@@ -36,7 +36,7 @@ const Login = () => {
           </div>
 
           <div className="space-y-2">
-            <h1 className="text-3xl font-bold text-foreground tracking-tight">Bem-vindo</h1>
+            <h1 className="text-4xl font-bold text-foreground tracking-tight">Bem-vindo</h1>
             <p className="text-muted-foreground">Entre com seus dados para fazer login</p>
           </div>
 
