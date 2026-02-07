@@ -89,7 +89,7 @@ const Login = () => {
       </div>
 
       {/* Footer */}
-      <div className="absolute bottom-4 right-6 lg:right-auto lg:left-1/2 lg:translate-x-1/4 text-right lg:text-center space-y-0.5">
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 lg:left-auto lg:translate-x-0 lg:right-0 lg:w-1/2 text-center space-y-0.5">
         <p className="text-xs text-muted-foreground/60">Desenvolvido por <span className="font-semibold text-muted-foreground">Avera</span></p>
         <p className="text-[10px] text-muted-foreground/40">Versão 1.0.0</p>
       </div>
