@@ -13,7 +13,7 @@ const ResetPassword = () => {
   const [submitted, setSubmitted] = useState(false);
 
   return (
-    <div className="min-h-screen flex bg-background">
+    <div className="min-h-screen flex bg-background relative">
       {/* Left — Hero Image */}
       <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden rounded-2xl m-4">
         <img src={tennisCourt} alt="Quadra de tênis" className="absolute inset-0 w-full h-full object-cover" />
@@ -120,11 +120,12 @@ const ResetPassword = () => {
             </Link>
           </p>
         </div>
+      </div>
 
-          <div className="pt-6 text-center space-y-0.5">
-            <p className="text-xs text-muted-foreground/60">Desenvolvido por <span className="font-semibold text-muted-foreground">Avera</span></p>
-            <p className="text-[10px] text-muted-foreground/40">Versão 1.0.0</p>
-          </div>
+      {/* Footer */}
+      <div className="absolute bottom-4 right-6 lg:right-auto lg:left-1/2 lg:translate-x-1/4 text-right lg:text-center space-y-0.5">
+        <p className="text-xs text-muted-foreground/60">Desenvolvido por <span className="font-semibold text-muted-foreground">Avera</span></p>
+        <p className="text-[10px] text-muted-foreground/40">Versão 1.0.0</p>
       </div>
     </div>
   );
