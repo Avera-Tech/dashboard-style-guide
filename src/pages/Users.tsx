@@ -13,7 +13,11 @@ import {
   ArrowUpDown,
   Filter,
   Download,
+  Phone,
+  MapPin,
+  Calendar,
 } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -180,35 +184,105 @@ const Users = () => {
                     Novo Usuário
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="sm:max-w-md">
+                <DialogContent className="sm:max-w-lg max-h-[85vh] overflow-y-auto">
                   <DialogHeader>
                     <DialogTitle>Adicionar Usuário</DialogTitle>
                     <DialogDescription>Preencha os dados para criar um novo usuário.</DialogDescription>
                   </DialogHeader>
                   <div className="space-y-4 py-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="user-name">Nome completo</Label>
-                      <Input id="user-name" placeholder="Ex: Maria Santos" />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="user-email">Email</Label>
-                      <div className="relative">
-                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                        <Input id="user-email" type="email" placeholder="email@empresa.com" className="pl-10" />
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="space-y-2 sm:col-span-2">
+                        <Label htmlFor="user-name">Nome completo</Label>
+                        <Input id="user-name" placeholder="Ex: Maria Santos" />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="user-cpf">CPF</Label>
+                        <Input id="user-cpf" placeholder="000.000.000-00" />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="user-email">Email</Label>
+                        <div className="relative">
+                          <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                          <Input id="user-email" type="email" placeholder="email@empresa.com" className="pl-10" />
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="user-birth">Data de Nascimento</Label>
+                        <div className="relative">
+                          <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                          <Input id="user-birth" type="date" className="pl-10" />
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="user-phone">Telefone</Label>
+                        <div className="relative">
+                          <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                          <Input id="user-phone" placeholder="(00) 00000-0000" className="pl-10" />
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Status</Label>
+                        <Select>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Selecione" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="active">Ativo</SelectItem>
+                            <SelectItem value="inactive">Inativo</SelectItem>
+                            <SelectItem value="pending">Pendente</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Papel</Label>
+                        <Select>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Selecione um papel" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="admin">Admin</SelectItem>
+                            <SelectItem value="editor">Editor</SelectItem>
+                            <SelectItem value="viewer">Viewer</SelectItem>
+                          </SelectContent>
+                        </Select>
                       </div>
                     </div>
-                    <div className="space-y-2">
-                      <Label>Papel</Label>
-                      <Select>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Selecione um papel" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="admin">Admin</SelectItem>
-                          <SelectItem value="editor">Editor</SelectItem>
-                          <SelectItem value="viewer">Viewer</SelectItem>
-                        </SelectContent>
-                      </Select>
+
+                    <Separator />
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="user-cep">CEP</Label>
+                        <div className="relative">
+                          <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                          <Input id="user-cep" placeholder="00000-000" className="pl-10" />
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="user-country">País</Label>
+                        <Input id="user-country" placeholder="Brasil" defaultValue="Brasil" />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="user-state">Estado</Label>
+                        <Input id="user-state" placeholder="Ex: São Paulo" />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="user-city">Cidade</Label>
+                        <Input id="user-city" placeholder="Ex: São Paulo" />
+                      </div>
+                      <div className="space-y-2 sm:col-span-2">
+                        <Label htmlFor="user-address">Endereço</Label>
+                        <Input id="user-address" placeholder="Rua, número, complemento" />
+                      </div>
+                    </div>
+
+                    <Separator />
+
+                    <div className="flex items-center space-x-2">
+                      <Checkbox id="user-minor" />
+                      <Label htmlFor="user-minor" className="text-sm font-normal cursor-pointer">
+                        Pessoa menor de idade
+                      </Label>
                     </div>
                   </div>
                   <DialogFooter>
