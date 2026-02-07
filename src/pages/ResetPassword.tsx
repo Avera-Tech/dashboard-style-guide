@@ -1,0 +1,128 @@
+import { useState } from "react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
+import { Lock, Eye, EyeOff, ArrowLeft, CheckCircle2 } from "lucide-react";
+import { Link } from "react-router-dom";
+import tennisCourt from "@/assets/tennis-court.jpg";
+
+const ResetPassword = () => {
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+
+  return (
+    <div className="min-h-screen flex bg-background">
+      {/* Left — Hero Image */}
+      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden rounded-2xl m-4">
+        <img src={tennisCourt} alt="Quadra de tênis" className="absolute inset-0 w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+        <div className="relative z-10 flex flex-col justify-end p-12">
+          <h2 className="text-5xl font-extrabold text-white tracking-tight leading-tight">
+            Tennis<span className="text-accent">UP</span>
+          </h2>
+          <p className="text-white/70 text-lg mt-2 max-w-md">
+            Gerencie sua academia de tênis com inteligência e simplicidade.
+          </p>
+        </div>
+      </div>
+
+      {/* Right — Form */}
+      <div className="flex-1 flex items-center justify-center px-6 py-12 lg:px-16">
+        <div className="w-full max-w-md space-y-8">
+          {/* Mobile logo */}
+          <div className="lg:hidden text-center mb-4">
+            <h2 className="text-3xl font-extrabold text-foreground tracking-tight">
+              Tennis<span className="text-accent">UP</span>
+            </h2>
+          </div>
+
+          {!submitted ? (
+            <>
+              <div className="space-y-2">
+                <h1 className="text-4xl font-bold text-foreground tracking-tight">Redefinir senha</h1>
+                <p className="text-muted-foreground">
+                  Crie uma nova senha segura para sua conta.
+                </p>
+              </div>
+
+              <form className="space-y-5" onSubmit={(e) => { e.preventDefault(); setSubmitted(true); }}>
+                <div className="space-y-2">
+                  <Label htmlFor="password">Nova senha</Label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      id="password"
+                      type={showPassword ? "text" : "password"}
+                      placeholder="••••••••"
+                      className="pl-10 pr-10 h-12"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                  </div>
+                  <p className="text-xs text-muted-foreground">Mínimo de 8 caracteres</p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="confirm">Confirmar nova senha</Label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      id="confirm"
+                      type={showConfirm ? "text" : "password"}
+                      placeholder="••••••••"
+                      className="pl-10 pr-10 h-12"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirm(!showConfirm)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      {showConfirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                  </div>
+                </div>
+
+                <Button type="submit" className="w-full h-12 text-base font-semibold">
+                  Salvar nova senha
+                </Button>
+              </form>
+            </>
+          ) : (
+            <div className="space-y-4 text-center">
+              <div className="mx-auto w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                <CheckCircle2 className="h-8 w-8 text-primary" />
+              </div>
+              <h1 className="text-3xl font-bold text-foreground tracking-tight">Senha redefinida!</h1>
+              <p className="text-muted-foreground max-w-sm mx-auto">
+                Sua senha foi alterada com sucesso. Agora você pode fazer login com a nova senha.
+              </p>
+              <Link to="/login">
+                <Button className="mt-4">Ir para o login</Button>
+              </Link>
+            </div>
+          )}
+
+          <div className="relative">
+            <Separator />
+          </div>
+
+          <p className="text-center text-sm text-muted-foreground">
+            <Link to="/login" className="text-primary font-medium hover:underline inline-flex items-center gap-1">
+              <ArrowLeft className="h-3 w-3" />
+              Voltar para o login
+            </Link>
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ResetPassword;

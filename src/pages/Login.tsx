@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Eye, EyeOff, Mail, Lock } from "lucide-react";
+import { Link } from "react-router-dom";
 import tennisCourt from "@/assets/tennis-court.jpg";
 
 const Login = () => {
@@ -80,9 +81,9 @@ const Login = () => {
 
           <p className="text-center text-sm text-muted-foreground">
             Esqueceu sua senha?{" "}
-            <a href="#" className="text-primary font-medium hover:underline">
+            <Link to="/forgot-password" className="text-primary font-medium hover:underline">
               Recuperar senha
-            </a>
+            </Link>
           </p>
         </div>
       </div>
