@@ -86,6 +86,11 @@ const Login = () => {
             </Link>
           </p>
         </div>
+
+          <div className="pt-6 text-center space-y-0.5">
+            <p className="text-xs text-muted-foreground/60">Desenvolvido por <span className="font-semibold text-muted-foreground">Avera</span></p>
+            <p className="text-[10px] text-muted-foreground/40">Versão 1.0.0</p>
+          </div>
       </div>
     </div>
   );
