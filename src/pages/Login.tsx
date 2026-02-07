@@ -13,16 +13,12 @@ const Login = () => {
     <div className="min-h-screen flex bg-background">
       {/* Left — Hero Image */}
       <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden rounded-2xl m-4">
-        <img
-          src={tennisCourt}
-          alt="Quadra de tênis"
-          className="absolute inset-0 w-full h-full object-cover"
-        />
+        <img src={tennisCourt} alt="Quadra de tênis" className="absolute inset-0 w-full h-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
         <div className="relative z-10 flex flex-col justify-end p-12">
-          <h1 className="text-5xl font-extrabold text-white tracking-tight leading-tight">
+          <h2 className="text-5xl font-extrabold text-white tracking-tight leading-tight">
             Tennis<span className="text-accent">UP</span>
-          </h1>
+          </h2>
           <p className="text-white/70 text-lg mt-2 max-w-md">
             Gerencie sua academia de tênis com inteligência e simplicidade.
           </p>
@@ -34,18 +30,14 @@ const Login = () => {
         <div className="w-full max-w-md space-y-8">
           {/* Mobile logo */}
           <div className="lg:hidden text-center mb-4">
-            <h1 className="text-3xl font-extrabold text-foreground tracking-tight">
+            <h2 className="text-3xl font-extrabold text-foreground tracking-tight">
               Tennis<span className="text-accent">UP</span>
-            </h1>
+            </h2>
           </div>
 
           <div className="space-y-2">
-            <h2 className="text-3xl font-bold text-foreground tracking-tight">
-              Bem-vindo
-            </h2>
-            <p className="text-muted-foreground">
-              Entre com seus dados para fazer login
-            </p>
+            <h1 className="text-3xl font-bold text-foreground tracking-tight">Bem-vindo</h1>
+            <p className="text-muted-foreground">Entre com seus dados para fazer login</p>
           </div>
 
           <form className="space-y-5" onSubmit={(e) => e.preventDefault()}>
@@ -53,12 +45,7 @@ const Login = () => {
               <Label htmlFor="email">Usuário</Label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="seu@email.com"
-                  className="pl-10 h-12"
-                />
+                <Input id="email" type="email" placeholder="seu@email.com" className="pl-10 h-12" />
               </div>
             </div>
 
