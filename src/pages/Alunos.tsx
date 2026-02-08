@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import StatCard from "@/components/dashboard/StatCard";
 import UserTable from "@/components/dashboard/UserTable";
-import type { BaseUser, Column } from "@/components/dashboard/UserTable";
+import type { BaseUser, Column, FilterConfig } from "@/components/dashboard/UserTable";
 import AlunoFormDialog from "@/components/alunos/AlunoFormDialog";
 
 interface Aluno extends BaseUser {
@@ -60,10 +60,41 @@ const alunoColumns: Column<Aluno>[] = [
   },
 ];
 
+const alunoFilters: FilterConfig[] = [
+  {
+    key: "status",
+    label: "Status",
+    options: [
+      { label: "Ativo", value: "active" },
+      { label: "Inativo", value: "inactive" },
+      { label: "Pendente", value: "pending" },
+    ],
+  },
+  {
+    key: "modalidade",
+    label: "Modalidade",
+    options: [
+      { label: "Tennis", value: "Tennis" },
+      { label: "Futevôlei", value: "Futevôlei" },
+      { label: "Ambos", value: "Ambos" },
+    ],
+  },
+  {
+    key: "nivel",
+    label: "Nível",
+    options: [
+      { label: "Iniciante", value: "Iniciante" },
+      { label: "Intermediário", value: "Intermediário" },
+      { label: "Avançado", value: "Avançado" },
+      { label: "Competitivo", value: "Competitivo" },
+    ],
+  },
+];
+
 const Alunos = () => {
   const [search, setSearch] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
-
+  const [activeFilters, setActiveFilters] = useState<Record<string, string[]>>({});
   const activeCount = MOCK_ALUNOS.filter((u) => u.status === "active").length;
   const pendingCount = MOCK_ALUNOS.filter((u) => u.status === "pending").length;
 
@@ -117,6 +148,11 @@ const Alunos = () => {
           search={search}
           onSearchChange={setSearch}
           searchPlaceholder="Buscar aluno por nome ou email..."
+          filters={alunoFilters}
+          activeFilters={activeFilters}
+          onFilterChange={(key, values) =>
+            setActiveFilters((prev) => ({ ...prev, [key]: values }))
+          }
         />
       </div>
     </DashboardLayout>

@@ -35,7 +35,7 @@ import {
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import StatCard from "@/components/dashboard/StatCard";
 import UserTable from "@/components/dashboard/UserTable";
-import type { BaseUser, Column } from "@/components/dashboard/UserTable";
+import type { BaseUser, Column, FilterConfig } from "@/components/dashboard/UserTable";
 
 interface Funcionario extends BaseUser {
   cargo: string;
@@ -212,9 +212,45 @@ const FuncionarioFormDialog = ({
   </Dialog>
 );
 
+const funcionarioFilters: FilterConfig[] = [
+  {
+    key: "status",
+    label: "Status",
+    options: [
+      { label: "Ativo", value: "active" },
+      { label: "Inativo", value: "inactive" },
+      { label: "Pendente", value: "pending" },
+    ],
+  },
+  {
+    key: "departamento",
+    label: "Departamento",
+    options: [
+      { label: "Ensino", value: "Ensino" },
+      { label: "Coordenação", value: "Coordenação" },
+      { label: "Diretoria", value: "Diretoria" },
+      { label: "Administrativo", value: "Administrativo" },
+      { label: "Financeiro", value: "Financeiro" },
+      { label: "TI", value: "TI" },
+    ],
+  },
+  {
+    key: "cargo",
+    label: "Cargo",
+    options: [
+      { label: "Professor", value: "Professor" },
+      { label: "Professora", value: "Professora" },
+      { label: "Coordenadora", value: "Coordenadora" },
+      { label: "Secretária", value: "Secretária" },
+      { label: "Diretor", value: "Diretor" },
+    ],
+  },
+];
+
 const Funcionarios = () => {
   const [search, setSearch] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [activeFilters, setActiveFilters] = useState<Record<string, string[]>>({});
 
   const activeCount = MOCK_FUNCIONARIOS.filter((u) => u.status === "active").length;
   const pendingCount = MOCK_FUNCIONARIOS.filter((u) => u.status === "pending").length;
@@ -269,6 +305,11 @@ const Funcionarios = () => {
           search={search}
           onSearchChange={setSearch}
           searchPlaceholder="Buscar funcionário por nome ou email..."
+          filters={funcionarioFilters}
+          activeFilters={activeFilters}
+          onFilterChange={(key, values) =>
+            setActiveFilters((prev) => ({ ...prev, [key]: values }))
+          }
         />
       </div>
     </DashboardLayout>
