@@ -8,9 +8,7 @@ import {
   ChevronLeft,
   ChevronRight,
   ArrowUpDown,
-  Filter,
   Download,
-  X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -32,10 +30,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 type UserStatus = "active" | "inactive" | "pending";
 
@@ -96,15 +96,9 @@ function UserTable<T extends BaseUser>({
   activeFilters = {},
   onFilterChange,
 }: UserTableProps<T>) {
-  const activeFilterCount = Object.values(activeFilters).reduce((acc, v) => acc + v.length, 0);
-
-  const toggleFilter = (key: string, value: string) => {
+  const handleSelectFilter = (key: string, value: string) => {
     if (!onFilterChange) return;
-    const current = activeFilters[key] || [];
-    const next = current.includes(value)
-      ? current.filter((v) => v !== value)
-      : [...current, value];
-    onFilterChange(key, next);
+    onFilterChange(key, value === "all" ? [] : [value]);
   };
 
   const filteredData = data.filter((u) => {
@@ -132,61 +126,28 @@ function UserTable<T extends BaseUser>({
           />
         </div>
         <div className="flex gap-2">
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button variant="outline" size="default" className="bg-card relative">
-                <Filter className="h-4 w-4 mr-2" />
-                Filtros
-                {activeFilterCount > 0 && (
-                  <Badge variant="default" className="ml-1.5 h-5 min-w-[20px] px-1.5 text-[10px]">
-                    {activeFilterCount}
-                  </Badge>
-                )}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent align="end" className="w-64 p-3">
-              <div className="space-y-3">
-                {filters.length === 0 ? (
-                  <p className="text-sm text-muted-foreground text-center py-2">Nenhum filtro disponível</p>
-                ) : (
-                  filters.map((filter) => (
-                    <div key={filter.key} className="space-y-1.5">
-                      <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{filter.label}</p>
-                      <div className="flex flex-wrap gap-1.5">
-                        {filter.options.map((opt) => {
-                          const isActive = (activeFilters[filter.key] || []).includes(opt.value);
-                          return (
-                            <button
-                              key={opt.value}
-                              onClick={() => toggleFilter(filter.key, opt.value)}
-                              className={`px-2.5 py-1 rounded-md text-xs font-medium transition-colors border ${
-                                isActive
-                                  ? "bg-primary text-primary-foreground border-primary"
-                                  : "bg-card text-foreground border-border hover:bg-muted"
-                              }`}
-                            >
-                              {opt.label}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  ))
-                )}
-                {activeFilterCount > 0 && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="w-full text-xs"
-                    onClick={() => filters.forEach((f) => onFilterChange?.(f.key, []))}
-                  >
-                    <X className="h-3 w-3 mr-1" />
-                    Limpar filtros
-                  </Button>
-                )}
-              </div>
-            </PopoverContent>
-          </Popover>
+          {filters.map((filter) => {
+            const currentValue = (activeFilters[filter.key] || [])[0] || "all";
+            return (
+              <Select
+                key={filter.key}
+                value={currentValue}
+                onValueChange={(v) => handleSelectFilter(filter.key, v)}
+              >
+                <SelectTrigger className="w-auto min-w-[130px] bg-card">
+                  <SelectValue placeholder={filter.label} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todos</SelectItem>
+                  {filter.options.map((opt) => (
+                    <SelectItem key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            );
+          })}
           <Button variant="outline" size="default" className="bg-card">
             <Download className="h-4 w-4 mr-2" />
             Exportar
