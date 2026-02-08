@@ -71,15 +71,6 @@ const alunoFilters: FilterConfig[] = [
     ],
   },
   {
-    key: "modalidade",
-    label: "Modalidade",
-    options: [
-      { label: "Tennis", value: "Tennis" },
-      { label: "Futevôlei", value: "Futevôlei" },
-      { label: "Ambos", value: "Ambos" },
-    ],
-  },
-  {
     key: "nivel",
     label: "Nível",
     options: [
