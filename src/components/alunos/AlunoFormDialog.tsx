@@ -3,11 +3,7 @@ import {
   Phone,
   MapPin,
   Calendar,
-  BookOpen,
   Users as UsersIcon,
-  Ruler,
-  Weight,
-  Footprints,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -92,48 +88,8 @@ const AlunoFormDialog = ({
 
         <Separator />
 
-        {/* Dados físicos */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="aluno-altura">Altura (cm)</Label>
-            <div className="relative">
-              <Ruler className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input id="aluno-altura" type="number" placeholder="175" className="pl-10" />
-            </div>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="aluno-peso">Peso (kg)</Label>
-            <div className="relative">
-              <Weight className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input id="aluno-peso" type="number" placeholder="70" className="pl-10" />
-            </div>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="aluno-sapato">Sapato</Label>
-            <div className="relative">
-              <Footprints className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input id="aluno-sapato" placeholder="42" className="pl-10" />
-            </div>
-          </div>
-        </div>
-
-        <Separator />
-
         {/* Dados esportivos */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="space-y-2">
-            <Label>Modalidade</Label>
-            <Select>
-              <SelectTrigger>
-                <SelectValue placeholder="Selecione" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="tennis">Tennis</SelectItem>
-                <SelectItem value="futevolei">Futevôlei</SelectItem>
-                <SelectItem value="ambos">Ambos</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label>Nível</Label>
             <Select>
@@ -145,47 +101,6 @@ const AlunoFormDialog = ({
                 <SelectItem value="intermediario">Intermediário</SelectItem>
                 <SelectItem value="avancado">Avançado</SelectItem>
                 <SelectItem value="competitivo">Competitivo</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="space-y-2">
-            <Label>Frequência</Label>
-            <Select>
-              <SelectTrigger>
-                <SelectValue placeholder="Selecione" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="1x">1x por semana</SelectItem>
-                <SelectItem value="2x">2x por semana</SelectItem>
-                <SelectItem value="3x">3x por semana</SelectItem>
-                <SelectItem value="livre">Livre</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="space-y-2">
-            <Label>Contrato</Label>
-            <Select>
-              <SelectTrigger>
-                <SelectValue placeholder="Selecione" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="mensal">Mensal</SelectItem>
-                <SelectItem value="trimestral">Trimestral</SelectItem>
-                <SelectItem value="semestral">Semestral</SelectItem>
-                <SelectItem value="anual">Anual</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="space-y-2">
-            <Label>Aula</Label>
-            <Select>
-              <SelectTrigger>
-                <SelectValue placeholder="Selecione" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="individual">Individual</SelectItem>
-                <SelectItem value="dupla">Dupla</SelectItem>
-                <SelectItem value="grupo">Grupo</SelectItem>
               </SelectContent>
             </Select>
           </div>
