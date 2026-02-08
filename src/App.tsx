@@ -7,7 +7,8 @@ import Index from "./pages/Index";
 import Login from "./pages/Login";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
-import Users from "./pages/Users";
+import Alunos from "./pages/Alunos";
+import Funcionarios from "./pages/Funcionarios";
 import VerifyAccount from "./pages/VerifyAccount";
 import EmailTemplates from "./pages/EmailTemplates";
 import NotFound from "./pages/NotFound";
@@ -25,7 +26,8 @@ const App = () => (
           <Route path="/login" element={<Login />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/users" element={<Users />} />
+          <Route path="/alunos" element={<Alunos />} />
+          <Route path="/funcionarios" element={<Funcionarios />} />
           <Route path="/verify" element={<VerifyAccount />} />
           <Route path="/email-templates" element={<EmailTemplates />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
