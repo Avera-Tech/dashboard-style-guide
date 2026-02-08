@@ -10,6 +10,7 @@ import {
   ArrowUpDown,
   Filter,
   Download,
+  X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -30,6 +31,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 type UserStatus = "active" | "inactive" | "pending";
 
@@ -48,12 +54,26 @@ interface Column<T> {
   render: (item: T) => ReactNode;
 }
 
+interface FilterOption {
+  label: string;
+  value: string;
+}
+
+interface FilterConfig {
+  key: string;
+  label: string;
+  options: FilterOption[];
+}
+
 interface UserTableProps<T extends BaseUser> {
   data: T[];
   columns: Column<T>[];
   search: string;
   onSearchChange: (value: string) => void;
   searchPlaceholder?: string;
+  filters?: FilterConfig[];
+  activeFilters?: Record<string, string[]>;
+  onFilterChange?: (key: string, values: string[]) => void;
 }
 
 const statusConfig: Record<UserStatus, { label: string; variant: "default" | "secondary" | "outline" | "destructive" }> = {
@@ -72,12 +92,31 @@ function UserTable<T extends BaseUser>({
   search,
   onSearchChange,
   searchPlaceholder = "Buscar por nome ou email...",
+  filters = [],
+  activeFilters = {},
+  onFilterChange,
 }: UserTableProps<T>) {
-  const filteredData = data.filter(
-    (u) =>
+  const activeFilterCount = Object.values(activeFilters).reduce((acc, v) => acc + v.length, 0);
+
+  const toggleFilter = (key: string, value: string) => {
+    if (!onFilterChange) return;
+    const current = activeFilters[key] || [];
+    const next = current.includes(value)
+      ? current.filter((v) => v !== value)
+      : [...current, value];
+    onFilterChange(key, next);
+  };
+
+  const filteredData = data.filter((u) => {
+    const matchesSearch =
       u.name.toLowerCase().includes(search.toLowerCase()) ||
-      u.email.toLowerCase().includes(search.toLowerCase())
-  );
+      u.email.toLowerCase().includes(search.toLowerCase());
+    const matchesFilters = Object.entries(activeFilters).every(([key, values]) => {
+      if (values.length === 0) return true;
+      return values.includes(String((u as Record<string, unknown>)[key]));
+    });
+    return matchesSearch && matchesFilters;
+  });
 
   return (
     <>
@@ -93,10 +132,61 @@ function UserTable<T extends BaseUser>({
           />
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" size="default" className="bg-card">
-            <Filter className="h-4 w-4 mr-2" />
-            Filtros
-          </Button>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline" size="default" className="bg-card relative">
+                <Filter className="h-4 w-4 mr-2" />
+                Filtros
+                {activeFilterCount > 0 && (
+                  <Badge variant="default" className="ml-1.5 h-5 min-w-[20px] px-1.5 text-[10px]">
+                    {activeFilterCount}
+                  </Badge>
+                )}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent align="end" className="w-64 p-3">
+              <div className="space-y-3">
+                {filters.length === 0 ? (
+                  <p className="text-sm text-muted-foreground text-center py-2">Nenhum filtro disponível</p>
+                ) : (
+                  filters.map((filter) => (
+                    <div key={filter.key} className="space-y-1.5">
+                      <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{filter.label}</p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {filter.options.map((opt) => {
+                          const isActive = (activeFilters[filter.key] || []).includes(opt.value);
+                          return (
+                            <button
+                              key={opt.value}
+                              onClick={() => toggleFilter(filter.key, opt.value)}
+                              className={`px-2.5 py-1 rounded-md text-xs font-medium transition-colors border ${
+                                isActive
+                                  ? "bg-primary text-primary-foreground border-primary"
+                                  : "bg-card text-foreground border-border hover:bg-muted"
+                              }`}
+                            >
+                              {opt.label}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  ))
+                )}
+                {activeFilterCount > 0 && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="w-full text-xs"
+                    onClick={() => filters.forEach((f) => onFilterChange?.(f.key, []))}
+                  >
+                    <X className="h-3 w-3 mr-1" />
+                    Limpar filtros
+                  </Button>
+                )}
+              </div>
+            </PopoverContent>
+          </Popover>
           <Button variant="outline" size="default" className="bg-card">
             <Download className="h-4 w-4 mr-2" />
             Exportar
@@ -230,4 +320,4 @@ function UserTable<T extends BaseUser>({
 
 export default UserTable;
 export { statusConfig, getInitials };
-export type { BaseUser, Column, UserStatus };
+export type { BaseUser, Column, UserStatus, FilterConfig, FilterOption };
