@@ -36,15 +36,6 @@ const alunoColumns: Column<Aluno>[] = [
     render: (aluno) => <span className="text-sm text-muted-foreground">{aluno.phone}</span>,
   },
   {
-    key: "modalidade",
-    label: "Modalidade",
-    render: (aluno) => (
-      <Badge variant="outline" className="font-medium">
-        {aluno.modalidade}
-      </Badge>
-    ),
-  },
-  {
     key: "nivel",
     label: "Nível",
     render: (aluno) => (

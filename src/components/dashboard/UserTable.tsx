@@ -4,7 +4,7 @@ import {
   MoreHorizontal,
   Edit,
   Trash2,
-  Mail,
+  Eye,
   ChevronLeft,
   ChevronRight,
   ArrowUpDown,
@@ -183,7 +183,7 @@ function UserTable<T extends BaseUser>({
                     Criado em <ArrowUpDown className="h-3 w-3" />
                   </button>
                 </TableHead>
-                <TableHead className="w-[50px]" />
+                <TableHead className="text-xs font-semibold uppercase tracking-wider">Opções</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -217,21 +217,22 @@ function UserTable<T extends BaseUser>({
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity"
+                            variant="outline"
+                            size="sm"
+                            className="h-8 gap-1.5 text-xs"
                           >
-                            <MoreHorizontal className="h-4 w-4" />
+                            <MoreHorizontal className="h-3.5 w-3.5" />
+                            Opções
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="w-40">
                           <DropdownMenuItem>
-                            <Edit className="h-4 w-4 mr-2" />
-                            Editar
+                            <Eye className="h-4 w-4 mr-2" />
+                            Ver perfil
                           </DropdownMenuItem>
                           <DropdownMenuItem>
-                            <Mail className="h-4 w-4 mr-2" />
-                            Enviar email
+                            <Edit className="h-4 w-4 mr-2" />
+                            Editar
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
                           <DropdownMenuItem className="text-destructive">
