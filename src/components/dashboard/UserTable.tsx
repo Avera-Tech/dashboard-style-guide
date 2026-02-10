@@ -134,10 +134,10 @@ function UserTable<T extends BaseUser>({
     <>
       {/* Filter Card */}
       <div className="rounded-xl border border-border bg-card p-5 shadow-sm space-y-4">
-        <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Filtro</p>
+        <p className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Filtro</p>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="space-y-1.5">
-            <label className="text-sm font-medium text-foreground">Nome</label>
+            <label className="text-xs font-medium text-foreground">Nome</label>
             <Input
               placeholder=""
               className="bg-background"
@@ -146,7 +146,7 @@ function UserTable<T extends BaseUser>({
             />
           </div>
           <div className="space-y-1.5">
-            <label className="text-sm font-medium text-foreground">CPF</label>
+            <label className="text-xs font-medium text-foreground">CPF</label>
             <Input
               placeholder=""
               className="bg-background"
@@ -155,7 +155,7 @@ function UserTable<T extends BaseUser>({
             />
           </div>
           <div className="space-y-1.5">
-            <label className="text-sm font-medium text-foreground">Email</label>
+            <label className="text-xs font-medium text-foreground">Email</label>
             <Input
               placeholder=""
               className="bg-background"
