@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 import {
   Search,
   MoreHorizontal,
@@ -112,45 +112,64 @@ function UserTable<T extends BaseUser>({
     return matchesSearch && matchesFilters;
   });
 
+  const [filterName, setFilterName] = useState("");
+  const [filterCpf, setFilterCpf] = useState("");
+  const [filterEmail, setFilterEmail] = useState("");
+
+  const handleClearFilters = () => {
+    setFilterName("");
+    setFilterCpf("");
+    setFilterEmail("");
+    onSearchChange("");
+    if (onFilterChange) {
+      Object.keys(activeFilters).forEach((key) => onFilterChange(key, []));
+    }
+  };
+
+  const handleSearch = () => {
+    onSearchChange(filterName || filterEmail);
+  };
+
   return (
     <>
-      {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-3">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder={searchPlaceholder}
-            className="pl-10 bg-card"
-            value={search}
-            onChange={(e) => onSearchChange(e.target.value)}
-          />
+      {/* Filter Card */}
+      <div className="rounded-xl border border-border bg-card p-5 shadow-sm space-y-4">
+        <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Filtro</p>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium text-foreground">Nome</label>
+            <Input
+              placeholder=""
+              className="bg-background"
+              value={filterName}
+              onChange={(e) => setFilterName(e.target.value)}
+            />
+          </div>
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium text-foreground">CPF</label>
+            <Input
+              placeholder=""
+              className="bg-background"
+              value={filterCpf}
+              onChange={(e) => setFilterCpf(e.target.value)}
+            />
+          </div>
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium text-foreground">Email</label>
+            <Input
+              placeholder=""
+              className="bg-background"
+              value={filterEmail}
+              onChange={(e) => setFilterEmail(e.target.value)}
+            />
+          </div>
         </div>
-        <div className="flex gap-2">
-          {filters.map((filter) => {
-            const currentValue = (activeFilters[filter.key] || [])[0] || "all";
-            return (
-              <Select
-                key={filter.key}
-                value={currentValue}
-                onValueChange={(v) => handleSelectFilter(filter.key, v)}
-              >
-                <SelectTrigger className="w-auto min-w-[130px] bg-card">
-                  <SelectValue placeholder={filter.label} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Todos</SelectItem>
-                  {filter.options.map((opt) => (
-                    <SelectItem key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            );
-          })}
-          <Button variant="outline" size="default" className="bg-card">
-            <Download className="h-4 w-4 mr-2" />
-            Exportar
+        <div className="flex justify-end gap-3">
+          <Button variant="outline" onClick={handleClearFilters}>
+            Limpar
+          </Button>
+          <Button onClick={handleSearch}>
+            Pesquisar
           </Button>
         </div>
       </div>
