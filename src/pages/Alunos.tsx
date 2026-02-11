@@ -12,6 +12,9 @@ import StatCard from "@/components/dashboard/StatCard";
 import UserTable from "@/components/dashboard/UserTable";
 import type { BaseUser, Column, FilterConfig } from "@/components/dashboard/UserTable";
 import AlunoFormDialog from "@/components/alunos/AlunoFormDialog";
+import AlunoProfileDialog from "@/components/alunos/AlunoProfileDialog";
+import AlunoDeleteDialog from "@/components/alunos/AlunoDeleteDialog";
+import { toast } from "@/hooks/use-toast";
 
 interface Aluno extends BaseUser {
   phone: string;
@@ -76,9 +79,37 @@ const alunoFilters: FilterConfig[] = [
 const Alunos = () => {
   const [search, setSearch] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [profileDialogOpen, setProfileDialogOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [selectedAluno, setSelectedAluno] = useState<Aluno | null>(null);
   const [activeFilters, setActiveFilters] = useState<Record<string, string[]>>({});
   const activeCount = MOCK_ALUNOS.filter((u) => u.status === "active").length;
   const pendingCount = MOCK_ALUNOS.filter((u) => u.status === "pending").length;
+
+  const handleView = (aluno: Aluno) => {
+    setSelectedAluno(aluno);
+    setProfileDialogOpen(true);
+  };
+
+  const handleEdit = (aluno: Aluno) => {
+    setSelectedAluno(aluno);
+    setEditDialogOpen(true);
+  };
+
+  const handleDelete = (aluno: Aluno) => {
+    setSelectedAluno(aluno);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    toast({
+      title: "Aluno removido",
+      description: `${selectedAluno?.name} foi removido com sucesso.`,
+    });
+    setDeleteDialogOpen(false);
+    setSelectedAluno(null);
+  };
 
   return (
     <DashboardLayout>
@@ -98,6 +129,14 @@ const Alunos = () => {
             Novo Aluno
           </Button>
           <AlunoFormDialog open={dialogOpen} onOpenChange={setDialogOpen} />
+          <AlunoFormDialog open={editDialogOpen} onOpenChange={setEditDialogOpen} />
+          <AlunoProfileDialog open={profileDialogOpen} onOpenChange={setProfileDialogOpen} aluno={selectedAluno} />
+          <AlunoDeleteDialog
+            open={deleteDialogOpen}
+            onOpenChange={setDeleteDialogOpen}
+            alunoName={selectedAluno?.name ?? null}
+            onConfirm={handleConfirmDelete}
+          />
         </div>
       </header>
 
@@ -135,6 +174,9 @@ const Alunos = () => {
           onFilterChange={(key, values) =>
             setActiveFilters((prev) => ({ ...prev, [key]: values }))
           }
+          onView={handleView}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
         />
       </div>
     </DashboardLayout>

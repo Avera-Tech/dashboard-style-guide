@@ -74,6 +74,9 @@ interface UserTableProps<T extends BaseUser> {
   filters?: FilterConfig[];
   activeFilters?: Record<string, string[]>;
   onFilterChange?: (key: string, values: string[]) => void;
+  onView?: (item: T) => void;
+  onEdit?: (item: T) => void;
+  onDelete?: (item: T) => void;
 }
 
 const statusConfig: Record<UserStatus, { label: string; variant: "default" | "secondary" | "outline" | "destructive" }> = {
@@ -95,6 +98,9 @@ function UserTable<T extends BaseUser>({
   filters = [],
   activeFilters = {},
   onFilterChange,
+  onView,
+  onEdit,
+  onDelete,
 }: UserTableProps<T>) {
   const handleSelectFilter = (key: string, value: string) => {
     if (!onFilterChange) return;
@@ -245,16 +251,16 @@ function UserTable<T extends BaseUser>({
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="w-40">
-                          <DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => onView?.(item)}>
                             <Eye className="h-4 w-4 mr-2" />
                             Ver perfil
                           </DropdownMenuItem>
-                          <DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => onEdit?.(item)}>
                             <Edit className="h-4 w-4 mr-2" />
                             Editar
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
-                          <DropdownMenuItem className="text-destructive">
+                          <DropdownMenuItem className="text-destructive" onClick={() => onDelete?.(item)}>
                             <Trash2 className="h-4 w-4 mr-2" />
                             Remover
                           </DropdownMenuItem>
