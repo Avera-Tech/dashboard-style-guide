@@ -6,6 +6,7 @@ import {
   Briefcase,
   Package,
   Calendar,
+  ClipboardList,
   BarChart3,
   Settings,
   LogOut,
@@ -20,6 +21,7 @@ const navItems = [
   { label: "Funcionários", icon: Briefcase, href: "/funcionarios" },
   { label: "Produtos", icon: Package, href: "/produtos" },
   { label: "Turmas", icon: Calendar, href: "/turmas" },
+  { label: "Aulas", icon: ClipboardList, href: "/aulas" },
   { label: "Relatórios", icon: BarChart3, href: "/relatorios" },
   { label: "Configurações", icon: Settings, href: "/configuracoes" },
 ];
