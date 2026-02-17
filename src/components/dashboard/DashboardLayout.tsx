@@ -5,6 +5,7 @@ import {
   GraduationCap,
   Briefcase,
   Package,
+  Calendar,
   BarChart3,
   Settings,
   LogOut,
@@ -18,6 +19,7 @@ const navItems = [
   { label: "Alunos", icon: GraduationCap, href: "/alunos" },
   { label: "Funcionários", icon: Briefcase, href: "/funcionarios" },
   { label: "Produtos", icon: Package, href: "/produtos" },
+  { label: "Turmas", icon: Calendar, href: "/turmas" },
   { label: "Relatórios", icon: BarChart3, href: "/relatorios" },
   { label: "Configurações", icon: Settings, href: "/configuracoes" },
 ];

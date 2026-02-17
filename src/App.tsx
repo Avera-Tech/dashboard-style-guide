@@ -11,6 +11,7 @@ import Alunos from "./pages/Alunos";
 import Funcionarios from "./pages/Funcionarios";
 import VerifyAccount from "./pages/VerifyAccount";
 import Produtos from "./pages/Produtos";
+import Turmas from "./pages/Turmas";
 import EmailTemplates from "./pages/EmailTemplates";
 import NotFound from "./pages/NotFound";
 
@@ -30,6 +31,7 @@ const App = () => (
           <Route path="/alunos" element={<Alunos />} />
           <Route path="/funcionarios" element={<Funcionarios />} />
           <Route path="/produtos" element={<Produtos />} />
+          <Route path="/turmas" element={<Turmas />} />
           <Route path="/verify" element={<VerifyAccount />} />
           <Route path="/email-templates" element={<EmailTemplates />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
