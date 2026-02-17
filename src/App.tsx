@@ -10,6 +10,7 @@ import ResetPassword from "./pages/ResetPassword";
 import Alunos from "./pages/Alunos";
 import Funcionarios from "./pages/Funcionarios";
 import VerifyAccount from "./pages/VerifyAccount";
+import Produtos from "./pages/Produtos";
 import EmailTemplates from "./pages/EmailTemplates";
 import NotFound from "./pages/NotFound";
 
@@ -28,6 +29,7 @@ const App = () => (
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/alunos" element={<Alunos />} />
           <Route path="/funcionarios" element={<Funcionarios />} />
+          <Route path="/produtos" element={<Produtos />} />
           <Route path="/verify" element={<VerifyAccount />} />
           <Route path="/email-templates" element={<EmailTemplates />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
