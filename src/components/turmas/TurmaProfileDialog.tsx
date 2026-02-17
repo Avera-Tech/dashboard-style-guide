@@ -19,6 +19,8 @@ import {
 } from "@/components/ui/select";
 import { Calendar, Clock, Users, GraduationCap, User, Plus, X } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import AulaStatusBadge from "@/components/aulas/AulaStatusBadge";
+import { MOCK_AULAS } from "@/data/mock-aulas";
 import type { Turma } from "@/pages/Turmas";
 
 const statusConfig = {
@@ -233,6 +235,38 @@ const TurmaProfileDialog = ({
               ))
             )}
           </div>
+        </div>
+
+        <Separator />
+
+        {/* Próximas Aulas */}
+        <div className="space-y-3">
+          <p className="text-sm font-semibold text-foreground">Próximas Aulas</p>
+          {(() => {
+            const turmaAulas = MOCK_AULAS
+              .filter((a) => a.turmaId === turma.id)
+              .sort((a, b) => a.data.localeCompare(b.data))
+              .slice(0, 4);
+            if (turmaAulas.length === 0)
+              return <p className="text-sm text-muted-foreground text-center py-3">Nenhuma aula gerada</p>;
+            return (
+              <div className="space-y-1.5">
+                {turmaAulas.map((a) => {
+                  const [y, m, d] = a.data.split("-");
+                  return (
+                    <div key={a.id} className="flex items-center justify-between rounded-lg border border-border bg-muted/20 px-3 py-2">
+                      <div className="flex items-center gap-2.5">
+                        <Calendar className="h-3.5 w-3.5 text-muted-foreground" />
+                        <span className="text-sm font-medium text-foreground">{d}/{m}</span>
+                        <span className="text-xs text-muted-foreground">{a.horarioInicio} - {a.horarioFim}</span>
+                      </div>
+                      <AulaStatusBadge status={a.status} />
+                    </div>
+                  );
+                })}
+              </div>
+            );
+          })()}
         </div>
       </DialogContent>
     </Dialog>
