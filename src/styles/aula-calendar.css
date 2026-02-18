@@ -63,6 +63,13 @@
 
 .aula-calendar .rbc-event {
   border: none !important;
+  min-height: 28px;
+}
+
+.aula-calendar .rbc-event-content {
+  overflow: visible;
+  white-space: normal;
+  line-height: 1.3;
 }
 
 .aula-calendar .rbc-event:focus {
