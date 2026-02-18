@@ -6,6 +6,7 @@ import {
   Clock,
   LayoutList,
   LayoutGrid,
+  CalendarDays,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -15,8 +16,10 @@ import StatCard from "@/components/dashboard/StatCard";
 import AulaCard from "@/components/aulas/AulaCard";
 import AulaFilters from "@/components/aulas/AulaFilters";
 import AulaDetailDialog from "@/components/aulas/AulaDetailDialog";
+import AulaCalendarView from "@/components/aulas/AulaCalendarView";
 import AulaStatusBadge from "@/components/aulas/AulaStatusBadge";
 import { MOCK_AULAS } from "@/data/mock-aulas";
+import "@/styles/aula-calendar.css";
 import type { Aula } from "@/types/aula";
 import {
   Table,
@@ -39,7 +42,7 @@ const formatDateFull = (d: string) => {
 };
 
 const Aulas = () => {
-  const [view, setView] = useState<"cards" | "list">("cards");
+  const [view, setView] = useState<"cards" | "list" | "calendar">("cards");
   const [filterTurma, setFilterTurma] = useState("all");
   const [filterStatus, setFilterStatus] = useState("all");
   const [filterDate, setFilterDate] = useState("");
@@ -98,13 +101,16 @@ const Aulas = () => {
               Ocorrências geradas automaticamente a partir das turmas
             </p>
           </div>
-          <Tabs value={view} onValueChange={(v) => setView(v as "cards" | "list")}>
+          <Tabs value={view} onValueChange={(v) => setView(v as "cards" | "list" | "calendar")}>
             <TabsList>
               <TabsTrigger value="cards">
                 <LayoutGrid className="h-4 w-4 mr-1.5" /> Cards
               </TabsTrigger>
               <TabsTrigger value="list">
                 <LayoutList className="h-4 w-4 mr-1.5" /> Lista
+              </TabsTrigger>
+              <TabsTrigger value="calendar">
+                <CalendarDays className="h-4 w-4 mr-1.5" /> Calendário
               </TabsTrigger>
             </TabsList>
           </Tabs>
@@ -133,7 +139,9 @@ const Aulas = () => {
         />
 
         {/* Content */}
-        {view === "cards" ? (
+        {view === "calendar" ? (
+          <AulaCalendarView aulas={filtered} onSelectAula={handleView} />
+        ) : view === "cards" ? (
           <div className="space-y-6">
             {grouped.map(([date, aulas]) => (
               <div key={date}>
