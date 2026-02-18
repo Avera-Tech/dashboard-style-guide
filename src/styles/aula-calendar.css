@@ -1,0 +1,143 @@
+/* Override react-big-calendar styles to match design system */
+.aula-calendar .rbc-toolbar {
+  margin-bottom: 16px;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.aula-calendar .rbc-toolbar button {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 8px;
+  padding: 6px 14px;
+  border: 1px solid hsl(var(--border));
+  color: hsl(var(--foreground));
+  background: hsl(var(--background));
+  transition: all 0.15s;
+}
+
+.aula-calendar .rbc-toolbar button:hover {
+  background: hsl(var(--muted));
+}
+
+.aula-calendar .rbc-toolbar button.rbc-active {
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  border-color: hsl(var(--primary));
+}
+
+.aula-calendar .rbc-header {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: hsl(var(--muted-foreground));
+  padding: 8px 4px;
+  border-bottom: 1px solid hsl(var(--border));
+}
+
+.aula-calendar .rbc-month-view,
+.aula-calendar .rbc-time-view {
+  border: 1px solid hsl(var(--border));
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.aula-calendar .rbc-month-row + .rbc-month-row {
+  border-top: 1px solid hsl(var(--border));
+}
+
+.aula-calendar .rbc-day-bg + .rbc-day-bg {
+  border-left: 1px solid hsl(var(--border));
+}
+
+.aula-calendar .rbc-off-range-bg {
+  background: hsl(var(--muted) / 0.3);
+}
+
+.aula-calendar .rbc-today {
+  background: hsl(var(--primary) / 0.06);
+}
+
+.aula-calendar .rbc-event {
+  border: none !important;
+}
+
+.aula-calendar .rbc-event:focus {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 1px;
+}
+
+.aula-calendar .rbc-show-more {
+  font-size: 11px;
+  font-weight: 600;
+  color: hsl(var(--primary));
+  padding: 2px 4px;
+}
+
+.aula-calendar .rbc-date-cell {
+  font-size: 13px;
+  font-weight: 500;
+  padding: 4px 8px;
+  color: hsl(var(--foreground));
+}
+
+.aula-calendar .rbc-time-header-content {
+  border-left: 1px solid hsl(var(--border));
+}
+
+.aula-calendar .rbc-time-content {
+  border-top: 1px solid hsl(var(--border));
+}
+
+.aula-calendar .rbc-timeslot-group {
+  border-bottom: 1px solid hsl(var(--border));
+}
+
+.aula-calendar .rbc-time-slot {
+  font-size: 11px;
+  color: hsl(var(--muted-foreground));
+}
+
+.aula-calendar .rbc-current-time-indicator {
+  background: hsl(var(--primary));
+}
+
+.aula-calendar .rbc-agenda-table {
+  font-size: 13px;
+}
+
+.aula-calendar .rbc-agenda-view table thead th {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: hsl(var(--muted-foreground));
+  padding: 8px 12px;
+  border-bottom: 1px solid hsl(var(--border));
+}
+
+.aula-calendar .rbc-agenda-view table tbody td {
+  padding: 8px 12px;
+  border-bottom: 1px solid hsl(var(--border));
+}
+
+/* Overlay popup */
+.rbc-overlay {
+  border-radius: 10px;
+  border: 1px solid hsl(var(--border));
+  background: hsl(var(--card));
+  box-shadow: 0 10px 30px -10px hsl(var(--foreground) / 0.15);
+  padding: 8px;
+  z-index: 50;
+}
+
+.rbc-overlay-header {
+  font-size: 13px;
+  font-weight: 600;
+  color: hsl(var(--foreground));
+  padding: 4px 8px 8px;
+  border-bottom: 1px solid hsl(var(--border));
+}
