@@ -15,6 +15,8 @@ import Turmas from "./pages/Turmas";
 import Aulas from "./pages/Aulas";
 import EmailTemplates from "./pages/EmailTemplates";
 import Financeiro from "./pages/Financeiro";
+import ContasReceber from "./pages/ContasReceber";
+import ContasPagar from "./pages/ContasPagar";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -36,6 +38,8 @@ const App = () => (
           <Route path="/turmas" element={<Turmas />} />
           <Route path="/aulas" element={<Aulas />} />
           <Route path="/financeiro" element={<Financeiro />} />
+          <Route path="/financeiro/receber" element={<ContasReceber />} />
+          <Route path="/financeiro/pagar" element={<ContasPagar />} />
           <Route path="/verify" element={<VerifyAccount />} />
           <Route path="/email-templates" element={<EmailTemplates />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

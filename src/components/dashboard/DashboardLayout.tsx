@@ -11,12 +11,14 @@ import {
   BarChart3,
   Settings,
   LogOut,
+  ArrowDownCircle,
+  ArrowUpCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { NavLink } from "@/components/NavLink";
 
-const navItems = [
+const navItems: { label: string; icon: typeof LayoutDashboard; href: string; indent?: boolean }[] = [
   { label: "Visão Geral", icon: LayoutDashboard, href: "/" },
   { label: "Alunos", icon: GraduationCap, href: "/alunos" },
   { label: "Funcionários", icon: Briefcase, href: "/funcionarios" },
@@ -24,6 +26,8 @@ const navItems = [
   { label: "Turmas", icon: Calendar, href: "/turmas" },
   { label: "Aulas", icon: ClipboardList, href: "/aulas" },
   { label: "Financeiro", icon: DollarSign, href: "/financeiro" },
+  { label: "Contas a Receber", icon: ArrowDownCircle, href: "/financeiro/receber", indent: true },
+  { label: "Contas a Pagar", icon: ArrowUpCircle, href: "/financeiro/pagar", indent: true },
   { label: "Relatórios", icon: BarChart3, href: "/relatorios" },
   { label: "Configurações", icon: Settings, href: "/configuracoes" },
 ];
@@ -55,7 +59,8 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
               <NavLink
                 key={item.label}
                 to={item.href}
-                className="w-full flex items-center gap-3 text-left px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 text-muted-foreground hover:text-foreground hover:bg-muted/60"
+                end={item.href === "/financeiro"}
+                className={`w-full flex items-center gap-3 text-left px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 text-muted-foreground hover:text-foreground hover:bg-muted/60 ${item.indent ? "pl-9 text-xs" : ""}`}
                 activeClassName="bg-primary text-primary-foreground shadow-md shadow-primary/25 hover:bg-primary hover:text-primary-foreground"
               >
                 <item.icon className="h-4 w-4 shrink-0" />
