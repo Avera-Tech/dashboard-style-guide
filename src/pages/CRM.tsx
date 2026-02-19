@@ -45,7 +45,7 @@ import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import StatCard from "@/components/dashboard/StatCard";
 import LembreteDetailDialog from "@/components/crm/LembreteDetailDialog";
 import LembreteFormDialog from "@/components/crm/LembreteFormDialog";
-import RegrasPanel from "@/components/crm/RegrasPanel";
+import RegrasPanel from "@/components/crm/RegrasPanelView";
 import {
   Lembrete,
   tipoConfig,
