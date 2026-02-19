@@ -13,6 +13,7 @@ import {
   LogOut,
   ArrowDownCircle,
   ArrowUpCircle,
+  MessageSquare,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -25,6 +26,7 @@ const navItems: { label: string; icon: typeof LayoutDashboard; href: string; ind
   { label: "Produtos", icon: Package, href: "/produtos" },
   { label: "Turmas", icon: Calendar, href: "/turmas" },
   { label: "Aulas", icon: ClipboardList, href: "/aulas" },
+  { label: "CRM", icon: MessageSquare, href: "/crm" },
   { label: "Financeiro", icon: DollarSign, href: "/financeiro" },
   { label: "Contas a Receber", icon: ArrowDownCircle, href: "/financeiro/receber", indent: true },
   { label: "Contas a Pagar", icon: ArrowUpCircle, href: "/financeiro/pagar", indent: true },
