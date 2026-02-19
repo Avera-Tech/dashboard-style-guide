@@ -22,9 +22,10 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { Settings, Pencil } from "lucide-react";
+import { Settings, Pencil, Plus, Trash2 } from "lucide-react";
 import {
   RegraLembrete,
+  LembreteTipo,
   tipoConfig,
   canalConfig,
   MOCK_REGRAS,
@@ -35,6 +36,29 @@ const RegrasPanel = () => {
   const [regras, setRegras] = useState<RegraLembrete[]>(MOCK_REGRAS);
   const [editingRegra, setEditingRegra] = useState<RegraLembrete | null>(null);
   const [editOpen, setEditOpen] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
+
+  const usedTipos = regras.map((r) => r.tipo);
+  const availableTipos = (Object.keys(tipoConfig) as LembreteTipo[]).filter(
+    (t) => !usedTipos.includes(t)
+  );
+
+  const handleCreate = () => {
+    const tipo = availableTipos[0] || "aula_hoje";
+    setEditingRegra({
+      id: `r${Date.now()}`,
+      tipo,
+      ativo: true,
+      canal: "whatsapp",
+      antecedencia: 1,
+      unidadeAntecedencia: "horas",
+      templateTitulo: "",
+      templateMensagem: "",
+      descricaoTrigger: "",
+    });
+    setIsCreating(true);
+    setEditOpen(true);
+  };
 
   const handleToggle = (id: string) => {
     setRegras((prev) =>
@@ -54,29 +78,56 @@ const RegrasPanel = () => {
 
   const handleEdit = (regra: RegraLembrete) => {
     setEditingRegra({ ...regra });
+    setIsCreating(false);
     setEditOpen(true);
   };
 
   const handleSave = () => {
     if (!editingRegra) return;
-    setRegras((prev) =>
-      prev.map((r) => (r.id === editingRegra.id ? editingRegra : r))
-    );
-    toast({
-      title: "Regra atualizada",
-      description: `${tipoConfig[editingRegra.tipo].emoji} ${tipoConfig[editingRegra.tipo].label} configurada com sucesso.`,
-    });
+    if (isCreating) {
+      setRegras((prev) => [...prev, editingRegra]);
+      toast({
+        title: "Regra criada",
+        description: `${tipoConfig[editingRegra.tipo].emoji} ${tipoConfig[editingRegra.tipo].label} adicionada com sucesso.`,
+      });
+    } else {
+      setRegras((prev) =>
+        prev.map((r) => (r.id === editingRegra.id ? editingRegra : r))
+      );
+      toast({
+        title: "Regra atualizada",
+        description: `${tipoConfig[editingRegra.tipo].emoji} ${tipoConfig[editingRegra.tipo].label} configurada com sucesso.`,
+      });
+    }
     setEditOpen(false);
+    setIsCreating(false);
+  };
+
+  const handleDelete = (id: string) => {
+    const regra = regras.find((r) => r.id === id);
+    setRegras((prev) => prev.filter((r) => r.id !== id));
+    if (regra) {
+      toast({
+        title: "Regra removida",
+        description: `${tipoConfig[regra.tipo].emoji} ${tipoConfig[regra.tipo].label} foi removida.`,
+      });
+    }
   };
 
   return (
     <>
       <div className="space-y-4">
-        <div className="flex items-center gap-2 mb-2">
-          <Settings className="h-5 w-5 text-muted-foreground" />
-          <h3 className="text-base font-bold text-foreground">
-            Regras de Disparo Automático
-          </h3>
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center gap-2">
+            <Settings className="h-5 w-5 text-muted-foreground" />
+            <h3 className="text-base font-bold text-foreground">
+              Regras de Disparo Automático
+            </h3>
+          </div>
+          <Button size="sm" onClick={handleCreate} disabled={availableTipos.length === 0}>
+            <Plus className="h-4 w-4 mr-1" />
+            Nova Regra
+          </Button>
         </div>
         <p className="text-sm text-muted-foreground -mt-2">
           Configure quando e como cada tipo de lembrete é disparado automaticamente para os alunos.
@@ -141,6 +192,14 @@ const RegrasPanel = () => {
                       >
                         <Pencil className="h-4 w-4" />
                       </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-destructive hover:text-destructive"
+                        onClick={() => handleDelete(regra.id)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
                       <Switch
                         checked={regra.ativo}
                         onCheckedChange={() => handleToggle(regra.id)}
@@ -159,16 +218,46 @@ const RegrasPanel = () => {
         <DialogContent className="sm:max-w-[500px] max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
-              Configurar Regra: {editingRegra && tipoConfig[editingRegra.tipo].emoji}{" "}
-              {editingRegra && tipoConfig[editingRegra.tipo].label}
+              {isCreating ? "Nova Regra de Disparo" : `Configurar Regra: ${editingRegra ? tipoConfig[editingRegra.tipo].emoji : ""} ${editingRegra ? tipoConfig[editingRegra.tipo].label : ""}`}
             </DialogTitle>
             <DialogDescription>
-              Ajuste quando e como esse lembrete é disparado automaticamente
+              {isCreating
+                ? "Defina o tipo, canal e template da nova regra automática"
+                : "Ajuste quando e como esse lembrete é disparado automaticamente"}
             </DialogDescription>
           </DialogHeader>
 
           {editingRegra && (
             <div className="space-y-4">
+              {isCreating && (
+                <div className="space-y-1.5">
+                  <Label>Tipo de lembrete</Label>
+                  <Select
+                    value={editingRegra.tipo}
+                    onValueChange={(v) =>
+                      setEditingRegra({ ...editingRegra, tipo: v as LembreteTipo })
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {availableTipos.map((key) => (
+                        <SelectItem key={key} value={key}>
+                          {tipoConfig[key].emoji} {tipoConfig[key].label}
+                        </SelectItem>
+                      ))}
+                      {/* Include currently selected tipo if editing new */}
+                      {!availableTipos.includes(editingRegra.tipo) && (
+                        <SelectItem value={editingRegra.tipo}>
+                          {tipoConfig[editingRegra.tipo].emoji} {tipoConfig[editingRegra.tipo].label}
+                        </SelectItem>
+                      )}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+              <Separator />
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
                   <Label>Canal de envio</Label>
@@ -237,6 +326,24 @@ const RegrasPanel = () => {
 
               <div className="space-y-3">
                 <div className="space-y-1.5">
+                  <Label>Descrição do gatilho</Label>
+                  <Input
+                    value={editingRegra.descricaoTrigger}
+                    onChange={(e) =>
+                      setEditingRegra({
+                        ...editingRegra,
+                        descricaoTrigger: e.target.value,
+                      })
+                    }
+                    placeholder="Ex: Dispara automaticamente antes de cada aula"
+                  />
+                </div>
+              </div>
+
+              <Separator />
+
+              <div className="space-y-3">
+                <div className="space-y-1.5">
                   <Label>Título do template</Label>
                   <Input
                     value={editingRegra.templateTitulo}
@@ -272,7 +379,7 @@ const RegrasPanel = () => {
             <Button variant="outline" onClick={() => setEditOpen(false)}>
               Cancelar
             </Button>
-            <Button onClick={handleSave}>Salvar Regra</Button>
+            <Button onClick={handleSave}>{isCreating ? "Criar Regra" : "Salvar Regra"}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
