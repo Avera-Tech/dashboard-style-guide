@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
-import { Send, Clock, CheckCheck, Mail, Phone } from "lucide-react";
+import { Send, Clock, CheckCheck, Zap, PenLine } from "lucide-react";
 import {
   Lembrete,
   tipoConfig,
@@ -69,6 +69,15 @@ const LembreteDetailDialog = ({ open, onOpenChange, lembrete }: LembreteDetailDi
             </h3>
             <div className="flex items-center gap-2 mt-1">
               <span className="text-sm">{tipo.emoji} {tipo.label}</span>
+              {lembrete.origem === "automatico" ? (
+                <Badge variant="secondary" className="text-[10px] gap-1">
+                  <Zap className="h-3 w-3" /> Auto
+                </Badge>
+              ) : (
+                <Badge variant="outline" className="text-[10px] gap-1">
+                  <PenLine className="h-3 w-3" /> Manual
+                </Badge>
+              )}
             </div>
           </div>
         </div>
