@@ -1,16 +1,17 @@
 import { useState } from "react";
 import {
-  Users,
+  MessageSquare,
   Plus,
-  Phone,
-  MessageCircle,
-  UserPlus,
+  Calendar,
+  Bell,
   AlertCircle,
   Search,
   MoreVertical,
   Eye,
-  Pencil,
   Trash2,
+  Send,
+  CheckCheck,
+  Clock,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -40,17 +41,17 @@ import {
 } from "@/components/ui/table";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import StatCard from "@/components/dashboard/StatCard";
-import ContatoProfileDialog from "@/components/crm/ContatoProfileDialog";
-import ContatoFormDialog from "@/components/crm/ContatoFormDialog";
+import LembreteDetailDialog from "@/components/crm/LembreteDetailDialog";
+import LembreteFormDialog from "@/components/crm/LembreteFormDialog";
 import {
-  Contato,
+  Lembrete,
+  tipoConfig,
   statusConfig,
-  origemConfig,
-  tarefaStatusConfig,
-  formatDateBR,
-  MOCK_CONTATOS,
-  MOCK_TAREFAS,
+  canalConfig,
+  formatDateTimeBR,
+  MOCK_LEMBRETES,
 } from "@/data/crm";
+import { toast } from "@/hooks/use-toast";
 
 function getInitials(name: string): string {
   return name
@@ -62,32 +63,48 @@ function getInitials(name: string): string {
     .toUpperCase();
 }
 
+const statusIcon = {
+  pendente: Clock,
+  enviado: Send,
+  lido: CheckCheck,
+};
+
 const CRM = () => {
   const [search, setSearch] = useState("");
+  const [filterTipo, setFilterTipo] = useState("all");
   const [filterStatus, setFilterStatus] = useState("all");
-  const [filterOrigem, setFilterOrigem] = useState("all");
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [profileDialogOpen, setProfileDialogOpen] = useState(false);
-  const [selectedContato, setSelectedContato] = useState<Contato | null>(null);
+  const [formOpen, setFormOpen] = useState(false);
+  const [detailOpen, setDetailOpen] = useState(false);
+  const [selectedLembrete, setSelectedLembrete] = useState<Lembrete | null>(null);
 
-  const novosCount = MOCK_CONTATOS.filter((c) => c.status === "novo").length;
-  const emContatoCount = MOCK_CONTATOS.filter((c) => c.status === "em_contato" || c.status === "interessado").length;
-  const tarefasPendentes = MOCK_TAREFAS.filter((t) => t.status === "pendente" || t.status === "atrasada").length;
+  const pendentesCount = MOCK_LEMBRETES.filter((l) => l.status === "pendente").length;
+  const enviadosCount = MOCK_LEMBRETES.filter((l) => l.status === "enviado").length;
+  const hojeCount = MOCK_LEMBRETES.filter((l) => {
+    const d = new Date(l.dataEnvio);
+    const today = new Date();
+    return d.toDateString() === today.toDateString();
+  }).length;
 
-  const filteredData = MOCK_CONTATOS.filter((contato) => {
+  const filteredData = MOCK_LEMBRETES.filter((l) => {
     const matchSearch =
       !search ||
-      contato.nome.toLowerCase().includes(search.toLowerCase()) ||
-      contato.email.toLowerCase().includes(search.toLowerCase()) ||
-      contato.telefone.includes(search);
-    const matchStatus = filterStatus === "all" || contato.status === filterStatus;
-    const matchOrigem = filterOrigem === "all" || contato.origem === filterOrigem;
-    return matchSearch && matchStatus && matchOrigem;
-  });
+      l.alunoNome.toLowerCase().includes(search.toLowerCase()) ||
+      l.titulo.toLowerCase().includes(search.toLowerCase());
+    const matchTipo = filterTipo === "all" || l.tipo === filterTipo;
+    const matchStatus = filterStatus === "all" || l.status === filterStatus;
+    return matchSearch && matchTipo && matchStatus;
+  }).sort((a, b) => new Date(b.dataEnvio).getTime() - new Date(a.dataEnvio).getTime());
 
-  const handleView = (contato: Contato) => {
-    setSelectedContato(contato);
-    setProfileDialogOpen(true);
+  const handleView = (lembrete: Lembrete) => {
+    setSelectedLembrete(lembrete);
+    setDetailOpen(true);
+  };
+
+  const handleResend = (lembrete: Lembrete) => {
+    toast({
+      title: "Lembrete reenviado",
+      description: `"${lembrete.titulo}" reenviado para ${lembrete.alunoNome}.`,
+    });
   };
 
   return (
@@ -100,22 +117,22 @@ const CRM = () => {
                 CRM
               </h1>
               <Badge variant="secondary" className="text-[10px] font-bold">
-                {MOCK_CONTATOS.length}
+                Comunicação
               </Badge>
             </div>
             <p className="text-sm text-muted-foreground mt-0.5">
-              Comunicação e follow-up com contatos
+              Lembretes e comunicações com alunos
             </p>
           </div>
-          <Button onClick={() => setDialogOpen(true)} className="shadow-md shadow-primary/20">
+          <Button onClick={() => setFormOpen(true)} className="shadow-md shadow-primary/20">
             <Plus className="h-4 w-4 mr-2" />
-            Novo Contato
+            Novo Lembrete
           </Button>
-          <ContatoFormDialog open={dialogOpen} onOpenChange={setDialogOpen} />
-          <ContatoProfileDialog
-            open={profileDialogOpen}
-            onOpenChange={setProfileDialogOpen}
-            contato={selectedContato}
+          <LembreteFormDialog open={formOpen} onOpenChange={setFormOpen} />
+          <LembreteDetailDialog
+            open={detailOpen}
+            onOpenChange={setDetailOpen}
+            lembrete={selectedLembrete}
           />
         </div>
       </header>
@@ -124,28 +141,28 @@ const CRM = () => {
         {/* Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
           <StatCard
-            label="Total de Contatos"
-            value={String(MOCK_CONTATOS.length)}
-            icon={Users}
+            label="Total de Lembretes"
+            value={String(MOCK_LEMBRETES.length)}
+            icon={MessageSquare}
             gradient="bg-gradient-to-br from-primary to-primary/70"
           />
           <StatCard
-            label="Novos"
-            value={String(novosCount)}
-            icon={UserPlus}
+            label="Hoje"
+            value={String(hojeCount)}
+            icon={Calendar}
             gradient="bg-gradient-to-br from-info to-info/70"
           />
           <StatCard
-            label="Em Negociação"
-            value={String(emContatoCount)}
-            icon={MessageCircle}
+            label="Pendentes"
+            value={String(pendentesCount)}
+            icon={Bell}
             gradient="bg-gradient-to-br from-accent to-accent/70"
           />
           <StatCard
-            label="Tarefas Pendentes"
-            value={String(tarefasPendentes)}
-            icon={AlertCircle}
-            gradient="bg-gradient-to-br from-destructive to-destructive/70"
+            label="Enviados"
+            value={String(enviadosCount)}
+            icon={Send}
+            gradient="bg-gradient-to-br from-success to-success/70"
           />
         </div>
 
@@ -156,14 +173,27 @@ const CRM = () => {
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="Buscar por nome, email ou telefone..."
+                  placeholder="Buscar por aluno ou título..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   className="pl-9"
                 />
               </div>
+              <Select value={filterTipo} onValueChange={setFilterTipo}>
+                <SelectTrigger className="w-full sm:w-[180px]">
+                  <SelectValue placeholder="Tipo" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todos os tipos</SelectItem>
+                  {Object.entries(tipoConfig).map(([key, val]) => (
+                    <SelectItem key={key} value={key}>
+                      {val.emoji} {val.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               <Select value={filterStatus} onValueChange={setFilterStatus}>
-                <SelectTrigger className="w-full sm:w-[160px]">
+                <SelectTrigger className="w-full sm:w-[150px]">
                   <SelectValue placeholder="Status" />
                 </SelectTrigger>
                 <SelectContent>
@@ -171,19 +201,6 @@ const CRM = () => {
                   {Object.entries(statusConfig).map(([key, val]) => (
                     <SelectItem key={key} value={key}>
                       {val.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Select value={filterOrigem} onValueChange={setFilterOrigem}>
-                <SelectTrigger className="w-full sm:w-[160px]">
-                  <SelectValue placeholder="Origem" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Todas</SelectItem>
-                  {Object.entries(origemConfig).map(([key, val]) => (
-                    <SelectItem key={key} value={key}>
-                      {val}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -198,63 +215,64 @@ const CRM = () => {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Contato</TableHead>
-                  <TableHead>Telefone</TableHead>
-                  <TableHead>Origem</TableHead>
-                  <TableHead>Interesse</TableHead>
+                  <TableHead>Aluno</TableHead>
+                  <TableHead>Tipo</TableHead>
+                  <TableHead>Título</TableHead>
+                  <TableHead>Canal</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead>Último Contato</TableHead>
+                  <TableHead>Data</TableHead>
                   <TableHead className="w-[50px]">Opções</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredData.map((contato) => {
-                  const status = statusConfig[contato.status];
-                  const tarefas = MOCK_TAREFAS.filter(
-                    (t) =>
-                      t.contatoId === contato.id &&
-                      (t.status === "pendente" || t.status === "atrasada")
-                  );
+                {filteredData.map((lembrete) => {
+                  const tipo = tipoConfig[lembrete.tipo];
+                  const status = statusConfig[lembrete.status];
+                  const canal = canalConfig[lembrete.canal];
+                  const StatusIcon = statusIcon[lembrete.status];
                   return (
-                    <TableRow key={contato.id} className="cursor-pointer" onClick={() => handleView(contato)}>
+                    <TableRow
+                      key={lembrete.id}
+                      className="cursor-pointer"
+                      onClick={() => handleView(lembrete)}
+                    >
                       <TableCell>
                         <div className="flex items-center gap-3">
-                          <Avatar className="h-9 w-9">
-                            <AvatarFallback className="bg-primary/10 text-primary text-xs font-bold">
-                              {getInitials(contato.nome)}
+                          <Avatar className="h-8 w-8">
+                            <AvatarFallback className="bg-primary/10 text-primary text-[10px] font-bold">
+                              {getInitials(lembrete.alunoNome)}
                             </AvatarFallback>
                           </Avatar>
-                          <div className="min-w-0">
-                            <p className="text-sm font-semibold text-foreground truncate">
-                              {contato.nome}
-                            </p>
-                            <p className="text-xs text-muted-foreground truncate">
-                              {contato.email}
-                            </p>
-                          </div>
-                          {tarefas.length > 0 && (
-                            <Badge variant="destructive" className="text-[10px] shrink-0">
-                              {tarefas.length} tarefa{tarefas.length > 1 ? "s" : ""}
-                            </Badge>
-                          )}
+                          <span className="text-sm font-medium text-foreground truncate max-w-[160px]">
+                            {lembrete.alunoNome}
+                          </span>
                         </div>
                       </TableCell>
-                      <TableCell className="text-sm text-muted-foreground">
-                        {contato.telefone}
+                      <TableCell>
+                        <span className="text-sm">
+                          {tipo.emoji} {tipo.label}
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        <span className="text-sm text-foreground truncate max-w-[200px] block">
+                          {lembrete.titulo}
+                        </span>
                       </TableCell>
                       <TableCell>
                         <Badge variant="outline" className="text-xs">
-                          {origemConfig[contato.origem]}
+                          {canal.emoji} {canal.label}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-sm text-muted-foreground">
-                        {contato.interesse}
-                      </TableCell>
                       <TableCell>
-                        <Badge variant={status.variant}>{status.label}</Badge>
+                        <div className="flex items-center gap-1.5">
+                          <StatusIcon className="h-3.5 w-3.5 text-muted-foreground" />
+                          <Badge variant={status.variant} className="text-[10px]">
+                            {status.label}
+                          </Badge>
+                        </div>
                       </TableCell>
-                      <TableCell className="text-sm text-muted-foreground">
-                        {formatDateBR(contato.ultimoContato)}
+                      <TableCell className="text-sm text-muted-foreground whitespace-nowrap">
+                        {formatDateTimeBR(lembrete.dataEnvio)}
                       </TableCell>
                       <TableCell>
                         <DropdownMenu>
@@ -264,11 +282,11 @@ const CRM = () => {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleView(contato); }}>
-                              <Eye className="h-4 w-4 mr-2" /> Ver perfil
+                            <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleView(lembrete); }}>
+                              <Eye className="h-4 w-4 mr-2" /> Ver detalhes
                             </DropdownMenuItem>
-                            <DropdownMenuItem>
-                              <Pencil className="h-4 w-4 mr-2" /> Editar
+                            <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleResend(lembrete); }}>
+                              <Send className="h-4 w-4 mr-2" /> Reenviar
                             </DropdownMenuItem>
                             <DropdownMenuItem className="text-destructive">
                               <Trash2 className="h-4 w-4 mr-2" /> Remover
@@ -282,7 +300,7 @@ const CRM = () => {
                 {filteredData.length === 0 && (
                   <TableRow>
                     <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
-                      Nenhum contato encontrado.
+                      Nenhum lembrete encontrado.
                     </TableCell>
                   </TableRow>
                 )}
