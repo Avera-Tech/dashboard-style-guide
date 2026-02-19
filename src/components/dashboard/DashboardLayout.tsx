@@ -7,6 +7,7 @@ import {
   Package,
   Calendar,
   ClipboardList,
+  DollarSign,
   BarChart3,
   Settings,
   LogOut,
@@ -22,6 +23,7 @@ const navItems = [
   { label: "Produtos", icon: Package, href: "/produtos" },
   { label: "Turmas", icon: Calendar, href: "/turmas" },
   { label: "Aulas", icon: ClipboardList, href: "/aulas" },
+  { label: "Financeiro", icon: DollarSign, href: "/financeiro" },
   { label: "Relatórios", icon: BarChart3, href: "/relatorios" },
   { label: "Configurações", icon: Settings, href: "/configuracoes" },
 ];
