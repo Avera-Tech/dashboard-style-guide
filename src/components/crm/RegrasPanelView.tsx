@@ -111,21 +111,23 @@ const RegrasPanel = () => {
   return (
     <>
       <div className="space-y-4">
-        <div className="flex items-center justify-between mb-2">
-          <div className="flex items-center gap-2">
-            <Settings className="h-5 w-5 text-muted-foreground" />
-            <h3 className="text-base font-bold text-foreground">
-              Regras de Disparo Automático
-            </h3>
+        <Card className="p-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Settings className="h-5 w-5 text-muted-foreground" />
+              <h3 className="text-base font-bold text-foreground">
+                Regras de Disparo Automático
+              </h3>
+            </div>
+            <Button size="sm" onClick={handleCreate}>
+              <Plus className="h-4 w-4 mr-1" />
+              Nova Regra
+            </Button>
           </div>
-          <Button size="sm" onClick={handleCreate}>
-            <Plus className="h-4 w-4 mr-1" />
-            Nova Regra
-          </Button>
-        </div>
-        <p className="text-sm text-muted-foreground -mt-2">
-          Configure quando e como cada tipo de lembrete é disparado automaticamente para os alunos.
-        </p>
+          <p className="text-sm text-muted-foreground mt-1">
+            Configure quando e como cada tipo de lembrete é disparado automaticamente para os alunos.
+          </p>
+        </Card>
 
         <div className="space-y-3">
           {regras.map((regra) => {
