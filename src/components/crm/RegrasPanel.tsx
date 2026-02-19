@@ -38,16 +38,10 @@ const RegrasPanel = () => {
   const [editOpen, setEditOpen] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
 
-  const usedTipos = regras.map((r) => r.tipo);
-  const availableTipos = (Object.keys(tipoConfig) as LembreteTipo[]).filter(
-    (t) => !usedTipos.includes(t)
-  );
-
   const handleCreate = () => {
-    const tipo = availableTipos[0] || "aula_hoje";
     setEditingRegra({
       id: `r${Date.now()}`,
-      tipo,
+      tipo: "aula_hoje",
       ativo: true,
       canal: "whatsapp",
       antecedencia: 1,
@@ -124,7 +118,7 @@ const RegrasPanel = () => {
               Regras de Disparo Automático
             </h3>
           </div>
-          <Button size="sm" onClick={handleCreate} disabled={availableTipos.length === 0}>
+          <Button size="sm" onClick={handleCreate}>
             <Plus className="h-4 w-4 mr-1" />
             Nova Regra
           </Button>
@@ -213,12 +207,14 @@ const RegrasPanel = () => {
         </div>
       </div>
 
-      {/* Edit dialog */}
+      {/* Edit/Create dialog */}
       <Dialog open={editOpen} onOpenChange={setEditOpen}>
         <DialogContent className="sm:max-w-[500px] max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
-              {isCreating ? "Nova Regra de Disparo" : `Configurar Regra: ${editingRegra ? tipoConfig[editingRegra.tipo].emoji : ""} ${editingRegra ? tipoConfig[editingRegra.tipo].label : ""}`}
+              {isCreating
+                ? "Nova Regra de Disparo"
+                : `Configurar Regra: ${editingRegra ? tipoConfig[editingRegra.tipo].emoji : ""} ${editingRegra ? tipoConfig[editingRegra.tipo].label : ""}`}
             </DialogTitle>
             <DialogDescription>
               {isCreating
@@ -242,22 +238,18 @@ const RegrasPanel = () => {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      {availableTipos.map((key) => (
+                      {(Object.keys(tipoConfig) as LembreteTipo[]).map((key) => (
                         <SelectItem key={key} value={key}>
                           {tipoConfig[key].emoji} {tipoConfig[key].label}
                         </SelectItem>
                       ))}
-                      {/* Include currently selected tipo if editing new */}
-                      {!availableTipos.includes(editingRegra.tipo) && (
-                        <SelectItem value={editingRegra.tipo}>
-                          {tipoConfig[editingRegra.tipo].emoji} {tipoConfig[editingRegra.tipo].label}
-                        </SelectItem>
-                      )}
                     </SelectContent>
                   </Select>
                 </div>
               )}
+
               <Separator />
+
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
                   <Label>Canal de envio</Label>
@@ -283,8 +275,6 @@ const RegrasPanel = () => {
                   <Label>
                     {editingRegra.tipo === "checkin_pos_aula"
                       ? "Tempo após término"
-                      : editingRegra.tipo === "aniversario"
-                      ? "Antecedência"
                       : "Antecedência"}
                   </Label>
                   <div className="flex gap-2">
@@ -322,22 +312,18 @@ const RegrasPanel = () => {
                 </div>
               </div>
 
-              <Separator />
-
-              <div className="space-y-3">
-                <div className="space-y-1.5">
-                  <Label>Descrição do gatilho</Label>
-                  <Input
-                    value={editingRegra.descricaoTrigger}
-                    onChange={(e) =>
-                      setEditingRegra({
-                        ...editingRegra,
-                        descricaoTrigger: e.target.value,
-                      })
-                    }
-                    placeholder="Ex: Dispara automaticamente antes de cada aula"
-                  />
-                </div>
+              <div className="space-y-1.5">
+                <Label>Descrição do gatilho</Label>
+                <Input
+                  value={editingRegra.descricaoTrigger}
+                  onChange={(e) =>
+                    setEditingRegra({
+                      ...editingRegra,
+                      descricaoTrigger: e.target.value,
+                    })
+                  }
+                  placeholder="Ex: Dispara automaticamente antes de cada aula"
+                />
               </div>
 
               <Separator />
@@ -379,7 +365,9 @@ const RegrasPanel = () => {
             <Button variant="outline" onClick={() => setEditOpen(false)}>
               Cancelar
             </Button>
-            <Button onClick={handleSave}>{isCreating ? "Criar Regra" : "Salvar Regra"}</Button>
+            <Button onClick={handleSave}>
+              {isCreating ? "Criar Regra" : "Salvar Regra"}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
