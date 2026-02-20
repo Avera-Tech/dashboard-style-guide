@@ -21,5 +21,5 @@ export const companyConfig: CompanyConfig = {
     logo: "",
     secondaryLogo: "",
   },
-  companyType: "fit",
+  companyType: "clinic",
 };
