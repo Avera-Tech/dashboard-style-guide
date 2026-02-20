@@ -22,6 +22,7 @@ import ListaEspera from "./pages/ListaEspera";
 import Vendas from "./pages/Vendas";
 import Integracoes from "./pages/Integracoes";
 import Anuncios from "./pages/Anuncios";
+import Configuracoes from "./pages/Configuracoes";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -50,6 +51,7 @@ const App = () => (
           <Route path="/vendas" element={<Vendas />} />
           <Route path="/integracoes" element={<Integracoes />} />
           <Route path="/anuncios" element={<Anuncios />} />
+          <Route path="/configuracoes" element={<Configuracoes />} />
           <Route path="/verify" element={<VerifyAccount />} />
           <Route path="/email-templates" element={<EmailTemplates />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
