@@ -25,21 +25,31 @@ interface Anuncio {
 
 const MAX_ANUNCIOS = 3;
 
+// Anúncio patrocinado fixo — vem de fora, admin não controla
+const ANUNCIO_PATROCINADO: Anuncio = {
+  id: "patrocinado",
+  imageUrl: "https://images.unsplash.com/photo-1552674605-db6ffd4facb5?w=600&h=400&fit=crop",
+  titulo: "Corrida de Rua 10K — Inscreva-se!",
+  descricao: "Participe da maior corrida de rua da cidade! Garanta já o seu kit com camiseta exclusiva e medalha de participação. Vagas limitadas.",
+  dataInicio: new Date(2026, 2, 1),
+  dataFim: new Date(2026, 4, 30),
+};
+
 const Anuncios = () => {
   const [anuncios, setAnuncios] = useState<Anuncio[]>([
     {
       id: "1",
-      imageUrl: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=600&h=400&fit=crop",
-      titulo: "Promoção de Verão",
-      descricao: "Matricule-se agora e ganhe 30% de desconto nos primeiros 3 meses. Válido até o final de março!",
+      imageUrl: "https://images.unsplash.com/photo-1617883861744-13b534e1a655?w=600&h=400&fit=crop",
+      titulo: "Raquetes Pro Staff — 20% OFF",
+      descricao: "Aproveite a promoção exclusiva em raquetes profissionais. Modelos Wilson, Babolat e Head com desconto imperdível!",
       dataInicio: new Date(2026, 1, 1),
       dataFim: new Date(2026, 2, 31),
     },
     {
       id: "2",
-      imageUrl: "https://images.unsplash.com/photo-1571902943202-507ec2618e8f?w=600&h=400&fit=crop",
-      titulo: "Aula Experimental Grátis",
-      descricao: "Venha conhecer nossa estrutura! Agende sua aula experimental gratuita.",
+      imageUrl: "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=600&h=400&fit=crop",
+      titulo: "Loja Tennis Center — Novidades",
+      descricao: "Confira os lançamentos em acessórios, calçados e vestuário esportivo na nossa loja parceira.",
       dataInicio: new Date(2026, 1, 15),
       dataFim: new Date(2026, 3, 15),
     },
@@ -95,7 +105,7 @@ const Anuncios = () => {
           <div>
             <h1 className="text-2xl font-bold text-foreground">Anúncios</h1>
             <p className="text-sm text-muted-foreground mt-1">
-              Gerencie seus anúncios promocionais ({anuncios.length}/{MAX_ANUNCIOS} espaços utilizados)
+              Gerencie seus anúncios promocionais ({anuncios.length}/{MAX_ANUNCIOS} espaços utilizados + 1 patrocinado)
             </p>
           </div>
           {anuncios.length < MAX_ANUNCIOS && (
@@ -107,44 +117,32 @@ const Anuncios = () => {
         </div>
 
         {/* Featured (first) */}
-        {anuncios.length > 0 && (
-          <Card className="overflow-hidden">
-            <div className="grid md:grid-cols-2">
-              <div className="relative aspect-[4/3] md:aspect-auto bg-muted">
-                {anuncios[0].imageUrl ? (
-                  <img src={anuncios[0].imageUrl} alt={anuncios[0].titulo} className="w-full h-full object-cover" />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <ImagePlus className="h-16 w-16 text-muted-foreground/30" />
-                  </div>
-                )}
-              </div>
-              <CardContent className="p-6 md:p-8 flex flex-col justify-center space-y-4">
-                <div className="flex items-center gap-2">
-                  <Badge variant={isActive(anuncios[0]) ? "default" : "secondary"}>
-                    {isActive(anuncios[0]) ? "Ativo" : "Inativo"}
-                  </Badge>
-                  <Badge variant="outline">Destaque</Badge>
-                </div>
-                <h2 className="text-2xl font-bold text-foreground">{anuncios[0].titulo}</h2>
-                <p className="text-muted-foreground leading-relaxed">{anuncios[0].descricao}</p>
-                <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                  <CalendarIcon className="h-3.5 w-3.5" />
-                  {format(anuncios[0].dataInicio, "dd/MM/yyyy")} — {format(anuncios[0].dataFim, "dd/MM/yyyy")}
-                </div>
-                <div className="pt-2">
-                  <Button variant="destructive" size="sm" onClick={() => confirmDelete(anuncios[0].id)}>
-                    <Trash2 className="h-3.5 w-3.5 mr-1" /> Remover
-                  </Button>
-                </div>
-              </CardContent>
+        <Card className="overflow-hidden">
+          <div className="grid md:grid-cols-2">
+            <div className="relative aspect-[4/3] md:aspect-auto bg-muted">
+              <img src={ANUNCIO_PATROCINADO.imageUrl} alt={ANUNCIO_PATROCINADO.titulo} className="w-full h-full object-cover" />
             </div>
-          </Card>
-        )}
+            <CardContent className="p-6 md:p-8 flex flex-col justify-center space-y-4">
+              <div className="flex items-center gap-2">
+                <Badge variant={isActive(ANUNCIO_PATROCINADO) ? "default" : "secondary"}>
+                  {isActive(ANUNCIO_PATROCINADO) ? "Ativo" : "Inativo"}
+                </Badge>
+                <Badge variant="outline">Destaque</Badge>
+                <Badge className="bg-amber-500/15 text-amber-600 border-amber-500/30 hover:bg-amber-500/20">Patrocinado</Badge>
+              </div>
+              <h2 className="text-2xl font-bold text-foreground">{ANUNCIO_PATROCINADO.titulo}</h2>
+              <p className="text-muted-foreground leading-relaxed">{ANUNCIO_PATROCINADO.descricao}</p>
+              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                <CalendarIcon className="h-3.5 w-3.5" />
+                {format(ANUNCIO_PATROCINADO.dataInicio, "dd/MM/yyyy")} — {format(ANUNCIO_PATROCINADO.dataFim, "dd/MM/yyyy")}
+              </div>
+            </CardContent>
+          </div>
+        </Card>
 
         {/* Remaining cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {anuncios.slice(1).map((anuncio) => (
+          {anuncios.map((anuncio) => (
             <Card key={anuncio.id} className="overflow-hidden">
               <div className="relative aspect-[3/2] bg-muted">
                 {anuncio.imageUrl ? (
