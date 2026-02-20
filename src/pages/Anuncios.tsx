@@ -1,21 +1,29 @@
 import { useState } from "react";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
-import { ImagePlus, Pencil, Trash2, Plus, Megaphone } from "lucide-react";
+import { ImagePlus, Plus, CalendarIcon, Trash2 } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
 
 interface Anuncio {
   id: string;
   imageUrl: string;
   titulo: string;
   descricao: string;
+  dataInicio: Date;
+  dataFim: Date;
 }
 
-const MAX_ANUNCIOS = 4;
+const MAX_ANUNCIOS = 3;
 
 const Anuncios = () => {
   const [anuncios, setAnuncios] = useState<Anuncio[]>([
@@ -24,39 +32,39 @@ const Anuncios = () => {
       imageUrl: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=600&h=400&fit=crop",
       titulo: "Promoção de Verão",
       descricao: "Matricule-se agora e ganhe 30% de desconto nos primeiros 3 meses. Válido até o final de março!",
+      dataInicio: new Date(2026, 1, 1),
+      dataFim: new Date(2026, 2, 31),
+    },
+    {
+      id: "2",
+      imageUrl: "https://images.unsplash.com/photo-1571902943202-507ec2618e8f?w=600&h=400&fit=crop",
+      titulo: "Aula Experimental Grátis",
+      descricao: "Venha conhecer nossa estrutura! Agende sua aula experimental gratuita.",
+      dataInicio: new Date(2026, 1, 15),
+      dataFim: new Date(2026, 3, 15),
     },
   ]);
 
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [editingAnuncio, setEditingAnuncio] = useState<Anuncio | null>(null);
   const [form, setForm] = useState({ titulo: "", descricao: "", imageUrl: "" });
+  const [dataInicio, setDataInicio] = useState<Date>();
+  const [dataFim, setDataFim] = useState<Date>();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const openNew = () => {
-    setEditingAnuncio(null);
     setForm({ titulo: "", descricao: "", imageUrl: "" });
-    setDialogOpen(true);
-  };
-
-  const openEdit = (anuncio: Anuncio) => {
-    setEditingAnuncio(anuncio);
-    setForm({ titulo: anuncio.titulo, descricao: anuncio.descricao, imageUrl: anuncio.imageUrl });
+    setDataInicio(undefined);
+    setDataFim(undefined);
     setDialogOpen(true);
   };
 
   const handleSave = () => {
-    if (!form.titulo.trim()) return;
-    if (editingAnuncio) {
-      setAnuncios((prev) =>
-        prev.map((a) => (a.id === editingAnuncio.id ? { ...a, ...form } : a))
-      );
-    } else {
-      setAnuncios((prev) => [
-        ...prev,
-        { id: Date.now().toString(), ...form },
-      ]);
-    }
+    if (!form.titulo.trim() || !dataInicio || !dataFim) return;
+    setAnuncios((prev) => [
+      ...prev,
+      { id: Date.now().toString(), ...form, dataInicio, dataFim },
+    ]);
     setDialogOpen(false);
   };
 
@@ -71,6 +79,11 @@ const Anuncios = () => {
     }
     setDeleteDialogOpen(false);
     setDeletingId(null);
+  };
+
+  const isActive = (a: Anuncio) => {
+    const now = new Date();
+    return now >= a.dataInicio && now <= a.dataFim;
   };
 
   const emptySlots = MAX_ANUNCIOS - anuncios.length;
@@ -93,33 +106,70 @@ const Anuncios = () => {
           )}
         </div>
 
+        {/* Featured (first) */}
+        {anuncios.length > 0 && (
+          <Card className="overflow-hidden">
+            <div className="grid md:grid-cols-2">
+              <div className="relative aspect-[4/3] md:aspect-auto bg-muted">
+                {anuncios[0].imageUrl ? (
+                  <img src={anuncios[0].imageUrl} alt={anuncios[0].titulo} className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <ImagePlus className="h-16 w-16 text-muted-foreground/30" />
+                  </div>
+                )}
+              </div>
+              <CardContent className="p-6 md:p-8 flex flex-col justify-center space-y-4">
+                <div className="flex items-center gap-2">
+                  <Badge variant={isActive(anuncios[0]) ? "default" : "secondary"}>
+                    {isActive(anuncios[0]) ? "Ativo" : "Inativo"}
+                  </Badge>
+                  <Badge variant="outline">Destaque</Badge>
+                </div>
+                <h2 className="text-2xl font-bold text-foreground">{anuncios[0].titulo}</h2>
+                <p className="text-muted-foreground leading-relaxed">{anuncios[0].descricao}</p>
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <CalendarIcon className="h-3.5 w-3.5" />
+                  {format(anuncios[0].dataInicio, "dd/MM/yyyy")} — {format(anuncios[0].dataFim, "dd/MM/yyyy")}
+                </div>
+                <div className="pt-2">
+                  <Button variant="destructive" size="sm" onClick={() => confirmDelete(anuncios[0].id)}>
+                    <Trash2 className="h-3.5 w-3.5 mr-1" /> Remover
+                  </Button>
+                </div>
+              </CardContent>
+            </div>
+          </Card>
+        )}
+
+        {/* Remaining cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {anuncios.map((anuncio) => (
-            <Card key={anuncio.id} className="overflow-hidden group">
+          {anuncios.slice(1).map((anuncio) => (
+            <Card key={anuncio.id} className="overflow-hidden">
               <div className="relative aspect-[3/2] bg-muted">
                 {anuncio.imageUrl ? (
-                  <img
-                    src={anuncio.imageUrl}
-                    alt={anuncio.titulo}
-                    className="w-full h-full object-cover"
-                  />
+                  <img src={anuncio.imageUrl} alt={anuncio.titulo} className="w-full h-full object-cover" />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
                     <ImagePlus className="h-12 w-12 text-muted-foreground/40" />
                   </div>
                 )}
-                <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <Button size="icon" variant="secondary" className="h-8 w-8 shadow-md" onClick={() => openEdit(anuncio)}>
-                    <Pencil className="h-3.5 w-3.5" />
-                  </Button>
-                  <Button size="icon" variant="destructive" className="h-8 w-8 shadow-md" onClick={() => confirmDelete(anuncio.id)}>
-                    <Trash2 className="h-3.5 w-3.5" />
-                  </Button>
-                </div>
               </div>
-              <CardContent className="p-5 space-y-2">
+              <CardContent className="p-5 space-y-3">
+                <div className="flex items-center gap-2">
+                  <Badge variant={isActive(anuncio) ? "default" : "secondary"}>
+                    {isActive(anuncio) ? "Ativo" : "Inativo"}
+                  </Badge>
+                </div>
                 <h3 className="font-semibold text-foreground text-lg leading-tight">{anuncio.titulo}</h3>
                 <p className="text-sm text-muted-foreground line-clamp-3">{anuncio.descricao}</p>
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <CalendarIcon className="h-3 w-3" />
+                  {format(anuncio.dataInicio, "dd/MM/yyyy")} — {format(anuncio.dataFim, "dd/MM/yyyy")}
+                </div>
+                <Button variant="destructive" size="sm" onClick={() => confirmDelete(anuncio.id)}>
+                  <Trash2 className="h-3.5 w-3.5 mr-1" /> Remover
+                </Button>
               </CardContent>
             </Card>
           ))}
@@ -145,11 +195,11 @@ const Anuncios = () => {
         </div>
       </div>
 
-      {/* Form Dialog */}
+      {/* New Anuncio Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
-            <DialogTitle>{editingAnuncio ? "Editar Anúncio" : "Novo Anúncio"}</DialogTitle>
+            <DialogTitle>Novo Anúncio</DialogTitle>
             <DialogDescription>Preencha as informações do anúncio.</DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-2">
@@ -183,12 +233,40 @@ const Anuncios = () => {
                 rows={3}
               />
             </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Data de Início</Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" className={cn("w-full justify-start text-left font-normal", !dataInicio && "text-muted-foreground")}>
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {dataInicio ? format(dataInicio, "dd/MM/yyyy") : "Selecionar"}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar mode="single" selected={dataInicio} onSelect={setDataInicio} initialFocus className="p-3 pointer-events-auto" />
+                  </PopoverContent>
+                </Popover>
+              </div>
+              <div className="space-y-2">
+                <Label>Data de Fim</Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" className={cn("w-full justify-start text-left font-normal", !dataFim && "text-muted-foreground")}>
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {dataFim ? format(dataFim, "dd/MM/yyyy") : "Selecionar"}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar mode="single" selected={dataFim} onSelect={setDataFim} initialFocus className="p-3 pointer-events-auto" />
+                  </PopoverContent>
+                </Popover>
+              </div>
+            </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancelar</Button>
-            <Button onClick={handleSave} disabled={!form.titulo.trim()}>
-              {editingAnuncio ? "Salvar" : "Criar Anúncio"}
-            </Button>
+            <Button onClick={handleSave} disabled={!form.titulo.trim() || !dataInicio || !dataFim}>Criar Anúncio</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -198,7 +276,7 @@ const Anuncios = () => {
         <DialogContent className="sm:max-w-sm">
           <DialogHeader>
             <DialogTitle>Excluir Anúncio</DialogTitle>
-            <DialogDescription>Tem certeza que deseja excluir este anúncio? Esta ação não pode ser desfeita.</DialogDescription>
+            <DialogDescription>Tem certeza que deseja excluir este anúncio?</DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>Cancelar</Button>
