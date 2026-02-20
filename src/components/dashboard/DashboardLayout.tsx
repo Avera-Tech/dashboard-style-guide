@@ -27,6 +27,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { NavLink } from "@/components/NavLink";
 import { cn } from "@/lib/utils";
+import { companyConfig } from "@/data/company-config";
 
 interface NavItem {
   label: string;
@@ -40,9 +41,10 @@ interface NavGroup {
   icon: typeof LayoutDashboard;
   items: NavItem[];
   defaultOpen?: boolean;
+  groupType?: "fit" | "clinic";
 }
 
-const navGroups: NavGroup[] = [
+const allNavGroups: NavGroup[] = [
   {
     label: "Core",
     icon: LayoutDashboard,
@@ -62,6 +64,7 @@ const navGroups: NavGroup[] = [
     label: "Operação Fit",
     icon: Dumbbell,
     defaultOpen: true,
+    groupType: "fit",
     items: [
       { label: "Alunos", icon: GraduationCap, href: "/alunos" },
       { label: "Funcionários", icon: Briefcase, href: "/funcionarios" },
@@ -75,6 +78,7 @@ const navGroups: NavGroup[] = [
     label: "Operação Clínica",
     icon: Stethoscope,
     defaultOpen: false,
+    groupType: "clinic",
     items: [
       { label: "Funcionários", icon: Briefcase, href: "/clinica/funcionarios" },
       { label: "Pacientes", icon: UsersIcon, href: "/clinica/pacientes" },
@@ -86,6 +90,12 @@ const navGroups: NavGroup[] = [
     ],
   },
 ];
+
+const navGroups = allNavGroups.filter((group) => {
+  if (!group.groupType) return true;
+  if (companyConfig.companyType === "both") return true;
+  return group.groupType === companyConfig.companyType;
+});
 
 const SidebarGroup = ({ group }: { group: NavGroup }) => {
   const [open, setOpen] = useState(group.defaultOpen ?? true);
