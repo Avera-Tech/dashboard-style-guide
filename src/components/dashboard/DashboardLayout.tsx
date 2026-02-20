@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 import {
   LayoutDashboard,
   Users as UsersIcon,
@@ -14,25 +14,112 @@ import {
   ArrowDownCircle,
   ArrowUpCircle,
   MessageSquare,
+  Dumbbell,
+  Stethoscope,
+  Clock,
+  CalendarCheck,
+  ListOrdered,
+  Plug,
+  FileSearch,
+  ChevronDown,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { NavLink } from "@/components/NavLink";
+import { cn } from "@/lib/utils";
 
-const navItems: { label: string; icon: typeof LayoutDashboard; href: string; indent?: boolean }[] = [
-  { label: "Visão Geral", icon: LayoutDashboard, href: "/" },
-  { label: "Alunos", icon: GraduationCap, href: "/alunos" },
-  { label: "Funcionários", icon: Briefcase, href: "/funcionarios" },
-  { label: "Produtos", icon: Package, href: "/produtos" },
-  { label: "Turmas", icon: Calendar, href: "/turmas" },
-  { label: "Aulas", icon: ClipboardList, href: "/aulas" },
-  { label: "CRM", icon: MessageSquare, href: "/crm" },
-  { label: "Financeiro", icon: DollarSign, href: "/financeiro" },
-  { label: "Contas a Receber", icon: ArrowDownCircle, href: "/financeiro/receber", indent: true },
-  { label: "Contas a Pagar", icon: ArrowUpCircle, href: "/financeiro/pagar", indent: true },
-  { label: "Relatórios", icon: BarChart3, href: "/relatorios" },
-  { label: "Configurações", icon: Settings, href: "/configuracoes" },
+interface NavItem {
+  label: string;
+  icon: typeof LayoutDashboard;
+  href: string;
+  indent?: boolean;
+}
+
+interface NavGroup {
+  label: string;
+  icon: typeof LayoutDashboard;
+  items: NavItem[];
+  defaultOpen?: boolean;
+}
+
+const navGroups: NavGroup[] = [
+  {
+    label: "Core",
+    icon: LayoutDashboard,
+    defaultOpen: true,
+    items: [
+      { label: "Visão Geral", icon: LayoutDashboard, href: "/" },
+      { label: "Alunos", icon: GraduationCap, href: "/alunos" },
+      { label: "Funcionários", icon: Briefcase, href: "/funcionarios" },
+      { label: "Produtos", icon: Package, href: "/produtos" },
+      { label: "CRM", icon: MessageSquare, href: "/crm" },
+      { label: "Financeiro", icon: DollarSign, href: "/financeiro" },
+      { label: "Contas a Receber", icon: ArrowDownCircle, href: "/financeiro/receber", indent: true },
+      { label: "Contas a Pagar", icon: ArrowUpCircle, href: "/financeiro/pagar", indent: true },
+      { label: "Relatórios", icon: BarChart3, href: "/relatorios" },
+      { label: "Configurações", icon: Settings, href: "/configuracoes" },
+    ],
+  },
+  {
+    label: "Operação Fit",
+    icon: Dumbbell,
+    defaultOpen: true,
+    items: [
+      { label: "Turmas", icon: Calendar, href: "/turmas" },
+      { label: "Aulas", icon: ClipboardList, href: "/aulas" },
+      { label: "Agendamento", icon: CalendarCheck, href: "/agendamento" },
+      { label: "Lista de Espera", icon: ListOrdered, href: "/lista-espera" },
+    ],
+  },
+  {
+    label: "Operação Clínica",
+    icon: Stethoscope,
+    defaultOpen: false,
+    items: [
+      { label: "Horários", icon: Clock, href: "/clinica/horarios" },
+      { label: "Agendamento", icon: CalendarCheck, href: "/clinica/agendamento" },
+      { label: "Lista de Espera", icon: ListOrdered, href: "/clinica/lista-espera" },
+      { label: "Integrações", icon: Plug, href: "/clinica/integracoes" },
+      { label: "Exame", icon: FileSearch, href: "/clinica/exame" },
+    ],
+  },
 ];
+
+const SidebarGroup = ({ group }: { group: NavGroup }) => {
+  const [open, setOpen] = useState(group.defaultOpen ?? true);
+
+  return (
+    <div className="space-y-0.5">
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-full flex items-center gap-2 px-3 py-2 text-[11px] font-bold uppercase tracking-wider text-muted-foreground/70 hover:text-muted-foreground transition-colors"
+      >
+        <group.icon className="h-3.5 w-3.5" />
+        <span className="flex-1 text-left">{group.label}</span>
+        <ChevronDown className={cn("h-3 w-3 transition-transform duration-200", open && "rotate-180")} />
+      </button>
+      {open && (
+        <div className="space-y-0.5">
+          {group.items.map((item) => (
+            <NavLink
+              key={item.href}
+              to={item.href}
+              end={item.href === "/financeiro"}
+              className={cn(
+                "w-full flex items-center gap-3 text-left px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 text-muted-foreground hover:text-foreground hover:bg-muted/60",
+                item.indent && "pl-9 text-xs"
+              )}
+              activeClassName="bg-primary text-primary-foreground shadow-md shadow-primary/25 hover:bg-primary hover:text-primary-foreground"
+            >
+              <item.icon className="h-4 w-4 shrink-0" />
+              {item.label}
+            </NavLink>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -56,18 +143,9 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
             </div>
           </div>
 
-          <nav className="flex-1 p-3 space-y-1">
-            {navItems.map((item) => (
-              <NavLink
-                key={item.label}
-                to={item.href}
-                end={item.href === "/financeiro"}
-                className={`w-full flex items-center gap-3 text-left px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 text-muted-foreground hover:text-foreground hover:bg-muted/60 ${item.indent ? "pl-9 text-xs" : ""}`}
-                activeClassName="bg-primary text-primary-foreground shadow-md shadow-primary/25 hover:bg-primary hover:text-primary-foreground"
-              >
-                <item.icon className="h-4 w-4 shrink-0" />
-                {item.label}
-              </NavLink>
+          <nav className="flex-1 p-3 space-y-3 overflow-y-auto">
+            {navGroups.map((group) => (
+              <SidebarGroup key={group.label} group={group} />
             ))}
           </nav>
 
