@@ -74,6 +74,7 @@ const allNavGroups: NavGroup[] = [
       { label: "Aulas", icon: ClipboardList, href: "/aulas" },
       { label: "Agendamento", icon: CalendarCheck, href: "/agendamento" },
       { label: "Lista de Espera", icon: ListOrdered, href: "/lista-espera" },
+      { label: "Integrações", icon: Plug, href: "/integracoes" },
     ],
   },
   {
