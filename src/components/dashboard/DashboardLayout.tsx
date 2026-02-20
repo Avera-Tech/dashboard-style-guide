@@ -61,6 +61,7 @@ const allNavGroups: NavGroup[] = [
       { label: "Contas a Receber", icon: ArrowDownCircle, href: "/financeiro/receber", indent: true },
       { label: "Contas a Pagar", icon: ArrowUpCircle, href: "/financeiro/pagar", indent: true },
       { label: "Relatórios", icon: BarChart3, href: "/relatorios" },
+      { label: "Cadastros", icon: ClipboardList, href: "/cadastros" },
       { label: "Configurações", icon: Settings, href: "/configuracoes" },
     ],
   },
