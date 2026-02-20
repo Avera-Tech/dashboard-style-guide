@@ -49,8 +49,6 @@ const navGroups: NavGroup[] = [
     defaultOpen: true,
     items: [
       { label: "Visão Geral", icon: LayoutDashboard, href: "/" },
-      { label: "Alunos", icon: GraduationCap, href: "/alunos" },
-      { label: "Funcionários", icon: Briefcase, href: "/funcionarios" },
       { label: "Produtos", icon: Package, href: "/produtos" },
       { label: "CRM", icon: MessageSquare, href: "/crm" },
       { label: "Financeiro", icon: DollarSign, href: "/financeiro" },
@@ -65,6 +63,8 @@ const navGroups: NavGroup[] = [
     icon: Dumbbell,
     defaultOpen: true,
     items: [
+      { label: "Alunos", icon: GraduationCap, href: "/alunos" },
+      { label: "Funcionários", icon: Briefcase, href: "/funcionarios" },
       { label: "Turmas", icon: Calendar, href: "/turmas" },
       { label: "Aulas", icon: ClipboardList, href: "/aulas" },
       { label: "Agendamento", icon: CalendarCheck, href: "/agendamento" },
@@ -76,6 +76,8 @@ const navGroups: NavGroup[] = [
     icon: Stethoscope,
     defaultOpen: false,
     items: [
+      { label: "Funcionários", icon: Briefcase, href: "/clinica/funcionarios" },
+      { label: "Pacientes", icon: UsersIcon, href: "/clinica/pacientes" },
       { label: "Horários", icon: Clock, href: "/clinica/horarios" },
       { label: "Agendamento", icon: CalendarCheck, href: "/clinica/agendamento" },
       { label: "Lista de Espera", icon: ListOrdered, href: "/clinica/lista-espera" },
