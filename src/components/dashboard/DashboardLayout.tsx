@@ -23,6 +23,7 @@ import {
   FileSearch,
   ChevronDown,
   ShoppingCart,
+  Megaphone,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -55,6 +56,7 @@ const allNavGroups: NavGroup[] = [
       { label: "Produtos", icon: Package, href: "/produtos" },
       { label: "CRM", icon: MessageSquare, href: "/crm" },
       { label: "Vendas", icon: ShoppingCart, href: "/vendas" },
+      { label: "Anúncios", icon: Megaphone, href: "/anuncios" },
       { label: "Financeiro", icon: DollarSign, href: "/financeiro" },
       { label: "Contas a Receber", icon: ArrowDownCircle, href: "/financeiro/receber", indent: true },
       { label: "Contas a Pagar", icon: ArrowUpCircle, href: "/financeiro/pagar", indent: true },
