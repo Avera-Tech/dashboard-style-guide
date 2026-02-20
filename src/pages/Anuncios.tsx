@@ -39,7 +39,7 @@ const Anuncios = () => {
   const [anuncios, setAnuncios] = useState<Anuncio[]>([
     {
       id: "1",
-      imageUrl: "https://images.unsplash.com/photo-1617883861744-13b534e1a655?w=600&h=400&fit=crop",
+      imageUrl: "https://images.unsplash.com/photo-1622279457486-62dcc4a431d6?w=600&h=400&fit=crop",
       titulo: "Raquetes Pro Staff — 20% OFF",
       descricao: "Aproveite a promoção exclusiva em raquetes profissionais. Modelos Wilson, Babolat e Head com desconto imperdível!",
       dataInicio: new Date(2026, 1, 1),
@@ -47,9 +47,9 @@ const Anuncios = () => {
     },
     {
       id: "2",
-      imageUrl: "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=600&h=400&fit=crop",
+      imageUrl: "https://images.unsplash.com/photo-1460353581641-37baddab0fa2?w=600&h=400&fit=crop",
       titulo: "Loja Tennis Center — Novidades",
-      descricao: "Confira os lançamentos em acessórios, calçados e vestuário esportivo na nossa loja parceira.",
+      descricao: "Confira os lançamentos em calçados esportivos e acessórios na nossa loja parceira.",
       dataInicio: new Date(2026, 1, 15),
       dataFim: new Date(2026, 3, 15),
     },
