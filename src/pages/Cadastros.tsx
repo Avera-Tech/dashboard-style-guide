@@ -6,7 +6,7 @@ import {
   Trash2,
   Save,
   Dumbbell,
-  Database,
+  BarChart3,
 } from "lucide-react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { Button } from "@/components/ui/button";
@@ -53,6 +53,15 @@ interface Modalidade {
   status: "active" | "inactive";
 }
 
+interface Nivel {
+  id: string;
+  nome: string;
+  descricao: string;
+  cor: string;
+  ordem: number;
+  status: "active" | "inactive";
+}
+
 // ── Mock data ──────────────────────────────────────────
 const MOCK_TIPOS_PRODUTO: TipoProduto[] = [
   { id: "1", nome: "Plano", descricao: "Cobrança recorrente mensal com renovação automática de créditos", cor: "primary", status: "active" },
@@ -67,6 +76,13 @@ const MOCK_MODALIDADES: Modalidade[] = [
   { id: "3", nome: "Beach Tennis", descricao: "Aulas de beach tennis na quadra de areia", cor: "success", icone: "🏖️", status: "active" },
   { id: "4", nome: "Padel", descricao: "Aulas e locação de quadras de padel", cor: "info", icone: "🏸", status: "active" },
   { id: "5", nome: "Musculação", descricao: "Treinos de musculação e condicionamento", cor: "warning", icone: "🏋️", status: "inactive" },
+];
+
+const MOCK_NIVEIS: Nivel[] = [
+  { id: "1", nome: "Iniciante", descricao: "Alunos sem experiência prévia na modalidade", cor: "success", ordem: 1, status: "active" },
+  { id: "2", nome: "Intermediário", descricao: "Alunos com fundamentos básicos consolidados", cor: "info", ordem: 2, status: "active" },
+  { id: "3", nome: "Avançado", descricao: "Alunos com domínio técnico e tático elevado", cor: "warning", ordem: 3, status: "active" },
+  { id: "4", nome: "Competitivo", descricao: "Atletas que participam de torneios e competições", cor: "destructive", ordem: 4, status: "active" },
 ];
 
 const ICONES_DISPONIVEIS = ["🎾", "⚽", "🏖️", "🏸", "🏋️", "🏊", "🥊", "🧘", "🚴", "🏃", "⛳", "🏀", "🏐", "🤸"];
@@ -84,11 +100,14 @@ const CORES_DISPONIVEIS = [
 const Cadastros = () => {
   const [tiposProduto, setTiposProduto] = useState<TipoProduto[]>(MOCK_TIPOS_PRODUTO);
   const [modalidades, setModalidades] = useState<Modalidade[]>(MOCK_MODALIDADES);
+  const [niveis, setNiveis] = useState<Nivel[]>(MOCK_NIVEIS);
 
   const [tipoDialogOpen, setTipoDialogOpen] = useState(false);
   const [editingTipo, setEditingTipo] = useState<TipoProduto | null>(null);
   const [modalidadeDialogOpen, setModalidadeDialogOpen] = useState(false);
   const [editingModalidade, setEditingModalidade] = useState<Modalidade | null>(null);
+  const [nivelDialogOpen, setNivelDialogOpen] = useState(false);
+  const [editingNivel, setEditingNivel] = useState<Nivel | null>(null);
 
   const [tipoForm, setTipoForm] = useState<Omit<TipoProduto, "id">>({
     nome: "", descricao: "", cor: "primary", status: "active",
@@ -96,6 +115,10 @@ const Cadastros = () => {
 
   const [modForm, setModForm] = useState<Omit<Modalidade, "id">>({
     nome: "", descricao: "", cor: "primary", icone: "🎾", status: "active",
+  });
+
+  const [nivelForm, setNivelForm] = useState<Omit<Nivel, "id">>({
+    nome: "", descricao: "", cor: "primary", ordem: 1, status: "active",
   });
 
   // ── Tipo produto handlers ──
@@ -176,6 +199,45 @@ const Cadastros = () => {
     );
   };
 
+  // ── Nivel handlers ──
+  const openNewNivel = () => {
+    setEditingNivel(null);
+    setNivelForm({ nome: "", descricao: "", cor: "primary", ordem: niveis.length + 1, status: "active" });
+    setNivelDialogOpen(true);
+  };
+
+  const openEditNivel = (n: Nivel) => {
+    setEditingNivel(n);
+    setNivelForm({ nome: n.nome, descricao: n.descricao, cor: n.cor, ordem: n.ordem, status: n.status });
+    setNivelDialogOpen(true);
+  };
+
+  const saveNivel = () => {
+    if (!nivelForm.nome) {
+      toast({ title: "Informe o nome do nível", variant: "destructive" });
+      return;
+    }
+    if (editingNivel) {
+      setNiveis((prev) => prev.map((n) => (n.id === editingNivel.id ? { ...n, ...nivelForm } : n)));
+      toast({ title: "Nível atualizado" });
+    } else {
+      setNiveis((prev) => [...prev, { ...nivelForm, id: Date.now().toString() }]);
+      toast({ title: "Nível adicionado" });
+    }
+    setNivelDialogOpen(false);
+  };
+
+  const deleteNivel = (id: string) => {
+    setNiveis((prev) => prev.filter((n) => n.id !== id));
+    toast({ title: "Nível removido" });
+  };
+
+  const toggleNivelStatus = (id: string) => {
+    setNiveis((prev) =>
+      prev.map((n) => (n.id === id ? { ...n, status: n.status === "active" ? "inactive" : "active" } : n))
+    );
+  };
+
   return (
     <DashboardLayout>
       <header className="sticky top-0 z-40 bg-background/60 backdrop-blur-xl border-b border-border px-6 lg:px-8 py-4">
@@ -184,17 +246,21 @@ const Cadastros = () => {
             <div className="flex items-center gap-2">
               <h1 className="text-xl font-extrabold text-foreground tracking-tight">Cadastros</h1>
             </div>
-            <p className="text-sm text-muted-foreground mt-0.5">Parametrize modalidades e tipos de produto do sistema</p>
+            <p className="text-sm text-muted-foreground mt-0.5">Parametrize modalidades, níveis e tipos de produto do sistema</p>
           </div>
         </div>
       </header>
 
       <div className="px-6 lg:px-8 py-6">
         <Tabs defaultValue="modalidades" className="space-y-6">
-          <TabsList className="grid w-full max-w-md grid-cols-2">
+          <TabsList className="grid w-full max-w-lg grid-cols-3">
             <TabsTrigger value="modalidades" className="gap-2">
               <Dumbbell className="h-4 w-4" />
               Modalidades
+            </TabsTrigger>
+            <TabsTrigger value="niveis" className="gap-2">
+              <BarChart3 className="h-4 w-4" />
+              Níveis
             </TabsTrigger>
             <TabsTrigger value="tipos" className="gap-2">
               <Tag className="h-4 w-4" />
@@ -270,6 +336,88 @@ const Cadastros = () => {
                     <p className="text-sm">Adicione os esportes e atividades que a empresa oferece.</p>
                   </div>
                 )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* ── TAB: Níveis ───────────────────────────── */}
+          <TabsContent value="niveis">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between">
+                <div>
+                  <CardTitle className="flex items-center gap-2">
+                    <BarChart3 className="h-5 w-5 text-primary" />
+                    Níveis
+                  </CardTitle>
+                  <CardDescription>Níveis de habilidade para classificação dos alunos</CardDescription>
+                </div>
+                <Button onClick={openNewNivel} className="shadow-md shadow-primary/20">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Novo Nível
+                </Button>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Ordem</TableHead>
+                      <TableHead>Cor</TableHead>
+                      <TableHead>Nome</TableHead>
+                      <TableHead className="hidden sm:table-cell">Descrição</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead className="text-right">Ações</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {niveis
+                      .sort((a, b) => a.ordem - b.ordem)
+                      .map((nivel) => (
+                        <TableRow key={nivel.id}>
+                          <TableCell>
+                            <Badge variant="outline" className="font-mono">{nivel.ordem}</Badge>
+                          </TableCell>
+                          <TableCell>
+                            <div className={`h-4 w-4 rounded-full bg-${nivel.cor}`} />
+                          </TableCell>
+                          <TableCell className="font-medium">{nivel.nome}</TableCell>
+                          <TableCell className="hidden sm:table-cell text-muted-foreground text-sm max-w-xs truncate">
+                            {nivel.descricao}
+                          </TableCell>
+                          <TableCell>
+                            <Badge
+                              variant={nivel.status === "active" ? "default" : "secondary"}
+                              className="cursor-pointer"
+                              onClick={() => toggleNivelStatus(nivel.id)}
+                            >
+                              {nivel.status === "active" ? "Ativo" : "Inativo"}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <div className="flex justify-end gap-1">
+                              <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => openEditNivel(nivel)}>
+                                <Pencil className="h-3.5 w-3.5" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-destructive hover:text-destructive"
+                                onClick={() => deleteNivel(nivel.id)}
+                              >
+                                <Trash2 className="h-3.5 w-3.5" />
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    {niveis.length === 0 && (
+                      <TableRow>
+                        <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                          Nenhum nível cadastrado
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
               </CardContent>
             </Card>
           </TabsContent>
@@ -412,6 +560,84 @@ const Cadastros = () => {
           <DialogFooter>
             <Button variant="outline" onClick={() => setTipoDialogOpen(false)}>Cancelar</Button>
             <Button onClick={saveTipo}>
+              <Save className="h-4 w-4 mr-2" />
+              Salvar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* ── Dialog: Nível ──────────────────────────── */}
+      <Dialog open={nivelDialogOpen} onOpenChange={setNivelDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>{editingNivel ? "Editar Nível" : "Novo Nível"}</DialogTitle>
+            <DialogDescription>Defina um nível de habilidade para os alunos</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label>Nome *</Label>
+              <Input
+                value={nivelForm.nome}
+                onChange={(e) => setNivelForm({ ...nivelForm, nome: e.target.value })}
+                placeholder="Ex: Iniciante, Intermediário, Avançado"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Descrição</Label>
+              <Textarea
+                value={nivelForm.descricao}
+                onChange={(e) => setNivelForm({ ...nivelForm, descricao: e.target.value })}
+                placeholder="Breve descrição do nível..."
+                rows={2}
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Ordem</Label>
+                <Input
+                  type="number"
+                  min={1}
+                  value={nivelForm.ordem}
+                  onChange={(e) => setNivelForm({ ...nivelForm, ordem: parseInt(e.target.value) || 1 })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Status</Label>
+                <Select
+                  value={nivelForm.status}
+                  onValueChange={(v) => setNivelForm({ ...nivelForm, status: v as "active" | "inactive" })}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="active">Ativo</SelectItem>
+                    <SelectItem value="inactive">Inativo</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label>Cor</Label>
+              <div className="flex gap-2 flex-wrap">
+                {CORES_DISPONIVEIS.map((cor) => (
+                  <button
+                    key={cor.value}
+                    type="button"
+                    onClick={() => setNivelForm({ ...nivelForm, cor: cor.value })}
+                    className={`h-8 w-8 rounded-full ${cor.class} ring-offset-2 ring-offset-background transition-all ${
+                      nivelForm.cor === cor.value ? "ring-2 ring-ring scale-110" : "opacity-60 hover:opacity-100"
+                    }`}
+                    title={cor.label}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setNivelDialogOpen(false)}>Cancelar</Button>
+            <Button onClick={saveNivel}>
               <Save className="h-4 w-4 mr-2" />
               Salvar
             </Button>
