@@ -3,28 +3,31 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Index from "./pages/Index";
-import Login from "./pages/Login";
-import ForgotPassword from "./pages/ForgotPassword";
-import ResetPassword from "./pages/ResetPassword";
-import Alunos from "./pages/Alunos";
-import Funcionarios from "./pages/Funcionarios";
-import VerifyAccount from "./pages/VerifyAccount";
-import Produtos from "./pages/Produtos";
-import Turmas from "./pages/Turmas";
-import Aulas from "./pages/Aulas";
-import EmailTemplates from "./pages/EmailTemplates";
-import Financeiro from "./pages/Financeiro";
-import ContasReceber from "./pages/ContasReceber";
-import ContasPagar from "./pages/ContasPagar";
-import CRM from "./pages/CRM";
-import ListaEspera from "./pages/ListaEspera";
-import Vendas from "./pages/Vendas";
-import Integracoes from "./pages/Integracoes";
-import Anuncios from "./pages/Anuncios";
-import Configuracoes from "./pages/Configuracoes";
-import Cadastros from "./pages/Cadastros";
-import NotFound from "./pages/NotFound";
+// Core pages
+import Index from "./modules/core/pages/Index";
+import Login from "./modules/core/pages/Login";
+import ForgotPassword from "./modules/core/pages/ForgotPassword";
+import ResetPassword from "./modules/core/pages/ResetPassword";
+import VerifyAccount from "./modules/core/pages/VerifyAccount";
+import Produtos from "./modules/core/pages/Produtos";
+import Financeiro from "./modules/core/pages/Financeiro";
+import ContasReceber from "./modules/core/pages/ContasReceber";
+import ContasPagar from "./modules/core/pages/ContasPagar";
+import CRM from "./modules/core/pages/CRM";
+import Vendas from "./modules/core/pages/Vendas";
+import Anuncios from "./modules/core/pages/Anuncios";
+import Configuracoes from "./modules/core/pages/Configuracoes";
+import Cadastros from "./modules/core/pages/Cadastros";
+import EmailTemplates from "./modules/core/pages/EmailTemplates";
+import NotFound from "./modules/core/pages/NotFound";
+
+// Fit pages
+import Alunos from "./modules/fit/pages/Alunos";
+import Funcionarios from "./modules/fit/pages/Funcionarios";
+import Turmas from "./modules/fit/pages/Turmas";
+import Aulas from "./modules/fit/pages/Aulas";
+import ListaEspera from "./modules/fit/pages/ListaEspera";
+import Integracoes from "./modules/fit/pages/Integracoes";
 
 const queryClient = new QueryClient();
 
