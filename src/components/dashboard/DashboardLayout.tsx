@@ -151,8 +151,8 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         {/* Sidebar */}
         <aside className="hidden lg:flex w-64 border-r border-border bg-card/50 backdrop-blur-sm flex-col min-h-screen sticky top-0">
           <div className="p-6 border-b border-border">
-            <div className="flex items-center gap-3">
-              <img src={logo} alt={companyConfig.companyName} className="h-9 w-auto" />
+            <div className="flex items-center justify-center">
+              <img src={logo} alt={companyConfig.companyName} className="h-12 w-auto" />
             </div>
           </div>
 
