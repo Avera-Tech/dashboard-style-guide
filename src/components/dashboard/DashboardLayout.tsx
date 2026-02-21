@@ -30,6 +30,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { NavLink } from "@/components/NavLink";
 import { cn } from "@/lib/utils";
 import { companyConfig } from "@/data/company-config";
+import logo from "@/assets/logo.svg";
 
 interface NavItem {
   label: string;
@@ -151,13 +152,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         <aside className="hidden lg:flex w-64 border-r border-border bg-card/50 backdrop-blur-sm flex-col min-h-screen sticky top-0">
           <div className="p-6 border-b border-border">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center shadow-lg shadow-primary/20">
-                <span className="text-sm font-extrabold text-primary-foreground">D</span>
-              </div>
-              <div>
-                <span className="font-bold text-sm text-foreground">Dashboard</span>
-                <p className="text-[10px] text-muted-foreground font-medium">Painel administrativo</p>
-              </div>
+              <img src={logo} alt={companyConfig.companyName} className="h-9 w-auto" />
             </div>
           </div>
 
