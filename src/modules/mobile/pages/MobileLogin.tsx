@@ -11,26 +11,21 @@ const MobileLogin = () => {
 
   return (
     <div className="mobile-login">
-      {/* Logo / Header */}
-      <div className="mobile-login__header">
+      {/* Centered content: logo + form + forgot */}
+      <div className="mobile-login__center">
         <img src={logo} alt="TennisUP" className="mobile-login__logo-img" />
-      </div>
 
-      {/* Form */}
-      <form
-        className="mobile-login__form"
-        onSubmit={(e) => e.preventDefault()}
-      >
-        <div className="space-y-1.5">
+        <form
+          className="mobile-login__form"
+          onSubmit={(e) => e.preventDefault()}
+        >
           <Input
             type="email"
             placeholder="Email"
             className="h-12"
             autoComplete="email"
           />
-        </div>
 
-        <div className="space-y-1.5">
           <div className="relative">
             <Input
               type={showPassword ? "text" : "password"}
@@ -47,18 +42,18 @@ const MobileLogin = () => {
               {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
           </div>
-        </div>
 
-        <Button type="submit" className="w-full h-12 text-base font-semibold rounded-lg mt-1">
-          Entrar
-        </Button>
+          <Button type="submit" className="w-full h-12 text-base font-semibold rounded-lg mt-1">
+            Entrar
+          </Button>
 
-        <div className="mobile-login__forgot">
-          <Link to="/forgot-password">Esqueceu sua senha?</Link>
-        </div>
-      </form>
+          <div className="mobile-login__forgot">
+            <Link to="/forgot-password">Esqueceu sua senha?</Link>
+          </div>
+        </form>
+      </div>
 
-      {/* Footer */}
+      {/* Footer pinned to bottom */}
       <div className="mobile-login__footer">
         <div className="mobile-login__footer-separator" />
         <p className="mobile-login__footer-text">
@@ -68,7 +63,7 @@ const MobileLogin = () => {
           </Link>
         </p>
         <p className="mobile-login__brand">
-          Desenvolvido por <strong>Avera</strong>
+          Desenvolvido por <strong>Avera</strong> · v1.0.0
         </p>
       </div>
     </div>
