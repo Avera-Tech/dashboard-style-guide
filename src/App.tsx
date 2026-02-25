@@ -31,6 +31,7 @@ import Integracoes from "./modules/fit/pages/Integracoes";
 
 // Mobile pages
 import MobileLogin from "./modules/mobile/pages/MobileLogin";
+import MobileHome from "./modules/mobile/pages/MobileHome";
 
 const queryClient = new QueryClient();
 
@@ -44,6 +45,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/login" element={<Login />} />
           <Route path="/m/login" element={<MobileLogin />} />
+          <Route path="/m/home" element={<MobileHome />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/alunos" element={<Alunos />} />
