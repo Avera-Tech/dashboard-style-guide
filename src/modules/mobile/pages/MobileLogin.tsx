@@ -1,6 +1,9 @@
 import { useState } from "react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { Eye, EyeOff } from "lucide-react";
 import { Link } from "react-router-dom";
+import logo from "@/assets/logo.svg";
 import "@/styles/mobile.css";
 
 const MobileLogin = () => {
@@ -10,12 +13,7 @@ const MobileLogin = () => {
     <div className="mobile-login">
       {/* Logo / Header */}
       <div className="mobile-login__header">
-        <h1 className="mobile-login__logo-text">
-          Tennis<span className="mobile-login__logo-accent">UP</span>
-        </h1>
-        <p className="mobile-login__subtitle">
-          Gerencie sua academia com simplicidade
-        </p>
+        <img src={logo} alt="TennisUP" className="mobile-login__logo-img" />
       </div>
 
       {/* Form */}
@@ -23,35 +21,37 @@ const MobileLogin = () => {
         className="mobile-login__form"
         onSubmit={(e) => e.preventDefault()}
       >
-        <div className="mobile-login__input-wrapper">
-          <input
+        <div className="space-y-1.5">
+          <Input
             type="email"
             placeholder="Email"
-            className="mobile-login__input"
+            className="h-12"
             autoComplete="email"
           />
         </div>
 
-        <div className="mobile-login__input-wrapper">
-          <input
-            type={showPassword ? "text" : "password"}
-            placeholder="Senha"
-            className="mobile-login__input mobile-login__input--password"
-            autoComplete="current-password"
-          />
-          <button
-            type="button"
-            className="mobile-login__eye-btn"
-            onClick={() => setShowPassword(!showPassword)}
-            aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
-          >
-            {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-          </button>
+        <div className="space-y-1.5">
+          <div className="relative">
+            <Input
+              type={showPassword ? "text" : "password"}
+              placeholder="Senha"
+              className="h-12 pr-12"
+              autoComplete="current-password"
+            />
+            <button
+              type="button"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors p-1"
+              onClick={() => setShowPassword(!showPassword)}
+              aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
+            >
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
+          </div>
         </div>
 
-        <button type="submit" className="mobile-login__submit">
+        <Button type="submit" className="w-full h-12 text-base font-semibold rounded-lg mt-1">
           Entrar
-        </button>
+        </Button>
 
         <div className="mobile-login__forgot">
           <Link to="/forgot-password">Esqueceu sua senha?</Link>
