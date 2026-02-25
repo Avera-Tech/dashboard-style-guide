@@ -29,6 +29,9 @@ import Aulas from "./modules/fit/pages/Aulas";
 import ListaEspera from "./modules/fit/pages/ListaEspera";
 import Integracoes from "./modules/fit/pages/Integracoes";
 
+// Mobile pages
+import MobileLogin from "./modules/mobile/pages/MobileLogin";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -40,6 +43,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/m/login" element={<MobileLogin />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/alunos" element={<Alunos />} />
