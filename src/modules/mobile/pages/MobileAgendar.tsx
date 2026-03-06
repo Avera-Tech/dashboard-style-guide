@@ -72,7 +72,21 @@ const MobileAgendar = () => {
       </header>
 
       {/* Title */}
-      <h1 className="text-2xl font-bold text-foreground mb-6">Agendar Aulas</h1>
+      <h1 className="text-2xl font-bold text-foreground mb-4">Agendar Aulas</h1>
+
+      {/* Modalidade selector */}
+      <div className="mobile-agendar__modalidades">
+        {MODALIDADES.map((mod) => (
+          <button
+            key={mod.id}
+            onClick={() => setSelectedModalidade(mod.id)}
+            className={`mobile-agendar__modalidade ${selectedModalidade === mod.id ? "mobile-agendar__modalidade--active" : ""}`}
+          >
+            <span className="mobile-agendar__modalidade-emoji">{mod.emoji}</span>
+            <span className="mobile-agendar__modalidade-nome">{mod.nome}</span>
+          </button>
+        ))}
+      </div>
 
       {/* Month selector */}
       <div className="mobile-agendar__months">
