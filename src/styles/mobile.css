@@ -332,6 +332,56 @@
   padding-bottom: 0;
 }
 
+/* Modalidade selector */
+.mobile-agendar__modalidades {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.25rem;
+}
+
+.mobile-agendar__modalidades::-webkit-scrollbar {
+  display: none;
+}
+
+.mobile-agendar__modalidade {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.5rem 1rem;
+  border-radius: 2rem;
+  border: 1.5px solid hsl(var(--border));
+  background: hsl(var(--card));
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: hsl(var(--muted-foreground));
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.mobile-agendar__modalidade:hover {
+  border-color: hsl(var(--primary) / 0.4);
+}
+
+.mobile-agendar__modalidade--active {
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  border-color: hsl(var(--primary));
+  font-weight: 600;
+}
+
+.mobile-agendar__modalidade-emoji {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.mobile-agendar__modalidade-nome {
+  white-space: nowrap;
+}
+
 /* Month selector — horizontal scroll */
 .mobile-agendar__months {
   display: flex;
