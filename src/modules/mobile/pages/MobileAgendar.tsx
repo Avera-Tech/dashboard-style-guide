@@ -36,6 +36,7 @@ const MobileAgendar = () => {
   const [selectedYear] = useState(today.getFullYear());
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
   const [selectedHorario, setSelectedHorario] = useState<string | null>(null);
+  const [selectedModalidade, setSelectedModalidade] = useState(MODALIDADES[0].id);
 
   const calendarDays = useMemo(
     () => getCalendarDays(selectedYear, selectedMonth),
