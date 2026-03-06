@@ -34,7 +34,7 @@ const MobileHome = () => {
       {/* Greeting */}
       <section className="mobile-home__greeting">
         <h1 className="text-2xl font-bold text-foreground">Olá, Fulano</h1>
-        <p className="text-sm text-muted-foreground leading-relaxed">
+        <p className="text-sm text-muted-foreground leading-relaxed mt-2">
           Desperte seu espírito atlético e eleve sua energia – reserve seu lugar no próximo ciclo de desafios e triunfos!
         </p>
       </section>
@@ -43,7 +43,7 @@ const MobileHome = () => {
       <section className="mobile-home__section">
         <div className="mobile-home__section-header">
           <h2 className="text-lg font-bold text-foreground">Próximas Aulas</h2>
-          <Button size="sm" className="rounded-full text-xs h-8 px-4">
+          <Button size="sm" variant="outline" className="rounded-full text-xs h-8 px-4">
             Agendar aulas
           </Button>
         </div>
