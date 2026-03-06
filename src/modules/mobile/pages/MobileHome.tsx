@@ -1,6 +1,6 @@
-import { Menu, Clock } from "lucide-react";
+import { useState } from "react";
+import { Menu, Clock, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import logo from "@/assets/logo.svg";
 import "@/styles/mobile.css";
 
@@ -17,7 +17,33 @@ const resumoItems = [
   { label: "Aulas realizadas", value: "32" },
 ];
 
+const anunciosMock = [
+  {
+    id: "patrocinado",
+    imageUrl: "https://images.unsplash.com/photo-1552674605-db6ffd4facb5?w=600&h=300&fit=crop",
+    titulo: "Corrida de Rua 10K — Inscreva-se!",
+    patrocinado: true,
+  },
+  {
+    id: "1",
+    imageUrl: "https://images.unsplash.com/photo-1622279457486-62dcc4a431d6?w=600&h=300&fit=crop",
+    titulo: "Raquetes Pro Staff — 20% OFF",
+    patrocinado: false,
+  },
+  {
+    id: "2",
+    imageUrl: "https://images.unsplash.com/photo-1460353581641-37baddab0fa2?w=600&h=300&fit=crop",
+    titulo: "Loja Tennis Center — Novidades",
+    patrocinado: false,
+  },
+];
+
 const MobileHome = () => {
+  const [currentAd, setCurrentAd] = useState(0);
+
+  const nextAd = () => setCurrentAd((prev) => (prev + 1) % anunciosMock.length);
+  const prevAd = () => setCurrentAd((prev) => (prev - 1 + anunciosMock.length) % anunciosMock.length);
+
   return (
     <div className="mobile-page">
       {/* Header */}
@@ -37,6 +63,40 @@ const MobileHome = () => {
         <p className="text-sm text-muted-foreground leading-relaxed mt-2">
           Desperte seu espírito atlético e eleve sua energia – reserve seu lugar no próximo ciclo de desafios e triunfos!
         </p>
+      </section>
+
+      {/* Anúncios Banner */}
+      <section className="mobile-home__section">
+        <div className="mobile-home__ad-banner">
+          <img
+            src={anunciosMock[currentAd].imageUrl}
+            alt={anunciosMock[currentAd].titulo}
+            className="mobile-home__ad-image"
+          />
+          <div className="mobile-home__ad-overlay">
+            {anunciosMock[currentAd].patrocinado && (
+              <span className="mobile-home__ad-badge">Patrocinado</span>
+            )}
+            <p className="mobile-home__ad-title">{anunciosMock[currentAd].titulo}</p>
+          </div>
+          <div className="mobile-home__ad-nav">
+            <button onClick={prevAd} className="mobile-home__ad-nav-btn" aria-label="Anterior">
+              <ChevronLeft className="h-4 w-4" />
+            </button>
+            <button onClick={nextAd} className="mobile-home__ad-nav-btn" aria-label="Próximo">
+              <ChevronRight className="h-4 w-4" />
+            </button>
+          </div>
+          <div className="mobile-home__ad-dots">
+            {anunciosMock.map((_, i) => (
+              <span
+                key={i}
+                className={`mobile-home__ad-dot ${i === currentAd ? "mobile-home__ad-dot--active" : ""}`}
+                onClick={() => setCurrentAd(i)}
+              />
+            ))}
+          </div>
+        </div>
       </section>
 
       {/* Próximas Aulas */}
