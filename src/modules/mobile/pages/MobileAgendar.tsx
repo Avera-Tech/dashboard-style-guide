@@ -13,6 +13,14 @@ const DIAS_SEMANA = ["DOM", "SEG", "TER", "QUA", "QUI", "SEX", "SAB"];
 
 const HORARIOS = ["08:00", "10:00", "14:00", "18:00"];
 
+// Mock — virá dos cadastros do sistema
+const MODALIDADES = [
+  { id: "tenis", nome: "Tênis", emoji: "🎾" },
+  { id: "beach", nome: "Beach Tennis", emoji: "🏖️" },
+  { id: "padel", nome: "Padel", emoji: "🏓" },
+  { id: "squash", nome: "Squash", emoji: "🏸" },
+];
+
 function getCalendarDays(year: number, month: number) {
   const firstDay = new Date(year, month, 1).getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
