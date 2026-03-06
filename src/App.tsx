@@ -47,6 +47,7 @@ const App = () => (
           <Route path="/login" element={<Login />} />
           <Route path="/m/login" element={<MobileLogin />} />
           <Route path="/m/home" element={<MobileHome />} />
+          <Route path="/m/agendar" element={<MobileAgendar />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/alunos" element={<Alunos />} />
