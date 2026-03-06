@@ -13,6 +13,14 @@ const DIAS_SEMANA = ["DOM", "SEG", "TER", "QUA", "QUI", "SEX", "SAB"];
 
 const HORARIOS = ["08:00", "10:00", "14:00", "18:00"];
 
+// Mock — virá dos cadastros do sistema
+const MODALIDADES = [
+  { id: "tenis", nome: "Tênis", emoji: "🎾" },
+  { id: "beach", nome: "Beach Tennis", emoji: "🏖️" },
+  { id: "padel", nome: "Padel", emoji: "🏓" },
+  { id: "squash", nome: "Squash", emoji: "🏸" },
+];
+
 function getCalendarDays(year: number, month: number) {
   const firstDay = new Date(year, month, 1).getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -28,6 +36,7 @@ const MobileAgendar = () => {
   const [selectedYear] = useState(today.getFullYear());
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
   const [selectedHorario, setSelectedHorario] = useState<string | null>(null);
+  const [selectedModalidade, setSelectedModalidade] = useState(MODALIDADES[0].id);
 
   const calendarDays = useMemo(
     () => getCalendarDays(selectedYear, selectedMonth),
@@ -63,7 +72,21 @@ const MobileAgendar = () => {
       </header>
 
       {/* Title */}
-      <h1 className="text-2xl font-bold text-foreground mb-6">Agendar Aulas</h1>
+      <h1 className="text-2xl font-bold text-foreground mb-4">Agendar Aulas</h1>
+
+      {/* Modalidade selector */}
+      <div className="mobile-agendar__modalidades">
+        {MODALIDADES.map((mod) => (
+          <button
+            key={mod.id}
+            onClick={() => setSelectedModalidade(mod.id)}
+            className={`mobile-agendar__modalidade ${selectedModalidade === mod.id ? "mobile-agendar__modalidade--active" : ""}`}
+          >
+            <span className="mobile-agendar__modalidade-emoji">{mod.emoji}</span>
+            <span className="mobile-agendar__modalidade-nome">{mod.nome}</span>
+          </button>
+        ))}
+      </div>
 
       {/* Month selector */}
       <div className="mobile-agendar__months">
