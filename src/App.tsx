@@ -32,6 +32,7 @@ import Integracoes from "./modules/fit/pages/Integracoes";
 // Mobile pages
 import MobileLogin from "./modules/mobile/pages/MobileLogin";
 import MobileHome from "./modules/mobile/pages/MobileHome";
+import MobileAgendar from "./modules/mobile/pages/MobileAgendar";
 
 const queryClient = new QueryClient();
 
