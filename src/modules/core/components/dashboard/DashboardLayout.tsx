@@ -190,7 +190,7 @@ const SidebarGroup = ({ group }: { group: NavGroup }) => {
             <NavLink
               key={item.href}
               to={item.href}
-              end={item.href === "/financeiro"}
+              end={item.href === "/financeiro" || item.href === "/clinica" || item.href === "/"}
               className={cn(
                 "w-full flex items-center gap-3 text-left px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 text-muted-foreground hover:text-foreground hover:bg-muted/60",
                 item.indent && "pl-9 text-xs"
