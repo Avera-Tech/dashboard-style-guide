@@ -27,6 +27,7 @@ import ClinicAgenda from "./modules/clinic/pages/ClinicAgenda";
 import ClinicPacientes from "./modules/clinic/pages/ClinicPacientes";
 import ClinicMedicos from "./modules/clinic/pages/ClinicMedicos";
 import ClinicEstoque from "./modules/clinic/pages/ClinicEstoque";
+import ClinicEscala from "./modules/clinic/pages/ClinicEscala";
 
 // Fit pages
 import Alunos from "./modules/fit/pages/Alunos";
