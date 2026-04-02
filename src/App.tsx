@@ -25,6 +25,7 @@ import NotFound from "./modules/core/pages/NotFound";
 import ClinicDashboard from "./modules/clinic/pages/ClinicDashboard";
 import ClinicAgenda from "./modules/clinic/pages/ClinicAgenda";
 import ClinicPacientes from "./modules/clinic/pages/ClinicPacientes";
+import ClinicMedicos from "./modules/clinic/pages/ClinicMedicos";
 
 // Fit pages
 import Alunos from "./modules/fit/pages/Alunos";
@@ -75,6 +76,7 @@ const App = () => (
           <Route path="/clinica" element={<ClinicDashboard />} />
           <Route path="/clinica/agenda" element={<ClinicAgenda />} />
           <Route path="/clinica/pacientes" element={<ClinicPacientes />} />
+          <Route path="/clinica/medicos" element={<ClinicMedicos />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
