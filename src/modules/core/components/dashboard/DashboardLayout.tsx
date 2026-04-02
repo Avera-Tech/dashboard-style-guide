@@ -87,6 +87,7 @@ const allNavGroups: NavGroup[] = [
     defaultOpen: false,
     groupType: "clinic",
     items: [
+      { label: "Dashboard", icon: LayoutDashboard, href: "/clinica" },
       { label: "Funcionários", icon: Briefcase, href: "/clinica/funcionarios" },
       { label: "Pacientes", icon: UsersIcon, href: "/clinica/pacientes" },
       { label: "Horários", icon: Clock, href: "/clinica/horarios" },

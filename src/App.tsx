@@ -21,6 +21,9 @@ import Cadastros from "./modules/core/pages/Cadastros";
 import EmailTemplates from "./modules/core/pages/EmailTemplates";
 import NotFound from "./modules/core/pages/NotFound";
 
+// Clinic pages
+import ClinicDashboard from "./modules/clinic/pages/ClinicDashboard";
+
 // Fit pages
 import Alunos from "./modules/fit/pages/Alunos";
 import Funcionarios from "./modules/fit/pages/Funcionarios";
@@ -67,6 +70,7 @@ const App = () => (
           <Route path="/cadastros" element={<Cadastros />} />
           <Route path="/verify" element={<VerifyAccount />} />
           <Route path="/email-templates" element={<EmailTemplates />} />
+          <Route path="/clinica" element={<ClinicDashboard />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
