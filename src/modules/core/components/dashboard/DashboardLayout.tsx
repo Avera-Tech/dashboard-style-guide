@@ -58,7 +58,7 @@ interface NavGroup {
   groupType?: "fit" | "clinic";
 }
 
-const allNavGroups: NavGroup[] = [
+const fitNavGroups: NavGroup[] = [
   {
     label: "Core",
     icon: LayoutDashboard,
@@ -81,7 +81,6 @@ const allNavGroups: NavGroup[] = [
     label: "Operação Fit",
     icon: Dumbbell,
     defaultOpen: true,
-    groupType: "fit",
     items: [
       { label: "Alunos", icon: GraduationCap, href: "/alunos" },
       { label: "Funcionários", icon: Briefcase, href: "/funcionarios" },
@@ -92,29 +91,85 @@ const allNavGroups: NavGroup[] = [
       { label: "Integrações", icon: Plug, href: "/integracoes" },
     ],
   },
+];
+
+const clinicNavGroups: NavGroup[] = [
   {
-    label: "Operação Clínica",
-    icon: Stethoscope,
-    defaultOpen: false,
-    groupType: "clinic",
+    label: "Principal",
+    icon: LayoutDashboard,
+    defaultOpen: true,
     items: [
       { label: "Dashboard", icon: LayoutDashboard, href: "/clinica" },
-      { label: "Funcionários", icon: Briefcase, href: "/clinica/funcionarios" },
+      { label: "Agenda", icon: CalendarCheck, href: "/clinica/agenda" },
       { label: "Pacientes", icon: UsersIcon, href: "/clinica/pacientes" },
-      { label: "Horários", icon: Clock, href: "/clinica/horarios" },
-      { label: "Agendamento", icon: CalendarCheck, href: "/clinica/agendamento" },
-      { label: "Lista de Espera", icon: ListOrdered, href: "/clinica/lista-espera" },
-      { label: "Integrações", icon: Plug, href: "/clinica/integracoes" },
-      { label: "Exame", icon: FileSearch, href: "/clinica/exame" },
+      { label: "Médicos", icon: Stethoscope, href: "/clinica/medicos" },
+    ],
+  },
+  {
+    label: "Operacional",
+    icon: Building2,
+    defaultOpen: true,
+    items: [
+      { label: "Salas e recursos", icon: Building2, href: "/clinica/salas" },
+      { label: "Estoque", icon: BoxesIcon, href: "/clinica/estoque" },
+      { label: "Escala médica", icon: Clock, href: "/clinica/escala" },
+      { label: "Multi-unidades", icon: Building2, href: "/clinica/unidades" },
+    ],
+  },
+  {
+    label: "Paciente",
+    icon: UserCheck,
+    defaultOpen: true,
+    items: [
+      { label: "Confirmações WA", icon: PhoneCall, href: "/clinica/confirmacoes" },
+      { label: "Painel de chamada", icon: MessageSquare, href: "/clinica/painel-chamada" },
+      { label: "Satisfação / NPS", icon: Star, href: "/clinica/nps" },
+    ],
+  },
+  {
+    label: "Financeiro",
+    icon: DollarSign,
+    defaultOpen: false,
+    items: [
+      { label: "Convênios", icon: CreditCard, href: "/clinica/convenios" },
+      { label: "DRE / Fluxo de caixa", icon: TrendingDown, href: "/clinica/dre" },
+      { label: "Repasse médicos", icon: DollarSign, href: "/clinica/repasse" },
+      { label: "Inadimplência", icon: ArrowDownCircle, href: "/clinica/inadimplencia" },
+      { label: "Relatórios", icon: BarChart3, href: "/clinica/relatorios" },
+    ],
+  },
+  {
+    label: "Segurança",
+    icon: Shield,
+    defaultOpen: false,
+    items: [
+      { label: "Log de auditoria", icon: ScrollText, href: "/clinica/auditoria" },
+      { label: "Permissões", icon: Lock, href: "/clinica/permissoes" },
+      { label: "Backup", icon: HardDrive, href: "/clinica/backup" },
     ],
   },
 ];
 
-const navGroups = allNavGroups.filter((group) => {
-  if (!group.groupType) return true;
-  if (companyConfig.companyType === "both") return true;
-  return group.groupType === companyConfig.companyType;
-});
+const bothNavGroups: NavGroup[] = [
+  ...fitNavGroups,
+  {
+    label: "Operação Clínica",
+    icon: Stethoscope,
+    defaultOpen: false,
+    items: [
+      { label: "Dashboard", icon: LayoutDashboard, href: "/clinica" },
+      { label: "Pacientes", icon: UsersIcon, href: "/clinica/pacientes" },
+      { label: "Agenda", icon: CalendarCheck, href: "/clinica/agenda" },
+    ],
+  },
+];
+
+const navGroups: NavGroup[] =
+  companyConfig.companyType === "clinic"
+    ? clinicNavGroups
+    : companyConfig.companyType === "fit"
+      ? fitNavGroups
+      : bothNavGroups;
 
 const SidebarGroup = ({ group }: { group: NavGroup }) => {
   const [open, setOpen] = useState(group.defaultOpen ?? true);
