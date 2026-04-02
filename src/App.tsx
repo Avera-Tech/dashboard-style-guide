@@ -74,6 +74,7 @@ const App = () => (
           <Route path="/email-templates" element={<EmailTemplates />} />
           <Route path="/clinica" element={<ClinicDashboard />} />
           <Route path="/clinica/agenda" element={<ClinicAgenda />} />
+          <Route path="/clinica/pacientes" element={<ClinicPacientes />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
