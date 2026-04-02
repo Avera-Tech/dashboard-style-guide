@@ -24,6 +24,17 @@ import {
   ChevronDown,
   ShoppingCart,
   Megaphone,
+  Building2,
+  BoxesIcon,
+  UserCheck,
+  PhoneCall,
+  Star,
+  CreditCard,
+  TrendingDown,
+  Shield,
+  ScrollText,
+  Lock,
+  HardDrive,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
