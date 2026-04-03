@@ -33,6 +33,7 @@ import ClinicPainelChamada from "./modules/clinic/pages/ClinicPainelChamada";
 import ClinicNps from "./modules/clinic/pages/ClinicNps";
 import ClinicConvenios from "./modules/clinic/pages/ClinicConvenios";
 import ClinicDre from "./modules/clinic/pages/ClinicDre";
+import ClinicRepasse from "./modules/clinic/pages/ClinicRepasse";
 
 // Fit pages
 import Alunos from "./modules/fit/pages/Alunos";
