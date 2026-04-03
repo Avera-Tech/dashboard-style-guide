@@ -50,7 +50,7 @@ const ClinicEstoque = () => {
         {/* Subheader */}
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-xl font-semibold text-foreground">Estoque de insumos</h2>
+            <h2 className="text-lg font-semibold text-foreground">Estoque de insumos</h2>
             <p className="text-sm text-muted-foreground">
               {criticos.length} itens abaixo do mínimo
             </p>
