@@ -36,6 +36,7 @@ const ClinicAgenda = () => {
     filteredConsultas.filter((c) => c.horario === horario && c.diaSemana === dia);
 
   return (
+    <DashboardLayout>
       <header className="sticky top-0 z-40 bg-background/60 backdrop-blur-xl border-b border-border px-6 lg:px-8 py-4">
         <div className="flex items-start justify-between">
           <div>
