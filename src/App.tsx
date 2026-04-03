@@ -38,6 +38,7 @@ import ClinicInadimplencia from "./modules/clinic/pages/ClinicInadimplencia";
 import ClinicRelatorios from "./modules/clinic/pages/ClinicRelatorios";
 import ClinicLogs from "./modules/clinic/pages/ClinicLogs";
 import ClinicPermissoes from "./modules/clinic/pages/ClinicPermissoes";
+import ClinicBackup from "./modules/clinic/pages/ClinicBackup";
 
 // Fit pages
 import Alunos from "./modules/fit/pages/Alunos";
