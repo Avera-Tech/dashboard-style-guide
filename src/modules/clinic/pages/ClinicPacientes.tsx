@@ -49,11 +49,11 @@ const ClinicPacientes = () => {
 
   return (
     <DashboardLayout>
-      <div className="p-8 space-y-8">
+      <div className="p-6 space-y-6">
         {/* Header */}
         <div className="flex items-start justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-foreground">Pacientes</h1>
+            <h1 className="text-2xl font-extrabold text-foreground tracking-tight">Pacientes</h1>
             <p className="text-sm text-muted-foreground mt-1">administração / pacientes</p>
           </div>
           <div className="flex items-center gap-3">
