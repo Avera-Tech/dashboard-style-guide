@@ -40,6 +40,7 @@ import ClinicLogs from "./modules/clinic/pages/ClinicLogs";
 import ClinicPermissoes from "./modules/clinic/pages/ClinicPermissoes";
 import ClinicBackup from "./modules/clinic/pages/ClinicBackup";
 import ClinicBi from "./modules/clinic/pages/ClinicBi";
+import ClinicAlertas from "./modules/clinic/pages/ClinicAlertas";
 
 // Fit pages
 import Alunos from "./modules/fit/pages/Alunos";
