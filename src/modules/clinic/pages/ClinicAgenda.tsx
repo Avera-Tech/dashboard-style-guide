@@ -37,12 +37,12 @@ const ClinicAgenda = () => {
 
   return (
     <DashboardLayout>
-      <div className="p-8 space-y-6">
+      <div className="p-6 space-y-6">
         {/* Header */}
         <div className="flex items-start justify-between">
           <div>
-            <h1 className="text-xl font-bold text-foreground">Agenda</h1>
-            <p className="text-sm text-muted-foreground">administração / agenda</p>
+            <h1 className="text-2xl font-extrabold text-foreground tracking-tight">Agenda</h1>
+            <p className="text-sm text-muted-foreground mt-1">administração / agenda</p>
           </div>
           <div className="flex items-center gap-3">
             <div className="relative">

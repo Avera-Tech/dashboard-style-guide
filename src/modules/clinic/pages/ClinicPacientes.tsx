@@ -72,7 +72,7 @@ const ClinicPacientes = () => {
         {/* Title + stats + action */}
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-xl font-semibold text-foreground">Pacientes</h2>
+            <h2 className="text-lg font-semibold text-foreground">Pacientes</h2>
             <p className="text-sm text-muted-foreground">
               <span className="text-primary font-medium">{totalCadastrados.toLocaleString()}</span> cadastrados · {ativosHoje} ativos hoje
             </p>
