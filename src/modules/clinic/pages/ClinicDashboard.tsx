@@ -39,14 +39,13 @@ const ClinicDashboard = () => {
 
   return (
     <DashboardLayout>
-      <div className="p-6 space-y-6">
-        {/* Header */}
+      <header className="sticky top-0 z-40 bg-background/60 backdrop-blur-xl border-b border-border px-6 lg:px-8 py-4">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-extrabold text-foreground tracking-tight">
+            <h1 className="text-xl font-extrabold text-foreground tracking-tight">
               Dashboard
             </h1>
-            <p className="text-sm text-muted-foreground mt-1">
+            <p className="text-sm text-muted-foreground mt-0.5">
               administração / visão geral
             </p>
           </div>
@@ -55,7 +54,9 @@ const ClinicDashboard = () => {
             Ver agenda
           </Button>
         </div>
+      </header>
 
+      <div className="px-6 lg:px-8 py-6 space-y-6">
         {/* Visão Geral + Data */}
         <div>
           <h2 className="text-lg font-bold text-foreground">Visão geral</h2>
