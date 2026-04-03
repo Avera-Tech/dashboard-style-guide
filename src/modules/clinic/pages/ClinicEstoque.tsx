@@ -29,12 +29,12 @@ const ClinicEstoque = () => {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
+      <div className="p-6 space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-foreground">Estoque de insumos</h1>
-            <p className="text-sm text-muted-foreground">operacional / estoque</p>
+            <h1 className="text-2xl font-extrabold text-foreground tracking-tight">Estoque de insumos</h1>
+            <p className="text-sm text-muted-foreground mt-1">operacional / estoque</p>
           </div>
           <div className="flex items-center gap-3">
             <div className="relative">
@@ -50,7 +50,7 @@ const ClinicEstoque = () => {
         {/* Subheader */}
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-xl font-semibold text-foreground">Estoque de insumos</h2>
+            <h2 className="text-lg font-semibold text-foreground">Estoque de insumos</h2>
             <p className="text-sm text-muted-foreground">
               {criticos.length} itens abaixo do mínimo
             </p>

@@ -32,12 +32,12 @@ const ClinicEscala = () => {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
+      <div className="p-6 space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-foreground">Escala médica</h1>
-            <p className="text-sm text-muted-foreground">operacional / escala</p>
+            <h1 className="text-2xl font-extrabold text-foreground tracking-tight">Escala médica</h1>
+            <p className="text-sm text-muted-foreground mt-1">operacional / escala</p>
           </div>
           <div className="flex items-center gap-3">
             <div className="relative">
@@ -51,7 +51,7 @@ const ClinicEscala = () => {
         {/* Subheader */}
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-xl font-semibold text-foreground">Escala médica</h2>
+            <h2 className="text-lg font-semibold text-foreground">Escala médica</h2>
             <p className="text-sm text-muted-foreground">{weekRange}</p>
           </div>
           <div className="flex items-center gap-2">
