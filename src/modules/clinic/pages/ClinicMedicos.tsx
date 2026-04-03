@@ -27,12 +27,12 @@ const ClinicMedicos = () => {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
+      <div className="p-6 space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-foreground">Médicos</h1>
-            <p className="text-sm text-muted-foreground">administração / médicos</p>
+            <h1 className="text-2xl font-extrabold text-foreground tracking-tight">Médicos</h1>
+            <p className="text-sm text-muted-foreground mt-1">administração / médicos</p>
           </div>
           <div className="flex items-center gap-3">
             <div className="relative">
