@@ -35,6 +35,7 @@ import ClinicConvenios from "./modules/clinic/pages/ClinicConvenios";
 import ClinicDre from "./modules/clinic/pages/ClinicDre";
 import ClinicRepasse from "./modules/clinic/pages/ClinicRepasse";
 import ClinicInadimplencia from "./modules/clinic/pages/ClinicInadimplencia";
+import ClinicRelatorios from "./modules/clinic/pages/ClinicRelatorios";
 
 // Fit pages
 import Alunos from "./modules/fit/pages/Alunos";
