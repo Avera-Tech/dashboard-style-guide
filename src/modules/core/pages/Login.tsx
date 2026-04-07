@@ -4,11 +4,12 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Eye, EyeOff, Mail, Lock } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import tennisCourt from "@/assets/tennis-court.jpg";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <div className="min-h-screen flex bg-background relative">
@@ -41,7 +42,7 @@ const Login = () => {
             <p className="text-muted-foreground">Entre com seus dados para fazer login</p>
           </div>
 
-          <form className="space-y-5" onSubmit={(e) => e.preventDefault()}>
+          <form className="space-y-5" onSubmit={(e) => { e.preventDefault(); navigate("/"); }}>
             <div className="space-y-2">
               <Label htmlFor="email">Usuário</Label>
               <div className="relative">
