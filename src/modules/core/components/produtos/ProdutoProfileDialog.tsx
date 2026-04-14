@@ -15,8 +15,8 @@ import {
   Timer,
   Tag,
 } from "lucide-react";
-import type { Produto } from "@/modules/core/pages/Produtos";
-
+import type { Produto } from "@/modules/core/types/product";
+  
 const statusConfig = {
   active: { label: "Ativo", variant: "default" as const },
   inactive: { label: "Inativo", variant: "secondary" as const },

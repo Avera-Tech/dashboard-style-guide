@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   Briefcase,
   Plus,
@@ -36,6 +36,8 @@ import DashboardLayout from "@/modules/core/components/dashboard/DashboardLayout
 import StatCard from "@/modules/core/components/dashboard/StatCard";
 import UserTable from "@/modules/core/components/dashboard/UserTable";
 import type { BaseUser, Column, FilterConfig } from "@/modules/core/components/dashboard/UserTable";
+import StaffCollection from "@/modules/core/api/staff";
+import { Staff } from "@/modules/core/types/staff";
 
 interface Funcionario extends BaseUser {
   cargo: string;
@@ -248,12 +250,27 @@ const funcionarioFilters: FilterConfig[] = [
 ];
 
 const Funcionarios = () => {
+  const repository = new StaffCollection();
   const [search, setSearch] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [activeFilters, setActiveFilters] = useState<Record<string, string[]>>({});
+  const [staff, setStaff] = useState<Staff[]>([]);
 
-  const activeCount = MOCK_FUNCIONARIOS.filter((u) => u.status === "active").length;
-  const pendingCount = MOCK_FUNCIONARIOS.filter((u) => u.status === "pending").length;
+  const activeCount = staff.filter((u) => u.active).length;
+  const pendingCount = staff.filter((u) => !u.active).length;
+
+  const fetchFuncionarios = useCallback(async () => {
+    await repository.list().then(({ data }: { data: Staff[] }) => {
+      setStaff(data.map((f: Staff) => ({
+        ...f,
+        status: f.active ? "active" : "inactive",
+      })));
+    });
+  }, [repository]);
+
+  useEffect(() => {
+    fetchFuncionarios();
+  }, []);
 
   return (
     <DashboardLayout>
@@ -263,7 +280,7 @@ const Funcionarios = () => {
             <div className="flex items-center gap-2">
               <h1 className="text-xl font-extrabold text-foreground tracking-tight">Funcionários</h1>
               <Badge variant="secondary" className="text-[10px] font-bold">
-                {MOCK_FUNCIONARIOS.length}
+                {staff.length}
               </Badge>
             </div>
             <p className="text-sm text-muted-foreground mt-0.5">Gerencie os funcionários da instituição</p>
@@ -280,7 +297,7 @@ const Funcionarios = () => {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <StatCard
             label="Total de Funcionários"
-            value={String(MOCK_FUNCIONARIOS.length)}
+            value={String(staff.length)}
             change="+5%"
             icon={Briefcase}
             gradient="bg-gradient-to-br from-primary to-primary/70"
@@ -300,7 +317,10 @@ const Funcionarios = () => {
         </div>
 
         <UserTable
-          data={MOCK_FUNCIONARIOS}
+          data={staff.map((f: any) => ({
+            ...f,
+            status: f.active ? "active" : "inactive",
+          } as BaseUser))}
           columns={funcionarioColumns}
           search={search}
           onSearchChange={setSearch}
