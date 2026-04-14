@@ -1,9 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   Package,
   Plus,
   CheckCircle,
-  Clock,
   XCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -15,22 +14,13 @@ import ProdutoFormDialog from "@/modules/core/components/produtos/ProdutoFormDia
 import ProdutoProfileDialog from "@/modules/core/components/produtos/ProdutoProfileDialog";
 import ProdutoDeleteDialog from "@/modules/core/components/produtos/ProdutoDeleteDialog";
 import { toast } from "@/hooks/use-toast";
+import type { Produto } from "@/modules/core/types/product";
+import productsRepository from "@/modules/core/api/products";
+import ProductsCollection from "@/modules/core/api/products";
 
-export interface Produto {
-  id: string;
-  name: string;
-  credits: number;
-  validity: string;
-  type: string;
-  price: number;
-  status: "active" | "inactive" | "pending";
-  usageLimitPeriod: string;
-  visibility: string;
-  purchaseLimit: number;
-  createdAt: string;
-}
+export type { Produto };
 
-const MOCK_PRODUTOS: Produto[] = [
+const MOCK_PRODUTOS: any = [
   {
     id: "1",
     name: "Pacote Mensal Tennis",
@@ -43,6 +33,10 @@ const MOCK_PRODUTOS: Produto[] = [
     visibility: "Todos",
     purchaseLimit: 1,
     createdAt: "2025-01-10",
+    updatedAt: "2025-01-10",
+    recurring: true,
+    validityDays: 30,
+    value: 320,
   },
   {
     id: "2",
@@ -56,6 +50,10 @@ const MOCK_PRODUTOS: Produto[] = [
     visibility: "Todos",
     purchaseLimit: 10,
     createdAt: "2025-01-15",
+    updatedAt: "2025-01-15",
+    recurring: false,
+    validityDays: 7,
+    value: 60,
   },
   {
     id: "3",
@@ -69,6 +67,10 @@ const MOCK_PRODUTOS: Produto[] = [
     visibility: "Alunos ativos",
     purchaseLimit: 1,
     createdAt: "2025-02-01",
+    updatedAt: "2025-02-01",
+    recurring: true,
+    validityDays: 90,
+    value: 850,
   },
   {
     id: "4",
@@ -82,6 +84,10 @@ const MOCK_PRODUTOS: Produto[] = [
     visibility: "Todos",
     purchaseLimit: 5,
     createdAt: "2024-12-20",
+    updatedAt: "2024-12-20",
+    recurring: false,
+    validityDays: 1,
+    value: 40,
   },
   {
     id: "5",
@@ -90,23 +96,45 @@ const MOCK_PRODUTOS: Produto[] = [
     validity: "180 dias",
     type: "Plano",
     price: 1500,
-    status: "pending",
+    status: "active",
     usageLimitPeriod: "4 por semana",
     visibility: "Convidados",
     purchaseLimit: 1,
     createdAt: "2025-03-01",
+    updatedAt: "2025-03-01",
+    recurring: true,
+    validityDays: 180,
+    value: 1500,
   },
 ];
 
 const Produtos = () => {
+  const repository = new ProductsCollection();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [profileDialogOpen, setProfileDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedProduto, setSelectedProduto] = useState<Produto | null>(null);
+  const [produtos, setProdutos] = useState<Produto[]>([]);
 
-  const activeCount = MOCK_PRODUTOS.filter((p) => p.status === "active").length;
-  const inactiveCount = MOCK_PRODUTOS.filter((p) => p.status === "inactive").length;
+  const fetchProdutos = useCallback(async () => {
+    await repository.list().then(({ products }: { products: Produto[] }) => {
+      setProdutos(products.map((p: Produto) => ({
+        ...p,
+        status: p.active ? "active" : "inactive",
+        type: p.recurring ? "Plano" : "Avulso",
+        price: Number(p.value),
+        validity: p.validityDays + " dias",
+      })));
+    });
+  }, [repository]);
+
+  useEffect(() => {
+    fetchProdutos();
+  }, []);
+
+  const activeCount = produtos.filter((p) => p.status === "active").length;
+  const inactiveCount = produtos.filter((p) => p.status === "inactive").length;
 
   const handleView = (produto: Produto) => {
     setSelectedProduto(produto);
@@ -140,7 +168,7 @@ const Produtos = () => {
             <div className="flex items-center gap-2">
               <h1 className="text-xl font-extrabold text-foreground tracking-tight">Produtos</h1>
               <Badge variant="secondary" className="text-[10px] font-bold">
-                {MOCK_PRODUTOS.length}
+                {produtos.length}
               </Badge>
             </div>
             <p className="text-sm text-muted-foreground mt-0.5">Gerencie os produtos e pacotes do CT</p>
@@ -150,7 +178,7 @@ const Produtos = () => {
             Novo Produto
           </Button>
           <ProdutoFormDialog open={dialogOpen} onOpenChange={setDialogOpen} />
-          <ProdutoFormDialog open={editDialogOpen} onOpenChange={setEditDialogOpen} />
+          <ProdutoFormDialog open={editDialogOpen} onOpenChange={setEditDialogOpen} produto={selectedProduto} />
           <ProdutoProfileDialog open={profileDialogOpen} onOpenChange={setProfileDialogOpen} produto={selectedProduto} />
           <ProdutoDeleteDialog
             open={deleteDialogOpen}
@@ -165,7 +193,7 @@ const Produtos = () => {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <StatCard
             label="Total de Produtos"
-            value={String(MOCK_PRODUTOS.length)}
+            value={String(produtos.length)}
             change="+3"
             icon={Package}
             gradient="bg-gradient-to-br from-primary to-primary/70"
@@ -185,7 +213,7 @@ const Produtos = () => {
         </div>
 
         <ProductTable
-          data={MOCK_PRODUTOS}
+          data={produtos}
           onView={handleView}
           onEdit={handleEdit}
           onDelete={handleDelete}
