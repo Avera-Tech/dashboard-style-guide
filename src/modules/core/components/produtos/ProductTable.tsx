@@ -167,7 +167,6 @@ const ProductTable = ({ data, onView, onEdit, onDelete }: ProductTableProps) => 
                         <DropdownMenuTrigger asChild>
                           <Button variant="outline" size="sm" className="h-8 gap-1.5 text-xs">
                             <MoreHorizontal className="h-3.5 w-3.5" />
-                            Opções
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="w-40">

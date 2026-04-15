@@ -177,8 +177,8 @@ const Produtos = () => {
             <Plus className="h-4 w-4 mr-2" />
             Novo Produto
           </Button>
-          <ProdutoFormDialog open={dialogOpen} onOpenChange={setDialogOpen} />
-          <ProdutoFormDialog open={editDialogOpen} onOpenChange={setEditDialogOpen} produto={selectedProduto} />
+          <ProdutoFormDialog open={dialogOpen} onOpenChange={setDialogOpen} onSuccess={fetchProdutos} />
+          <ProdutoFormDialog open={editDialogOpen} onOpenChange={setEditDialogOpen} onSuccess={fetchProdutos} />
           <ProdutoProfileDialog open={profileDialogOpen} onOpenChange={setProfileDialogOpen} produto={selectedProduto} />
           <ProdutoDeleteDialog
             open={deleteDialogOpen}

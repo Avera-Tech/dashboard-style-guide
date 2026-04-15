@@ -5,7 +5,10 @@ export default async function conectAPI(url: string, method: string, body?: any)
     const response = await fetch(`http://localhost:3000/api${url}`, {
         method,
         body: body ? JSON.stringify(body) : undefined,
-        headers: { 'Authorization': `Bearer ${token}` }
+        headers: {
+            'Authorization': `Bearer ${token}`,
+            ...(body ? { 'Content-Type': 'application/json' } : {}),
+        }
     });
     return response.json();
 }

@@ -16,3 +16,18 @@ export interface Produto {
   validityDays: number;
   value: number;
 }
+
+export interface ProductCreateDTO {
+  productTypeId: number;
+  name: string;
+  description: string;
+  credits: number;
+  value: number;
+  validityDays: number;
+  recurring: boolean;
+}
+
+export interface ProductType {
+  id: number;
+  name: string;
+}
