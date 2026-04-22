@@ -48,6 +48,7 @@ import type { BaseUser, Column, FilterConfig } from "@/modules/core/components/d
 import StaffCollection from "@/modules/core/api/staff";
 import type { Staff } from "@/modules/core/types/staff";
 import { toast } from "@/hooks/use-toast";
+import StatusField from "@/modules/core/components/dashboard/StatusField";
 
 const repository = new StaffCollection();
 
@@ -122,6 +123,7 @@ interface StaffFormData {
   password: string;
   role: string;
   phone: string;
+  active: boolean;
 }
 
 const emptyForm: StaffFormData = {
@@ -130,6 +132,7 @@ const emptyForm: StaffFormData = {
   password: "",
   role: "",
   phone: "",
+  active: true,
 };
 
 // ── InfoRow ───────────────────────────────────────────────
@@ -306,12 +309,13 @@ const StaffCreateDialog = ({
         password: form.password,
         role: form.role,
         phone: form.phone ? rawPhone(form.phone) : undefined,
+        active: form.active,
       });
       toast({ title: "Funcionário cadastrado", description: `${form.name} foi adicionado com sucesso.` });
       onSuccess();
       handleClose();
-    } catch {
-      toast({ title: "Erro ao cadastrar", description: "Não foi possível criar o funcionário.", variant: "destructive" });
+    } catch (err) {
+      toast({ title: "Erro ao cadastrar", description: err instanceof Error ? err.message : "Não foi possível criar o funcionário.", variant: "destructive" });
     } finally {
       setLoading(false);
     }
@@ -384,6 +388,15 @@ const StaffCreateDialog = ({
               </Select>
             </div>
           </div>
+
+          <Separator />
+
+          <StatusField
+            checked={form.active}
+            onCheckedChange={(checked) => setForm((p) => ({ ...p, active: checked }))}
+            activeDescription="Funcionário será criado com acesso ao sistema."
+            inactiveDescription="Funcionário será criado sem acesso ao sistema."
+          />
         </div>
 
         <DialogFooter>
@@ -410,7 +423,7 @@ const StaffEditDialog = ({
   staffId: string | null;
   onSuccess: () => void;
 }) => {
-  const [form, setForm] = useState({ name: "", phone: "", role: "" });
+  const [form, setForm] = useState({ name: "", phone: "", role: "", active: true });
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(false);
   const [phoneTouched, setPhoneTouched] = useState(false);
@@ -428,6 +441,7 @@ const StaffEditDialog = ({
           name: data.name,
           phone: maskPhone(data.phone ?? ""),
           role: getFirstRoleSlug(data),
+          active: data.active,
         });
       })
       .catch(() =>
@@ -452,12 +466,13 @@ const StaffEditDialog = ({
         name: form.name || undefined,
         phone: form.phone ? rawPhone(form.phone) : undefined,
         role: form.role || undefined,
+        active: form.active,
       });
       toast({ title: "Funcionário atualizado", description: `${form.name} foi atualizado com sucesso.` });
       onSuccess();
       onOpenChange(false);
-    } catch {
-      toast({ title: "Erro ao atualizar", description: "Não foi possível atualizar o funcionário.", variant: "destructive" });
+    } catch (err) {
+      toast({ title: "Erro ao atualizar", description: err instanceof Error ? err.message : "Não foi possível atualizar o funcionário.", variant: "destructive" });
     } finally {
       setLoading(false);
     }
@@ -517,6 +532,15 @@ const StaffEditDialog = ({
                 </Select>
               </div>
             </div>
+
+            <Separator />
+
+            <StatusField
+              checked={form.active}
+              onCheckedChange={(checked) => setForm((p) => ({ ...p, active: checked }))}
+              activeDescription="Funcionário será criado com acesso ao sistema."
+              inactiveDescription="Funcionário será criado sem acesso ao sistema."
+            />
           </div>
         )}
 
@@ -551,11 +575,11 @@ const StaffDeactivateDialog = ({
     setLoading(true);
     try {
       await repository.deactivate(staff.id);
-      toast({ title: "Funcionário desativado", description: `${staff.name} foi desativado com sucesso.` });
+      toast({ title: "Funcionário removido", description: "Os dados foram anonimizados com sucesso." });
       onSuccess();
       onOpenChange(false);
-    } catch {
-      toast({ title: "Erro ao desativar", description: "Não foi possível desativar o funcionário.", variant: "destructive" });
+    } catch (err) {
+      toast({ title: "Erro ao remover", description: err instanceof Error ? err.message : "Não foi possível remover o funcionário.", variant: "destructive" });
     } finally {
       setLoading(false);
     }
@@ -565,11 +589,15 @@ const StaffDeactivateDialog = ({
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Desativar funcionário</AlertDialogTitle>
-          <AlertDialogDescription>
-            Tem certeza que deseja desativar{" "}
-            <span className="font-semibold text-foreground">{staff?.name}</span>?
-            O funcionário perderá acesso ao sistema.
+          <AlertDialogTitle>Remover funcionário</AlertDialogTitle>
+          <AlertDialogDescription asChild>
+            <div className="space-y-3 text-sm text-muted-foreground">
+              <p>
+                Você está prestes a remover{" "}
+                <span className="font-semibold text-foreground">{staff?.name}</span>.
+              </p>
+              <p>Esta ação é <span className="font-semibold text-destructive">permanente e irreversível</span>. Os dados pessoais do funcionário serão anonimizados no banco de dados em conformidade com a LGPD</p>
+            </div>
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
@@ -579,7 +607,7 @@ const StaffDeactivateDialog = ({
             disabled={loading}
             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
           >
-            {loading ? "Desativando..." : "Desativar"}
+            {loading ? "Removendo..." : "Remover e anonimizar"}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
