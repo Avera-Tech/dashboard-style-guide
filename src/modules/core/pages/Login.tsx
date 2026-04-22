@@ -6,10 +6,54 @@ import { Separator } from "@/components/ui/separator";
 import { Eye, EyeOff, Mail, Lock } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import tennisCourt from "@/assets/tennis-court.jpg";
+import { toast } from "@/hooks/use-toast";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!email || !password) {
+      toast({ title: "Preencha todos os campos", variant: "destructive" });
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await fetch("http://localhost:3000/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        toast({
+          title: "Erro ao entrar",
+          description: data.error ?? "Credenciais inválidas.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      localStorage.setItem("token", data.token);
+      navigate("/");
+    } catch {
+      toast({
+        title: "Erro de conexão",
+        description: "Não foi possível conectar ao servidor.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen flex bg-background relative">
@@ -42,12 +86,19 @@ const Login = () => {
             <p className="text-muted-foreground">Entre com seus dados para fazer login</p>
           </div>
 
-          <form className="space-y-5" onSubmit={(e) => { e.preventDefault(); navigate("/"); }}>
+          <form className="space-y-5" onSubmit={handleSubmit}>
             <div className="space-y-2">
               <Label htmlFor="email">Usuário</Label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input id="email" type="email" placeholder="seu@email.com" className="pl-10 h-12" />
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="seu@email.com"
+                  className="pl-10 h-12"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
               </div>
             </div>
 
@@ -60,6 +111,8 @@ const Login = () => {
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
                   className="pl-10 pr-10 h-12"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                 />
                 <button
                   type="button"
@@ -71,8 +124,8 @@ const Login = () => {
               </div>
             </div>
 
-            <Button type="submit" className="w-full h-12 text-base font-semibold">
-              Entrar
+            <Button type="submit" className="w-full h-12 text-base font-semibold" disabled={loading}>
+              {loading ? "Entrando..." : "Entrar"}
             </Button>
           </form>
 

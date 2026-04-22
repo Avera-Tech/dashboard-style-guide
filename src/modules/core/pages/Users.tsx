@@ -11,19 +11,19 @@ import DashboardLayout from "@/modules/core/components/dashboard/DashboardLayout
 import StatCard from "@/modules/core/components/dashboard/StatCard";
 import UserTable from "@/modules/core/components/dashboard/UserTable";
 import type { BaseUser, Column, FilterConfig } from "@/modules/core/components/dashboard/UserTable";
-import AlunoFormDialog from "@/modules/fit/components/alunos/AlunoFormDialog";
-import AlunoProfileDialog from "@/modules/fit/components/alunos/AlunoProfileDialog";
-import AlunoDeleteDialog from "@/modules/fit/components/alunos/AlunoDeleteDialog";
+import UserFormDialog from "@/modules/core/components/users/UserFormDialog";
+import UserProfileDialog from "@/modules/core/components/users/UserProfileDialog";
+import UserDeleteDialog from "@/modules/core/components/users/UserDeleteDialog";
 import { toast } from "@/hooks/use-toast";
 
-interface Aluno extends BaseUser {
+interface User extends BaseUser {
   phone: string;
   modalidade: string;
   nivel: string;
   ultimoCheckin: string;
 }
 
-const MOCK_ALUNOS: Aluno[] = [
+const MOCK_USERS: User[] = [
   { id: "1", name: "Pedro Henrique Kevin Assunção", email: "pedro-assuncao86@grupoap.com.br", status: "active", createdAt: "2025-01-15", phone: "(62) 98759-1829", modalidade: "Tennis", nivel: "Intermediário", ultimoCheckin: "12/12/2023" },
   { id: "2", name: "Ana Clara Silva", email: "ana.silva@email.com", status: "active", createdAt: "2025-02-01", phone: "(11) 99876-5432", modalidade: "Futevôlei", nivel: "Iniciante", ultimoCheckin: "05/02/2026" },
   { id: "3", name: "Bruno Costa Mendes", email: "bruno.costa@email.com", status: "pending", createdAt: "2025-03-10", phone: "(21) 98765-4321", modalidade: "Tennis", nivel: "Avançado", ultimoCheckin: "01/02/2026" },
@@ -32,29 +32,29 @@ const MOCK_ALUNOS: Aluno[] = [
   { id: "6", name: "Eduarda Santos Alves", email: "eduarda.santos@email.com", status: "active", createdAt: "2024-12-18", phone: "(51) 95432-1098", modalidade: "Tennis", nivel: "Iniciante", ultimoCheckin: "06/02/2026" },
 ];
 
-const alunoColumns: Column<Aluno>[] = [
+const userColumns: Column<User>[] = [
   {
     key: "phone",
     label: "Telefone",
-    render: (aluno) => <span className="text-sm text-muted-foreground">{aluno.phone}</span>,
+    render: (user) => <span className="text-sm text-muted-foreground">{user.phone}</span>,
   },
   {
     key: "nivel",
     label: "Nível",
-    render: (aluno) => (
+    render: (user) => (
       <Badge variant="secondary" className="font-medium">
-        {aluno.nivel}
+        {user.nivel}
       </Badge>
     ),
   },
   {
     key: "ultimoCheckin",
     label: "Último Check-in",
-    render: (aluno) => <span className="text-sm text-muted-foreground">{aluno.ultimoCheckin}</span>,
+    render: (user) => <span className="text-sm text-muted-foreground">{user.ultimoCheckin}</span>,
   },
 ];
 
-const alunoFilters: FilterConfig[] = [
+const userFilters: FilterConfig[] = [
   {
     key: "status",
     label: "Status",
@@ -76,39 +76,39 @@ const alunoFilters: FilterConfig[] = [
   },
 ];
 
-const Alunos = () => {
+const Users = () => {
   const [search, setSearch] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [profileDialogOpen, setProfileDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [selectedAluno, setSelectedAluno] = useState<Aluno | null>(null);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [activeFilters, setActiveFilters] = useState<Record<string, string[]>>({});
-  const activeCount = MOCK_ALUNOS.filter((u) => u.status === "active").length;
-  const pendingCount = MOCK_ALUNOS.filter((u) => u.status === "pending").length;
+  const activeCount = MOCK_USERS.filter((u) => u.status === "active").length;
+  const pendingCount = MOCK_USERS.filter((u) => u.status === "pending").length;
 
-  const handleView = (aluno: Aluno) => {
-    setSelectedAluno(aluno);
+  const handleView = (user: User) => {
+    setSelectedUser(user);
     setProfileDialogOpen(true);
   };
 
-  const handleEdit = (aluno: Aluno) => {
-    setSelectedAluno(aluno);
+  const handleEdit = (user: User) => {
+    setSelectedUser(user);
     setEditDialogOpen(true);
   };
 
-  const handleDelete = (aluno: Aluno) => {
-    setSelectedAluno(aluno);
+  const handleDelete = (user: User) => {
+    setSelectedUser(user);
     setDeleteDialogOpen(true);
   };
 
   const handleConfirmDelete = () => {
     toast({
       title: "Aluno removido",
-      description: `${selectedAluno?.name} foi removido com sucesso.`,
+      description: `${selectedUser?.name} foi removido com sucesso.`,
     });
     setDeleteDialogOpen(false);
-    setSelectedAluno(null);
+    setSelectedUser(null);
   };
 
   return (
@@ -119,7 +119,7 @@ const Alunos = () => {
             <div className="flex items-center gap-2">
               <h1 className="text-xl font-extrabold text-foreground tracking-tight">Alunos</h1>
               <Badge variant="secondary" className="text-[10px] font-bold">
-                {MOCK_ALUNOS.length}
+                {MOCK_USERS.length}
               </Badge>
             </div>
             <p className="text-sm text-muted-foreground mt-0.5">Gerencie os alunos do CT</p>
@@ -128,13 +128,13 @@ const Alunos = () => {
             <Plus className="h-4 w-4 mr-2" />
             Novo Aluno
           </Button>
-          <AlunoFormDialog open={dialogOpen} onOpenChange={setDialogOpen} />
-          <AlunoFormDialog open={editDialogOpen} onOpenChange={setEditDialogOpen} />
-          <AlunoProfileDialog open={profileDialogOpen} onOpenChange={setProfileDialogOpen} aluno={selectedAluno} />
-          <AlunoDeleteDialog
+          <UserFormDialog open={dialogOpen} onOpenChange={setDialogOpen} />
+          <UserFormDialog open={editDialogOpen} onOpenChange={setEditDialogOpen} />
+          <UserProfileDialog open={profileDialogOpen} onOpenChange={setProfileDialogOpen} user={selectedUser} />
+          <UserDeleteDialog
             open={deleteDialogOpen}
             onOpenChange={setDeleteDialogOpen}
-            alunoName={selectedAluno?.name ?? null}
+            userName={selectedUser?.name ?? null}
             onConfirm={handleConfirmDelete}
           />
         </div>
@@ -144,7 +144,7 @@ const Alunos = () => {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <StatCard
             label="Total de Alunos"
-            value={String(MOCK_ALUNOS.length)}
+            value={String(MOCK_USERS.length)}
             change="+12%"
             icon={GraduationCap}
             gradient="bg-gradient-to-br from-primary to-primary/70"
@@ -164,12 +164,12 @@ const Alunos = () => {
         </div>
 
         <UserTable
-          data={MOCK_ALUNOS}
-          columns={alunoColumns}
+          data={MOCK_USERS}
+          columns={userColumns}
           search={search}
           onSearchChange={setSearch}
           searchPlaceholder="Buscar aluno por nome ou email..."
-          filters={alunoFilters}
+          filters={userFilters}
           activeFilters={activeFilters}
           onFilterChange={(key, values) =>
             setActiveFilters((prev) => ({ ...prev, [key]: values }))
@@ -183,4 +183,4 @@ const Alunos = () => {
   );
 };
 
-export default Alunos;
+export default Users;

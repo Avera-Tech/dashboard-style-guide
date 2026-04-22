@@ -43,8 +43,8 @@ import ClinicBi from "./modules/clinic/pages/ClinicBi";
 import ClinicAlertas from "./modules/clinic/pages/ClinicAlertas";
 
 // Fit pages
-import Alunos from "./modules/fit/pages/Alunos";
-import Funcionarios from "./modules/fit/pages/Funcionarios";
+import Users from "./modules/core/pages/Users";
+import StaffPage from "./modules/core/pages/StaffPage";
 import Turmas from "./modules/fit/pages/Turmas";
 import Aulas from "./modules/fit/pages/Aulas";
 import ListaEspera from "./modules/fit/pages/ListaEspera";
@@ -71,8 +71,8 @@ const App = () => (
           <Route path="/m/agendar" element={<MobileAgendar />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/alunos" element={<Alunos />} />
-          <Route path="/funcionarios" element={<Funcionarios />} />
+          <Route path="/users" element={<Users />} />
+          <Route path="/staff" element={<StaffPage />} />
           <Route path="/produtos" element={<Produtos />} />
           <Route path="/turmas" element={<Turmas />} />
           <Route path="/aulas" element={<Aulas />} />

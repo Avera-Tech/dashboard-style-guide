@@ -12,14 +12,14 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-interface AlunoDeleteDialogProps {
+interface UserDeleteDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  alunoName: string | null;
+  userName: string | null;
   onConfirm: () => void;
 }
 
-const AlunoDeleteDialog = ({ open, onOpenChange, alunoName, onConfirm }: AlunoDeleteDialogProps) => {
+const UserDeleteDialog = ({ open, onOpenChange, userName, onConfirm }: UserDeleteDialogProps) => {
   const [password, setPassword] = useState("");
 
   const handleOpenChange = (value: boolean) => {
@@ -38,7 +38,7 @@ const AlunoDeleteDialog = ({ open, onOpenChange, alunoName, onConfirm }: AlunoDe
         <AlertDialogHeader>
           <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
           <AlertDialogDescription>
-            Tem certeza que deseja remover <span className="font-semibold text-foreground">{alunoName}</span>? Essa ação não pode ser desfeita.
+            Tem certeza que deseja remover <span className="font-semibold text-foreground">{userName}</span>? Essa ação não pode ser desfeita.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <div className="space-y-2 py-2">
@@ -68,4 +68,4 @@ const AlunoDeleteDialog = ({ open, onOpenChange, alunoName, onConfirm }: AlunoDe
   );
 };
 
-export default AlunoDeleteDialog;
+export default UserDeleteDialog;

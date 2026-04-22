@@ -82,8 +82,8 @@ const fitNavGroups: NavGroup[] = [
     icon: Dumbbell,
     defaultOpen: true,
     items: [
-      { label: "Alunos", icon: GraduationCap, href: "/alunos" },
-      { label: "Funcionários", icon: Briefcase, href: "/funcionarios" },
+      { label: "Alunos", icon: GraduationCap, href: "/users" },
+      { label: "Funcionários", icon: Briefcase, href: "/staff" },
       { label: "Turmas", icon: Calendar, href: "/turmas" },
       { label: "Aulas", icon: ClipboardList, href: "/aulas" },
       { label: "Agendamento", icon: CalendarCheck, href: "/agendamento" },

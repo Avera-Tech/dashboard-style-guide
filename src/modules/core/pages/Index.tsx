@@ -101,7 +101,7 @@ const topPlans = [
 ];
 
 const quickActions = [
-  { label: "Alunos", icon: GraduationCap, href: "/alunos", color: "bg-primary/10 text-primary" },
+  { label: "Alunos", icon: GraduationCap, href: "/users", color: "bg-primary/10 text-primary" },
   { label: "Aulas", icon: ClipboardList, href: "/aulas", color: "bg-success/10 text-success" },
   { label: "Turmas", icon: Calendar, href: "/turmas", color: "bg-accent/10 text-accent-foreground" },
   { label: "Financeiro", icon: DollarSign, href: "/financeiro", color: "bg-info/10 text-info" },

@@ -7,10 +7,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Mail, Phone, MapPin, Calendar, GraduationCap } from "lucide-react";
+import { Mail, Phone, Calendar, GraduationCap } from "lucide-react";
 import { getInitials, statusConfig } from "@/modules/core/components/dashboard/UserTable";
 
-interface AlunoData {
+interface UserData {
   id: string;
   name: string;
   email: string;
@@ -32,18 +32,18 @@ const InfoRow = ({ icon: Icon, label, value }: { icon: React.ElementType; label:
   </div>
 );
 
-const AlunoProfileDialog = ({
+const UserProfileDialog = ({
   open,
   onOpenChange,
-  aluno,
+  user,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  aluno: AlunoData | null;
+  user: UserData | null;
 }) => {
-  if (!aluno) return null;
+  if (!user) return null;
 
-  const status = statusConfig[aluno.status];
+  const status = statusConfig[user.status];
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -55,11 +55,11 @@ const AlunoProfileDialog = ({
         <div className="flex flex-col items-center gap-3 py-4">
           <Avatar className="h-16 w-16 ring-2 ring-border">
             <AvatarFallback className="text-lg bg-primary/10 text-primary font-bold">
-              {getInitials(aluno.name)}
+              {getInitials(user.name)}
             </AvatarFallback>
           </Avatar>
           <div className="text-center">
-            <p className="text-lg font-semibold text-foreground">{aluno.name}</p>
+            <p className="text-lg font-semibold text-foreground">{user.name}</p>
             <Badge variant={status.variant} className="mt-1">{status.label}</Badge>
           </div>
         </div>
@@ -67,15 +67,15 @@ const AlunoProfileDialog = ({
         <Separator />
 
         <div className="space-y-4 py-2">
-          <InfoRow icon={Mail} label="Email" value={aluno.email} />
-          <InfoRow icon={Phone} label="Telefone" value={aluno.phone} />
-          <InfoRow icon={GraduationCap} label="Nível" value={aluno.nivel} />
-          <InfoRow icon={Calendar} label="Último Check-in" value={aluno.ultimoCheckin} />
-          <InfoRow icon={Calendar} label="Cadastrado em" value={new Date(aluno.createdAt).toLocaleDateString("pt-BR")} />
+          <InfoRow icon={Mail} label="Email" value={user.email} />
+          <InfoRow icon={Phone} label="Telefone" value={user.phone} />
+          <InfoRow icon={GraduationCap} label="Nível" value={user.nivel} />
+          <InfoRow icon={Calendar} label="Último Check-in" value={user.ultimoCheckin} />
+          <InfoRow icon={Calendar} label="Cadastrado em" value={new Date(user.createdAt).toLocaleDateString("pt-BR")} />
         </div>
       </DialogContent>
     </Dialog>
   );
 };
 
-export default AlunoProfileDialog;
+export default UserProfileDialog;
