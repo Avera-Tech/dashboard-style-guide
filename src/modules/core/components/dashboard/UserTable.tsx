@@ -1,15 +1,13 @@
-import { ReactNode, useState } from "react";
+import { ReactNode, useState, useEffect } from "react";
 import {
   Search,
   MoreHorizontal,
   Edit,
   Trash2,
   Eye,
-  ChevronLeft,
-  ChevronRight,
   ArrowUpDown,
-  Download,
 } from "lucide-react";
+import { Pagination } from "./Pagination";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -29,13 +27,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 type UserStatus = "active" | "inactive" | "pending";
 
@@ -77,6 +68,7 @@ interface UserTableProps<T extends BaseUser> {
   onView?: (item: T) => void;
   onEdit?: (item: T) => void;
   onDelete?: (item: T) => void;
+  loading?: boolean;
 }
 
 const statusConfig: Record<UserStatus, { label: string; variant: "default" | "secondary" | "outline" | "destructive" }> = {
@@ -89,23 +81,29 @@ function getInitials(name: string) {
   return name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase();
 }
 
+const PAGE_SIZE = 10;
+const SKELETON_ROWS = 6;
+
+function SkeletonCell({ className = "h-4 w-24" }: { className?: string }) {
+  return <div className={`rounded bg-muted animate-pulse ${className}`} />;
+}
+
 function UserTable<T extends BaseUser>({
   data,
   columns,
   search,
   onSearchChange,
-  searchPlaceholder = "Buscar por nome ou email...",
   filters = [],
   activeFilters = {},
   onFilterChange,
   onView,
   onEdit,
   onDelete,
+  loading = false,
 }: UserTableProps<T>) {
-  const handleSelectFilter = (key: string, value: string) => {
-    if (!onFilterChange) return;
-    onFilterChange(key, value === "all" ? [] : [value]);
-  };
+  const [filterName, setFilterName] = useState("");
+  const [filterEmail, setFilterEmail] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
 
   const filteredData = data.filter((u) => {
     const matchesSearch =
@@ -118,13 +116,23 @@ function UserTable<T extends BaseUser>({
     return matchesSearch && matchesFilters;
   });
 
-  const [filterName, setFilterName] = useState("");
-  const [filterCpf, setFilterCpf] = useState("");
-  const [filterEmail, setFilterEmail] = useState("");
+  const totalPages = Math.max(1, Math.ceil(filteredData.length / PAGE_SIZE));
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, activeFilters]);
+
+  useEffect(() => {
+    if (currentPage > totalPages) setCurrentPage(totalPages);
+  }, [currentPage, totalPages]);
+
+  const paginatedData = filteredData.slice(
+    (currentPage - 1) * PAGE_SIZE,
+    currentPage * PAGE_SIZE,
+  );
 
   const handleClearFilters = () => {
     setFilterName("");
-    setFilterCpf("");
     setFilterEmail("");
     onSearchChange("");
     if (onFilterChange) {
@@ -136,6 +144,8 @@ function UserTable<T extends BaseUser>({
     onSearchChange(filterName || filterEmail);
   };
 
+  const totalCols = columns.length + 4;
+
   return (
     <>
       {/* Filter Card */}
@@ -145,38 +155,25 @@ function UserTable<T extends BaseUser>({
           <div className="space-y-1.5">
             <label className="text-xs font-medium text-foreground">Nome</label>
             <Input
-              placeholder=""
               className="bg-background"
               value={filterName}
               onChange={(e) => setFilterName(e.target.value)}
-            />
-          </div>
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-foreground">CPF</label>
-            <Input
-              placeholder=""
-              className="bg-background"
-              value={filterCpf}
-              onChange={(e) => setFilterCpf(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleSearch()}
             />
           </div>
           <div className="space-y-1.5">
             <label className="text-xs font-medium text-foreground">Email</label>
             <Input
-              placeholder=""
               className="bg-background"
               value={filterEmail}
               onChange={(e) => setFilterEmail(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleSearch()}
             />
           </div>
         </div>
         <div className="flex justify-end gap-3">
-          <Button variant="outline" onClick={handleClearFilters}>
-            Limpar
-          </Button>
-          <Button onClick={handleSearch}>
-            Pesquisar
-          </Button>
+          <Button variant="outline" onClick={handleClearFilters}>Limpar</Button>
+          <Button onClick={handleSearch}>Pesquisar</Button>
         </div>
       </div>
 
@@ -212,67 +209,90 @@ function UserTable<T extends BaseUser>({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredData.map((item) => {
-                const status = statusConfig[item.status];
-                return (
-                  <TableRow key={item.id} className="group hover:bg-muted/20 transition-colors">
+              {loading ? (
+                Array.from({ length: SKELETON_ROWS }).map((_, i) => (
+                  <TableRow key={i}>
                     <TableCell>
                       <div className="flex items-center gap-3">
-                        <Avatar className="h-9 w-9 ring-1 ring-border">
-                          <AvatarFallback className="text-xs bg-primary/5 text-primary font-semibold">
-                            {getInitials(item.name)}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <p className="text-sm font-semibold text-foreground">{item.name}</p>
-                          <p className="text-xs text-muted-foreground">{item.email}</p>
+                        <div className="h-9 w-9 rounded-full bg-muted animate-pulse shrink-0" />
+                        <div className="space-y-1.5">
+                          <SkeletonCell className="h-3.5 w-28" />
+                          <SkeletonCell className="h-3 w-36" />
                         </div>
                       </div>
                     </TableCell>
                     {columns.map((col) => (
-                      <TableCell key={col.key}>{col.render(item)}</TableCell>
+                      <TableCell key={col.key}>
+                        <SkeletonCell className="h-4 w-20" />
+                      </TableCell>
                     ))}
-                    <TableCell>
-                      <Badge variant={status.variant}>{status.label}</Badge>
-                    </TableCell>
-                    <TableCell className="text-sm text-muted-foreground">
-                      {new Date(item.createdAt).toLocaleDateString("pt-BR")}
-                    </TableCell>
-                    <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="h-8 gap-1.5 text-xs"
-                          >
-                            <MoreHorizontal className="h-3.5 w-3.5" />
-                            Opções
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-40">
-                          <DropdownMenuItem onClick={() => onView?.(item)}>
-                            <Eye className="h-4 w-4 mr-2" />
-                            Ver perfil
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => onEdit?.(item)}>
-                            <Edit className="h-4 w-4 mr-2" />
-                            Editar
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem className="text-destructive" onClick={() => onDelete?.(item)}>
-                            <Trash2 className="h-4 w-4 mr-2" />
-                            Remover
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
+                    <TableCell><SkeletonCell className="h-5 w-14 rounded-full" /></TableCell>
+                    <TableCell><SkeletonCell className="h-4 w-20" /></TableCell>
+                    <TableCell><SkeletonCell className="h-8 w-20 rounded-md" /></TableCell>
                   </TableRow>
-                );
-              })}
-              {filteredData.length === 0 && (
+                ))
+              ) : paginatedData.length > 0 ? (
+                paginatedData.map((item) => {
+                  const status = statusConfig[item.status];
+                  const isInactive = item.status === "inactive";
+                  return (
+                    <TableRow key={item.id} className="group hover:bg-muted/20 transition-colors">
+                      <TableCell>
+                        <div className="flex items-center gap-3">
+                          <Avatar className="h-9 w-9 ring-1 ring-border">
+                            <AvatarFallback className="text-xs bg-primary/5 text-primary font-semibold">
+                              {getInitials(item.name)}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <p className="text-sm font-semibold text-foreground">{item.name}</p>
+                            <p className="text-xs text-muted-foreground">{item.email}</p>
+                          </div>
+                        </div>
+                      </TableCell>
+                      {columns.map((col) => (
+                        <TableCell key={col.key}>{col.render(item)}</TableCell>
+                      ))}
+                      <TableCell>
+                        <Badge variant={status.variant}>{status.label}</Badge>
+                      </TableCell>
+                      <TableCell className="text-sm text-muted-foreground">
+                        {new Date(item.createdAt).toLocaleDateString("pt-BR")}
+                      </TableCell>
+                      <TableCell>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="outline" size="sm" className="h-8 gap-1.5 text-xs">
+                              <MoreHorizontal className="h-3.5 w-3.5" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end" className="w-40">
+                            <DropdownMenuItem onClick={() => onView?.(item)}>
+                              <Eye className="h-4 w-4 mr-2" />
+                              Ver perfil
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => onEdit?.(item)}>
+                              <Edit className="h-4 w-4 mr-2" />
+                              Editar
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                              className="text-destructive focus:text-destructive"
+                              disabled={isInactive}
+                              onClick={() => !isInactive && onDelete?.(item)}
+                            >
+                              <Trash2 className="h-4 w-4 mr-2" />
+                              Remover
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })
+              ) : (
                 <TableRow>
-                  <TableCell colSpan={columns.length + 4} className="text-center py-16 text-muted-foreground">
+                  <TableCell colSpan={totalCols} className="text-center py-16 text-muted-foreground">
                     <div className="flex flex-col items-center gap-2">
                       <Search className="h-8 w-8 text-muted-foreground/40" />
                       <p className="font-medium">Nenhum resultado encontrado</p>
@@ -284,22 +304,15 @@ function UserTable<T extends BaseUser>({
             </TableBody>
           </Table>
         </div>
-        <div className="flex items-center justify-between px-5 py-3 border-t border-border bg-muted/10">
-          <p className="text-xs text-muted-foreground">
-            Mostrando <span className="font-semibold text-foreground">{filteredData.length}</span> de{" "}
-            <span className="font-semibold text-foreground">{data.length}</span>
-          </p>
-          <div className="flex items-center gap-1">
-            <Button variant="outline" size="icon" className="h-8 w-8" disabled>
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-            <Button size="sm" className="h-8 min-w-[32px] shadow-sm">1</Button>
-            <Button variant="outline" size="sm" className="h-8 min-w-[32px]">2</Button>
-            <Button variant="outline" size="icon" className="h-8 w-8">
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-          </div>
-        </div>
+
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          totalItems={filteredData.length}
+          pageSize={PAGE_SIZE}
+          onPageChange={setCurrentPage}
+          loading={loading}
+        />
       </div>
     </>
   );

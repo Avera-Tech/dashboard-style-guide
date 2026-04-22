@@ -12,6 +12,8 @@ export interface Staff {
   active: boolean;
   phone?: string | null;
   employeeLevel?: string | null;
+  emailVerified?: boolean;
+  lastLogin?: string | null;
   createdAt?: string;
   updatedAt?: string;
 }
