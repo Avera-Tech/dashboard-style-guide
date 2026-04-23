@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   GraduationCap,
   Plus,
@@ -15,24 +15,33 @@ import UserFormDialog from "@/modules/core/components/users/UserFormDialog";
 import UserProfileDialog from "@/modules/core/components/users/UserProfileDialog";
 import UserDeleteDialog from "@/modules/core/components/users/UserDeleteDialog";
 import { toast } from "@/hooks/use-toast";
+import UserCollection from "@/modules/core/api/users";
+import type { User as ApiUser } from "@/modules/core/types/user";
 
-interface User extends BaseUser {
+const api = new UserCollection();
+
+interface DisplayUser extends BaseUser {
   phone: string;
-  modalidade: string;
   nivel: string;
   ultimoCheckin: string;
+  apiData: ApiUser;
 }
 
-const MOCK_USERS: User[] = [
-  { id: "1", name: "Pedro Henrique Kevin Assunção", email: "pedro-assuncao86@grupoap.com.br", status: "active", createdAt: "2025-01-15", phone: "(62) 98759-1829", modalidade: "Tennis", nivel: "Intermediário", ultimoCheckin: "12/12/2023" },
-  { id: "2", name: "Ana Clara Silva", email: "ana.silva@email.com", status: "active", createdAt: "2025-02-01", phone: "(11) 99876-5432", modalidade: "Futevôlei", nivel: "Iniciante", ultimoCheckin: "05/02/2026" },
-  { id: "3", name: "Bruno Costa Mendes", email: "bruno.costa@email.com", status: "pending", createdAt: "2025-03-10", phone: "(21) 98765-4321", modalidade: "Tennis", nivel: "Avançado", ultimoCheckin: "01/02/2026" },
-  { id: "4", name: "Carla Oliveira Ramos", email: "carla.oliveira@email.com", status: "active", createdAt: "2025-01-22", phone: "(31) 97654-3210", modalidade: "Ambos", nivel: "Competitivo", ultimoCheckin: "07/02/2026" },
-  { id: "5", name: "Daniel Souza Lima", email: "daniel.souza@email.com", status: "inactive", createdAt: "2024-11-05", phone: "(41) 96543-2109", modalidade: "Futevôlei", nivel: "Intermediário", ultimoCheckin: "20/01/2026" },
-  { id: "6", name: "Eduarda Santos Alves", email: "eduarda.santos@email.com", status: "active", createdAt: "2024-12-18", phone: "(51) 95432-1098", modalidade: "Tennis", nivel: "Iniciante", ultimoCheckin: "06/02/2026" },
-];
+function mapApiUser(u: ApiUser): DisplayUser {
+  return {
+    id: String(u.id),
+    name: u.name,
+    email: u.email,
+    status: u.status ?? (u.active ? "active" : "inactive"),
+    createdAt: u.createdAt,
+    phone: u.phone ?? "—",
+    nivel: u.level?.name ?? "—",
+    ultimoCheckin: "—",
+    apiData: u,
+  };
+}
 
-const userColumns: Column<User>[] = [
+const userColumns: Column<DisplayUser>[] = [
   {
     key: "phone",
     label: "Telefone",
@@ -41,11 +50,12 @@ const userColumns: Column<User>[] = [
   {
     key: "nivel",
     label: "Nível",
-    render: (user) => (
-      <Badge variant="secondary" className="font-medium">
-        {user.nivel}
-      </Badge>
-    ),
+    render: (user) =>
+      user.nivel !== "—" ? (
+        <Badge variant="secondary" className="font-medium">{user.nivel}</Badge>
+      ) : (
+        <span className="text-sm text-muted-foreground">—</span>
+      ),
   },
   {
     key: "ultimoCheckin",
@@ -54,61 +64,111 @@ const userColumns: Column<User>[] = [
   },
 ];
 
-const userFilters: FilterConfig[] = [
-  {
-    key: "status",
-    label: "Status",
-    options: [
-      { label: "Ativo", value: "active" },
-      { label: "Inativo", value: "inactive" },
-      { label: "Pendente", value: "pending" },
-    ],
-  },
-  {
-    key: "nivel",
-    label: "Nível",
-    options: [
-      { label: "Iniciante", value: "Iniciante" },
-      { label: "Intermediário", value: "Intermediário" },
-      { label: "Avançado", value: "Avançado" },
-      { label: "Competitivo", value: "Competitivo" },
-    ],
-  },
-];
-
 const Users = () => {
+  const [users, setUsers] = useState<DisplayUser[]>([]);
+
+  const [loading, setLoading] = useState(true);
+  const [total, setTotal] = useState(0);
   const [search, setSearch] = useState("");
+  const [activeFilters, setActiveFilters] = useState<Record<string, string[]>>({});
+
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [profileDialogOpen, setProfileDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const [activeFilters, setActiveFilters] = useState<Record<string, string[]>>({});
-  const activeCount = MOCK_USERS.filter((u) => u.status === "active").length;
-  const pendingCount = MOCK_USERS.filter((u) => u.status === "pending").length;
+  const [selectedUser, setSelectedUser] = useState<DisplayUser | null>(null);
+  const [detailUser, setDetailUser] = useState<ApiUser | null>(null);
+  const [detailLoading, setDetailLoading] = useState(false);
 
-  const handleView = (user: User) => {
-    setSelectedUser(user);
-    setProfileDialogOpen(true);
+  const loadUsers = useCallback(async () => {
+    try {
+      setLoading(true);
+      const statusFilter = activeFilters.status?.[0];
+      const result = await api.list({
+        search: search || undefined,
+        status: statusFilter,
+        limit: 100,
+      });
+      setUsers((result.data as ApiUser[]).map(mapApiUser));
+      setTotal(result.meta.total);
+    } catch {
+      toast({ title: "Erro ao carregar alunos", variant: "destructive" });
+    } finally {
+      setLoading(false);
+    }
+  }, [search, activeFilters]);
+
+  useEffect(() => {
+    loadUsers();
+  }, [loadUsers]);
+
+
+  const activeCount = users.filter((u) => u.status === "active").length;
+  const pendingCount = users.filter((u) => u.status === "pending").length;
+
+  const userFilters: FilterConfig[] = [
+    {
+      key: "status",
+      label: "Status",
+      options: [
+        { label: "Ativo", value: "active" },
+        { label: "Inativo", value: "inactive" },
+        { label: "Pendente", value: "pending" },
+      ],
+    },
+  ];
+
+  const fetchDetail = async (id: number): Promise<ApiUser | null> => {
+    try {
+      setDetailLoading(true);
+      const res = await api.getById(id);
+      return res.data as ApiUser;
+    } catch {
+      toast({ title: "Erro ao carregar dados do aluno", variant: "destructive" });
+      return null;
+    } finally {
+      setDetailLoading(false);
+    }
   };
 
-  const handleEdit = (user: User) => {
+  const handleView = async (user: DisplayUser) => {
     setSelectedUser(user);
-    setEditDialogOpen(true);
+    const full = await fetchDetail(Number(user.id));
+    if (full) {
+      setDetailUser(full);
+      setProfileDialogOpen(true);
+    }
   };
 
-  const handleDelete = (user: User) => {
+  const handleEdit = async (user: DisplayUser) => {
+    setSelectedUser(user);
+    const full = await fetchDetail(Number(user.id));
+    if (full) {
+      setDetailUser(full);
+      setEditDialogOpen(true);
+    }
+  };
+
+  const handleDelete = (user: DisplayUser) => {
     setSelectedUser(user);
     setDeleteDialogOpen(true);
   };
 
-  const handleConfirmDelete = () => {
-    toast({
-      title: "Aluno removido",
-      description: `${selectedUser?.name} foi removido com sucesso.`,
-    });
-    setDeleteDialogOpen(false);
-    setSelectedUser(null);
+  const handleConfirmDelete = async () => {
+    if (!selectedUser) return;
+    try {
+      await api.deactivate(Number(selectedUser.id));
+      toast({
+        title: "Aluno removido",
+        description: `${selectedUser.name} foi removido com sucesso.`,
+      });
+      setDeleteDialogOpen(false);
+      setSelectedUser(null);
+      loadUsers();
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : undefined;
+      toast({ title: "Erro ao remover aluno", description: message, variant: "destructive" });
+    }
   };
 
   return (
@@ -119,7 +179,7 @@ const Users = () => {
             <div className="flex items-center gap-2">
               <h1 className="text-xl font-extrabold text-foreground tracking-tight">Alunos</h1>
               <Badge variant="secondary" className="text-[10px] font-bold">
-                {MOCK_USERS.length}
+                {total}
               </Badge>
             </div>
             <p className="text-sm text-muted-foreground mt-0.5">Gerencie os alunos do CT</p>
@@ -128,9 +188,28 @@ const Users = () => {
             <Plus className="h-4 w-4 mr-2" />
             Novo Aluno
           </Button>
-          <UserFormDialog open={dialogOpen} onOpenChange={setDialogOpen} />
-          <UserFormDialog open={editDialogOpen} onOpenChange={setEditDialogOpen} />
-          <UserProfileDialog open={profileDialogOpen} onOpenChange={setProfileDialogOpen} user={selectedUser} />
+          <UserFormDialog
+            open={dialogOpen}
+            onOpenChange={setDialogOpen}
+            onSuccess={loadUsers}
+          />
+          <UserFormDialog
+            open={editDialogOpen}
+            onOpenChange={(open) => {
+              setEditDialogOpen(open);
+              if (!open) { setSelectedUser(null); setDetailUser(null); }
+            }}
+            user={detailUser ?? undefined}
+            onSuccess={loadUsers}
+          />
+          <UserProfileDialog
+            open={profileDialogOpen}
+            onOpenChange={(open) => {
+              setProfileDialogOpen(open);
+              if (!open) setDetailUser(null);
+            }}
+            user={detailUser}
+          />
           <UserDeleteDialog
             open={deleteDialogOpen}
             onOpenChange={setDeleteDialogOpen}
@@ -144,7 +223,7 @@ const Users = () => {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <StatCard
             label="Total de Alunos"
-            value={String(MOCK_USERS.length)}
+            value={String(total)}
             change="+12%"
             icon={GraduationCap}
             gradient="bg-gradient-to-br from-primary to-primary/70"
@@ -164,7 +243,7 @@ const Users = () => {
         </div>
 
         <UserTable
-          data={MOCK_USERS}
+          data={users}
           columns={userColumns}
           search={search}
           onSearchChange={setSearch}
@@ -177,6 +256,7 @@ const Users = () => {
           onView={handleView}
           onEdit={handleEdit}
           onDelete={handleDelete}
+          loading={loading}
         />
       </div>
     </DashboardLayout>

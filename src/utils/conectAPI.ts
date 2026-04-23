@@ -16,5 +16,11 @@ export default async function conectAPI(url: string, method: string, body?: any)
         return;
     }
 
-    return response.json();
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(data?.message ?? `Erro ${response.status}`);
+    }
+
+    return data;
 }
