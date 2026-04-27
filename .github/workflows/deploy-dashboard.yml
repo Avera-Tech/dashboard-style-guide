@@ -1,12 +1,13 @@
-name: Deploy Dashboard
+name: Deploy Dashboard (production)
 
 on:
   push:
-    branches: [main]
+    branches: [release]
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment: production
 
     steps:
       - name: Checkout
@@ -19,7 +20,7 @@ jobs:
 
       - name: Criar .env de build
         run: |
-          echo "VITE_API_URL=${{ vars.VITE_API_URL }}" > .env.production
+          echo "VITE_API_URL=${{ secrets.VITE_API_URL }}" > .env.production
 
       - name: Build
         run: |
@@ -33,6 +34,6 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
 
-      - name: Enviar build para aaPanel
+      - name: Enviar build para VPS
         run: |
-          rsync -avz --delete dist/ root@${{ secrets.VPS_HOST }}:/www/wwwroot/dashboard/
+          rsync -avz --delete dist/ root@${{ secrets.VPS_HOST }}:/www/wwwroot/dashboard-prod/
