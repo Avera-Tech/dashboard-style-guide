@@ -30,10 +30,10 @@ jobs:
       - name: Setup SSH
         run: |
           mkdir -p ~/.ssh
-          printf '%s' "${{ secrets.VPS_SSH_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
+          echo "${{ secrets.VPS_SSH_KEY }}" > ~/.ssh/github_deploy
+          chmod 600 ~/.ssh/github_deploy
           ssh-keyscan -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
 
       - name: Enviar build para VPS
         run: |
-          rsync -avz --delete dist/ root@${{ secrets.VPS_HOST }}:/www/wwwroot/dashboard-prod/
+          rsync -avz --delete -e "ssh -i ~/.ssh/github_deploy" dist/ root@${{ secrets.VPS_HOST }}:/www/wwwroot/dashboard-prod/
