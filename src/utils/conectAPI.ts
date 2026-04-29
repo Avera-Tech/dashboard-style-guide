@@ -1,7 +1,8 @@
 export default async function conectAPI(url: string, method: string, body?: any) {
     const token = localStorage.getItem("token");
 
-    const response = await fetch(`http://localhost:3000/api${url}`, {
+    const base = import.meta.env.VITE_API_URL ?? 'http://localhost:3000';
+    const response = await fetch(`${base}/api${url}`, {
         method,
         body: body ? JSON.stringify(body) : undefined,
         headers: {

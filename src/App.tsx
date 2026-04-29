@@ -2,7 +2,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import PrivateRoute from "@/components/PrivateRoute";
 // Core pages
 import Index from "./modules/core/pages/Index";
 import Login from "./modules/core/pages/Login";
@@ -64,50 +65,56 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Index />} />
+          {/* Public routes */}
+          <Route path="/" element={<Navigate to="/login" replace />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/m/login" element={<MobileLogin />} />
-          <Route path="/m/home" element={<MobileHome />} />
-          <Route path="/m/agendar" element={<MobileAgendar />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/users" element={<Users />} />
-          <Route path="/staff" element={<StaffPage />} />
-          <Route path="/produtos" element={<Produtos />} />
-          <Route path="/turmas" element={<Turmas />} />
-          <Route path="/aulas" element={<Aulas />} />
-          <Route path="/financeiro" element={<Financeiro />} />
-          <Route path="/financeiro/receber" element={<ContasReceber />} />
-          <Route path="/financeiro/pagar" element={<ContasPagar />} />
-          <Route path="/crm" element={<CRM />} />
-          <Route path="/lista-espera" element={<ListaEspera />} />
-          <Route path="/vendas" element={<Vendas />} />
-          <Route path="/integracoes" element={<Integracoes />} />
-          <Route path="/anuncios" element={<Anuncios />} />
-          <Route path="/configuracoes" element={<Configuracoes />} />
-          <Route path="/cadastros" element={<Cadastros />} />
           <Route path="/verify" element={<VerifyAccount />} />
-          <Route path="/email-templates" element={<EmailTemplates />} />
-          <Route path="/clinica" element={<ClinicDashboard />} />
-          <Route path="/clinica/agenda" element={<ClinicAgenda />} />
-          <Route path="/clinica/pacientes" element={<ClinicPacientes />} />
-          <Route path="/clinica/medicos" element={<ClinicMedicos />} />
-          <Route path="/clinica/estoque" element={<ClinicEstoque />} />
-          <Route path="/clinica/escala" element={<ClinicEscala />} />
-          <Route path="/clinica/confirmacoes" element={<ClinicConfirmacoes />} />
-          <Route path="/clinica/painel-chamada" element={<ClinicPainelChamada />} />
-          <Route path="/clinica/nps" element={<ClinicNps />} />
-          <Route path="/clinica/convenios" element={<ClinicConvenios />} />
-          <Route path="/clinica/dre" element={<ClinicDre />} />
-          <Route path="/clinica/repasse" element={<ClinicRepasse />} />
-          <Route path="/clinica/inadimplencia" element={<ClinicInadimplencia />} />
-          <Route path="/clinica/relatorios" element={<ClinicRelatorios />} />
-          <Route path="/clinica/logs" element={<ClinicLogs />} />
-          <Route path="/clinica/permissoes" element={<ClinicPermissoes />} />
-          <Route path="/clinica/backup" element={<ClinicBackup />} />
-          <Route path="/clinica/bi" element={<ClinicBi />} />
-          <Route path="/clinica/alertas" element={<ClinicAlertas />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+          <Route path="/m/login" element={<MobileLogin />} />
+
+          {/* Private routes */}
+          <Route element={<PrivateRoute />}>
+            <Route path="/dashboard" element={<Index />} />
+            <Route path="/users" element={<Users />} />
+            <Route path="/staff" element={<StaffPage />} />
+            <Route path="/produtos" element={<Produtos />} />
+            <Route path="/turmas" element={<Turmas />} />
+            <Route path="/aulas" element={<Aulas />} />
+            <Route path="/financeiro" element={<Financeiro />} />
+            <Route path="/financeiro/receber" element={<ContasReceber />} />
+            <Route path="/financeiro/pagar" element={<ContasPagar />} />
+            <Route path="/crm" element={<CRM />} />
+            <Route path="/lista-espera" element={<ListaEspera />} />
+            <Route path="/vendas" element={<Vendas />} />
+            <Route path="/integracoes" element={<Integracoes />} />
+            <Route path="/anuncios" element={<Anuncios />} />
+            <Route path="/configuracoes" element={<Configuracoes />} />
+            <Route path="/cadastros" element={<Cadastros />} />
+            <Route path="/email-templates" element={<EmailTemplates />} />
+            <Route path="/m/home" element={<MobileHome />} />
+            <Route path="/m/agendar" element={<MobileAgendar />} />
+            <Route path="/clinica" element={<ClinicDashboard />} />
+            <Route path="/clinica/agenda" element={<ClinicAgenda />} />
+            <Route path="/clinica/pacientes" element={<ClinicPacientes />} />
+            <Route path="/clinica/medicos" element={<ClinicMedicos />} />
+            <Route path="/clinica/estoque" element={<ClinicEstoque />} />
+            <Route path="/clinica/escala" element={<ClinicEscala />} />
+            <Route path="/clinica/confirmacoes" element={<ClinicConfirmacoes />} />
+            <Route path="/clinica/painel-chamada" element={<ClinicPainelChamada />} />
+            <Route path="/clinica/nps" element={<ClinicNps />} />
+            <Route path="/clinica/convenios" element={<ClinicConvenios />} />
+            <Route path="/clinica/dre" element={<ClinicDre />} />
+            <Route path="/clinica/repasse" element={<ClinicRepasse />} />
+            <Route path="/clinica/inadimplencia" element={<ClinicInadimplencia />} />
+            <Route path="/clinica/relatorios" element={<ClinicRelatorios />} />
+            <Route path="/clinica/logs" element={<ClinicLogs />} />
+            <Route path="/clinica/permissoes" element={<ClinicPermissoes />} />
+            <Route path="/clinica/backup" element={<ClinicBackup />} />
+            <Route path="/clinica/bi" element={<ClinicBi />} />
+            <Route path="/clinica/alertas" element={<ClinicAlertas />} />
+          </Route>
+
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

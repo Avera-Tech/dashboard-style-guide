@@ -155,7 +155,7 @@ const EmailTemplates = () => {
     <div className="min-h-screen bg-background">
       <div className="max-w-3xl mx-auto px-6 py-10">
         <div className="flex items-center gap-3 mb-8">
-          <Link to="/" className="text-muted-foreground hover:text-foreground transition-colors">
+          <Link to="/dashboard" className="text-muted-foreground hover:text-foreground transition-colors">
             <ArrowLeft className="h-5 w-5" />
           </Link>
           <div>

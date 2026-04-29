@@ -64,7 +64,7 @@ const fitNavGroups: NavGroup[] = [
     icon: LayoutDashboard,
     defaultOpen: true,
     items: [
-      { label: "Visão Geral", icon: LayoutDashboard, href: "/" },
+      { label: "Visão Geral", icon: LayoutDashboard, href: "/dashboard" },
       { label: "Produtos", icon: Package, href: "/produtos" },
       { label: "CRM", icon: MessageSquare, href: "/crm" },
       { label: "Vendas", icon: ShoppingCart, href: "/vendas" },
@@ -190,7 +190,7 @@ const SidebarGroup = ({ group }: { group: NavGroup }) => {
             <NavLink
               key={item.href}
               to={item.href}
-              end={item.href === "/financeiro" || item.href === "/clinica" || item.href === "/"}
+              end={item.href === "/financeiro" || item.href === "/clinica" || item.href === "/dashboard"}
               className={cn(
                 "w-full flex items-center gap-3 text-left px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 text-muted-foreground hover:text-foreground hover:bg-muted/60",
                 item.indent && "pl-9 text-xs"
