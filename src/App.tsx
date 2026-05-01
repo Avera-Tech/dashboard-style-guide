@@ -59,6 +59,23 @@ import MobileAgendar from "./modules/mobile/pages/MobileAgendar";
 
 const queryClient = new QueryClient();
 
+function RootRedirect() {
+  const clientId = localStorage.getItem("clientId");
+  if (clientId) return <Navigate to={`/${clientId}/login`} replace />;
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-background">
+      <div className="text-center space-y-2">
+        <h1 className="text-2xl font-bold text-foreground">Avera</h1>
+        <p className="text-muted-foreground text-sm">
+          Acesse pelo link da sua organização.<br />
+          Ex: <span className="font-mono text-foreground">dashboard.averafit.app/sua-empresa</span>
+        </p>
+      </div>
+    </div>
+  );
+}
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
@@ -66,7 +83,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Navigate to="/login" replace />} />
+          <Route path="/" element={<RootRedirect />} />
 
           {/* Todas as rotas sob /:clientId — ClientProvider persiste o slug no localStorage */}
           <Route path="/:clientId" element={<ClientProvider />}>
