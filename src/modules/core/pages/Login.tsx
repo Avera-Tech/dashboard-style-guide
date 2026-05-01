@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Eye, EyeOff, Mail, Lock } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import tennisCourt from "@/assets/tennis-court.jpg";
 import { toast } from "@/hooks/use-toast";
 
@@ -14,6 +14,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { clientId } = useParams<{ clientId: string }>();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,7 +45,8 @@ const Login = () => {
       }
 
       localStorage.setItem("token", data.token);
-      navigate("/dashboard");
+      if (clientId) localStorage.setItem("clientId", clientId);
+      navigate(clientId ? `/${clientId}/dashboard` : "/dashboard");
     } catch {
       toast({
         title: "Erro de conexão",

@@ -1,6 +1,7 @@
-import { Navigate, Outlet } from "react-router-dom";
+import { Navigate, Outlet, useParams } from "react-router-dom";
 
 export default function PrivateRoute() {
   const token = localStorage.getItem("token");
-  return token ? <Outlet /> : <Navigate to="/login" replace />;
+  const { clientId } = useParams<{ clientId: string }>();
+  return token ? <Outlet /> : <Navigate to={`/${clientId}/login`} replace />;
 }
