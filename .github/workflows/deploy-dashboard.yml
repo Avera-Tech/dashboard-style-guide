@@ -36,4 +36,4 @@ jobs:
 
       - name: Enviar build para VPS
         run: |
-          rsync -avz --delete -e "ssh -i ~/.ssh/github_deploy" dist/ root@${{ secrets.VPS_HOST }}:/www/wwwroot/dashboard-prod/
+          rsync -avz --delete --exclude='.user.ini' -e "ssh -i ~/.ssh/github_deploy" dist/ root@${{ secrets.VPS_HOST }}:/www/wwwroot/dashboard-prod/
