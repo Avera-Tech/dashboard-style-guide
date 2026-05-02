@@ -78,7 +78,7 @@ function getCached(clientId: string): TenantTheme | null {
 }
 
 async function fetchTenant(clientId: string): Promise<TenantTheme | null> {
-  const base = import.meta.env.VITE_API_URL ?? "http://localhost:3000";
+  const base = import.meta.env.VITE_TENANT_API_URL ?? "https://backend.averatech.com.br";
   const res = await fetch(`${base}/api/public/tenant/${clientId}`);
   const data = await res.json();
   if (!data.found) return null;
