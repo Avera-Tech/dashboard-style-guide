@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { Outlet, useParams } from "react-router-dom";
 import NotFound from "@/modules/core/pages/NotFound";
 
@@ -27,9 +27,9 @@ const ClientContext = createContext<ClientContextType>({ clientId: "", tenant: n
 
 // Converte hex (#RRGGBB) para o formato HSL do Tailwind: "H S% L%"
 function hexToHsl(hex: string): string {
-  const r = parseInt(hex.slice(1, 3), 16) / 255;
-  const g = parseInt(hex.slice(3, 5), 16) / 255;
-  const b = parseInt(hex.slice(5, 7), 16) / 255;
+  const r = Number.parseInt(hex.slice(1, 3), 16) / 255;
+  const g = Number.parseInt(hex.slice(3, 5), 16) / 255;
+  const b = Number.parseInt(hex.slice(5, 7), 16) / 255;
 
   const max = Math.max(r, g, b);
   const min = Math.min(r, g, b);
@@ -78,20 +78,24 @@ function getCached(clientId: string): TenantTheme | null {
 }
 
 async function fetchTenant(clientId: string): Promise<TenantTheme | null> {
-  const base = import.meta.env.VITE_TENANT_API_URL ?? "https://backend.averatech.com.br";
-  const res = await fetch(`${base}/api/public/tenant/${clientId}`);
-  const data = await res.json();
-  if (!data.success || !data.tenant) return null;
-  const t = data.tenant;
+  const validationBase = import.meta.env.VITE_TENANT_API_URL ?? "https://backend.averatech.com.br";
+  const validationRes = await fetch(`${validationBase}/api/public/tenant/${clientId}`);
+  const validationData = await validationRes.json();
+  if (!validationData.success || !validationData.tenant) return null;
+
+  const themeBase = import.meta.env.VITE_API_URL ?? "http://localhost:3000";
+  const themeRes = await fetch(`${themeBase}/api/public/tenant/${clientId}`);
+  const themeData = themeRes.ok ? await themeRes.json() : {};
+
   return {
-    name:            t.company_name,
-    primaryColor:    t.primaryColor    ?? "#6366f1",
-    secondaryColor:  t.secondaryColor  ?? "#8b5cf6",
-    accentColor:     t.accentColor     ?? "#06b6d4",
-    backgroundColor: t.backgroundColor ?? "#ffffff",
-    textColor:       t.textColor       ?? "#0f172a",
-    logo:            t.logo            ?? null,
-    favicon:         t.favicon         ?? null,
+    name:            validationData.tenant.company_name,
+    primaryColor:    themeData.primaryColor    ?? "#6366f1",
+    secondaryColor:  themeData.secondaryColor  ?? "#8b5cf6",
+    accentColor:     themeData.accentColor     ?? "#06b6d4",
+    backgroundColor: themeData.backgroundColor ?? "#ffffff",
+    textColor:       themeData.textColor       ?? "#0f172a",
+    logo:            themeData.logo            ?? null,
+    favicon:         themeData.favicon         ?? null,
   };
 }
 
@@ -139,8 +143,10 @@ export function ClientProvider() {
     </div>
   );
 
+  const contextValue = useMemo(() => ({ clientId, tenant }), [clientId, tenant]);
+
   return (
-    <ClientContext.Provider value={{ clientId, tenant }}>
+    <ClientContext.Provider value={contextValue}>
       <Outlet />
     </ClientContext.Provider>
   );
