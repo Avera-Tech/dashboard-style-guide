@@ -41,7 +41,8 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { NavLink } from "@/components/NavLink";
 import { cn } from "@/lib/utils";
 import { companyConfig } from "@/modules/core/data/company-config";
-import logo from "@/assets/logo.svg";
+import { useTenant } from "@/contexts/ClientContext";
+import averaLogo from "@/assets/logo.svg";
 
 interface NavItem {
   label: string;
@@ -212,6 +213,10 @@ interface DashboardLayoutProps {
 }
 
 const DashboardLayout = ({ children }: DashboardLayoutProps) => {
+  const tenant = useTenant();
+  const logoSrc = tenant?.logo ?? averaLogo;
+  const companyName = tenant?.name ?? companyConfig.companyName;
+
   return (
     <div className="min-h-screen bg-background">
       <div className="flex">
@@ -219,7 +224,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         <aside className="hidden lg:flex w-64 border-r border-border bg-card/50 backdrop-blur-sm flex-col min-h-screen sticky top-0">
           <div className="p-6 border-b border-border">
             <div className="flex items-center justify-center">
-              <img src={logo} alt={companyConfig.companyName} className="h-12 w-auto" />
+              <img src={logoSrc} alt={companyName} className="h-12 w-auto" />
             </div>
           </div>
 
