@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Eye, EyeOff, Mail, Lock } from "lucide-react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import tennisCourt from "@/assets/tennis-court.jpg";
 import { toast } from "@/hooks/use-toast";
 
@@ -15,6 +15,35 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { clientId } = useParams<{ clientId: string }>();
+  const [searchParams] = useSearchParams();
+
+  const base = import.meta.env.VITE_API_URL ?? 'http://localhost:3000';
+
+  useEffect(() => {
+    const masterToken = searchParams.get("master_token");
+    if (!masterToken || !clientId) return;
+
+    window.history.replaceState({}, "", window.location.pathname);
+    setLoading(true);
+
+    fetch(`${base}/api/auth/master-access`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ master_token: masterToken, clientId }),
+    })
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.success && data.token) {
+          localStorage.setItem("token", data.token);
+          localStorage.setItem("clientId", clientId);
+          navigate(`/${clientId}/dashboard`, { replace: true });
+        } else {
+          toast({ title: "Acesso master inválido", description: data.error, variant: "destructive" });
+        }
+      })
+      .catch(() => toast({ title: "Erro ao validar acesso master", variant: "destructive" }))
+      .finally(() => setLoading(false));
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,10 +55,12 @@ const Login = () => {
 
     setLoading(true);
     try {
-      const base = import.meta.env.VITE_API_URL ?? 'http://localhost:3000';
       const response = await fetch(`${base}/api/auth/login`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "X-Client-Id": clientId ?? "",
+        },
         body: JSON.stringify({ email, password }),
       });
 
