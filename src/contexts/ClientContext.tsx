@@ -78,26 +78,21 @@ function getCached(clientId: string): TenantTheme | null {
 }
 
 async function fetchTenant(clientId: string): Promise<TenantTheme | null> {
-  // 1. Valida se o tenant existe na plataforma
-  const tenantBase = import.meta.env.VITE_TENANT_API_URL ?? "https://backend.averatech.com.br";
-  const tenantRes = await fetch(`${tenantBase}/api/public/tenant/${clientId}`);
-  const tenantData = await tenantRes.json();
-  if (!tenantData.success || !tenantData.tenant) return null;
-
-  // 2. Busca o tema no backend do tenant
-  const themeBase = import.meta.env.VITE_API_URL ?? "http://localhost:3000";
-  const themeRes = await fetch(`${themeBase}/api/public/tenant/${clientId}`);
-  const themeData = themeRes.ok ? await themeRes.json() : {};
+  const base = import.meta.env.VITE_API_URL ?? "http://localhost:3000";
+  const res  = await fetch(`${base}/api/public/tenant/${clientId}`);
+  if (!res.ok) return null;
+  const data = await res.json();
+  if (!data.found) return null;
 
   return {
-    name:            tenantData.tenant.company_name,
-    primaryColor:    themeData.primaryColor    ?? "#6366f1",
-    secondaryColor:  themeData.secondaryColor  ?? "#8b5cf6",
-    accentColor:     themeData.accentColor     ?? "#06b6d4",
-    backgroundColor: themeData.backgroundColor ?? "#ffffff",
-    textColor:       themeData.textColor       ?? "#0f172a",
-    logo:            themeData.logo            ?? null,
-    favicon:         themeData.favicon         ?? null,
+    name:            data.name            ?? clientId,
+    primaryColor:    data.primaryColor    ?? "#6366f1",
+    secondaryColor:  data.secondaryColor  ?? "#8b5cf6",
+    accentColor:     data.accentColor     ?? "#06b6d4",
+    backgroundColor: data.backgroundColor ?? "#ffffff",
+    textColor:       data.textColor       ?? "#0f172a",
+    logo:            data.logo            ?? null,
+    favicon:         data.favicon         ?? null,
   };
 }
 
