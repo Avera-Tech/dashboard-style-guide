@@ -78,17 +78,19 @@ function getCached(clientId: string): TenantTheme | null {
 }
 
 async function fetchTenant(clientId: string): Promise<TenantTheme | null> {
-  const validationBase = import.meta.env.VITE_TENANT_API_URL ?? "https://backend.averatech.com.br";
-  const validationRes = await fetch(`${validationBase}/api/public/tenant/${clientId}`);
-  const validationData = await validationRes.json();
-  if (!validationData.success || !validationData.tenant) return null;
+  // 1. Valida se o tenant existe na plataforma
+  const tenantBase = import.meta.env.VITE_TENANT_API_URL ?? "https://backend.averatech.com.br";
+  const tenantRes = await fetch(`${tenantBase}/api/public/tenant/${clientId}`);
+  const tenantData = await tenantRes.json();
+  if (!tenantData.success || !tenantData.tenant) return null;
 
+  // 2. Busca o tema no backend do tenant
   const themeBase = import.meta.env.VITE_API_URL ?? "http://localhost:3000";
   const themeRes = await fetch(`${themeBase}/api/public/tenant/${clientId}`);
   const themeData = themeRes.ok ? await themeRes.json() : {};
 
   return {
-    name:            validationData.tenant.company_name,
+    name:            tenantData.tenant.company_name,
     primaryColor:    themeData.primaryColor    ?? "#6366f1",
     secondaryColor:  themeData.secondaryColor  ?? "#8b5cf6",
     accentColor:     themeData.accentColor     ?? "#06b6d4",
