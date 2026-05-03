@@ -81,16 +81,17 @@ async function fetchTenant(clientId: string): Promise<TenantTheme | null> {
   const base = import.meta.env.VITE_TENANT_API_URL ?? "https://backend.averatech.com.br";
   const res = await fetch(`${base}/api/public/tenant/${clientId}`);
   const data = await res.json();
-  if (!data.found) return null;
+  if (!data.success || !data.tenant) return null;
+  const t = data.tenant;
   return {
-    name:            data.name,
-    primaryColor:    data.primaryColor,
-    secondaryColor:  data.secondaryColor,
-    accentColor:     data.accentColor,
-    backgroundColor: data.backgroundColor,
-    textColor:       data.textColor,
-    logo:            data.logo,
-    favicon:         data.favicon,
+    name:            t.company_name,
+    primaryColor:    t.primaryColor    ?? "#6366f1",
+    secondaryColor:  t.secondaryColor  ?? "#8b5cf6",
+    accentColor:     t.accentColor     ?? "#06b6d4",
+    backgroundColor: t.backgroundColor ?? "#ffffff",
+    textColor:       t.textColor       ?? "#0f172a",
+    logo:            t.logo            ?? null,
+    favicon:         t.favicon         ?? null,
   };
 }
 
