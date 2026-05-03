@@ -4,7 +4,8 @@
       "Bash(Get-ChildItem -Path . -Recurse -Force)",
       "Bash(Select-Object -First 50)",
       "Bash(Format-Table -AutoSize)",
-      "Bash(xargs grep *)"
+      "Bash(xargs grep *)",
+      "Bash(git revert *)"
     ]
   }
 }
