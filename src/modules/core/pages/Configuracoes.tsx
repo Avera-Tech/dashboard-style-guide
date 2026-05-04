@@ -11,6 +11,8 @@ import {
   Save,
   Palette,
   Image,
+  Upload,
+  X,
 } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
 import DashboardLayout from "@/modules/core/components/dashboard/DashboardLayout";
@@ -115,9 +117,11 @@ const Configuracoes = () => {
   const defaultTab = searchParams.get("tab") ?? "empresa";
 
   // ── Theme state ────────────────────────────────────
-  const [themeForm,    setThemeForm]    = useState<ThemeForm>(DEFAULT_THEME);
-  const [themeLoading, setThemeLoading] = useState(false);
-  const [themeSaving,  setThemeSaving]  = useState(false);
+  const [themeForm,      setThemeForm]      = useState<ThemeForm>(DEFAULT_THEME);
+  const [themeLoading,   setThemeLoading]   = useState(false);
+  const [themeSaving,    setThemeSaving]    = useState(false);
+  const [uploadingLogo,  setUploadingLogo]  = useState(false);
+  const [uploadingFav,   setUploadingFav]   = useState(false);
 
   useEffect(() => {
     setThemeLoading(true);
@@ -140,6 +144,31 @@ const Configuracoes = () => {
       .catch(() => {/* mantém defaults */})
       .finally(() => setThemeLoading(false));
   }, []);
+
+  const uploadImage = async (field: "logo" | "favicon", file: File) => {
+    const setUploading = field === "logo" ? setUploadingLogo : setUploadingFav;
+    setUploading(true);
+    try {
+      const form = new FormData();
+      form.append(field, file);
+      const res  = await fetch(`${BASE}/api/theme/upload/${field}`, {
+        method:  "POST",
+        headers: authHeaders(),
+        body:    form,
+      });
+      const data = await res.json();
+      if (data.success) {
+        setThemeForm((f) => ({ ...f, [field]: data.url }));
+        toast({ title: `${field === "logo" ? "Logo" : "Favicon"} enviado!` });
+      } else {
+        toast({ title: "Erro no upload", description: data.error, variant: "destructive" });
+      }
+    } catch {
+      toast({ title: "Erro de conexão no upload", variant: "destructive" });
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const saveTheme = async () => {
     setThemeSaving(true);
@@ -426,36 +455,61 @@ const Configuracoes = () => {
                     <Image className="h-5 w-5 text-primary" />
                     Logotipo e Favicon
                   </CardTitle>
-                  <CardDescription>URLs públicas das imagens do seu sistema</CardDescription>
+                  <CardDescription>PNG, SVG ou ICO — máximo 2 MB</CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label>URL do Logo</Label>
-                      <Input
-                        value={themeForm.logo}
-                        onChange={(e) => setThemeForm((f) => ({ ...f, logo: e.target.value }))}
-                        placeholder="https://sua-empresa.com/logo.png"
-                      />
-                      {themeForm.logo && (
-                        <div className="rounded-lg border border-border bg-muted/30 p-3 flex items-center justify-center h-20">
-                          <img src={themeForm.logo} alt="Logo" className="h-full w-auto object-contain" onError={(e) => (e.currentTarget.style.display = "none")} />
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {(
+                      [
+                        { field: "logo"    as const, label: "Logo",    uploading: uploadingLogo, hint: "Recomendado: 200×60 px" },
+                        { field: "favicon" as const, label: "Favicon", uploading: uploadingFav,  hint: "Recomendado: 32×32 px"  },
+                      ]
+                    ).map(({ field, label, uploading, hint }) => (
+                      <div key={field} className="space-y-3">
+                        <Label>{label}</Label>
+                        <label
+                          className={`flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-border bg-muted/30 h-32 cursor-pointer transition-colors hover:border-primary/50 hover:bg-muted/50 ${uploading ? "opacity-60 pointer-events-none" : ""}`}
+                        >
+                          {uploading ? (
+                            <div className="h-5 w-5 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+                          ) : themeForm[field] ? (
+                            <img
+                              src={themeForm[field]}
+                              alt={label}
+                              className={field === "logo" ? "h-14 w-auto object-contain" : "h-8 w-8 object-contain"}
+                              onError={(e) => (e.currentTarget.style.display = "none")}
+                            />
+                          ) : (
+                            <>
+                              <Upload className="h-6 w-6 text-muted-foreground" />
+                              <span className="text-xs text-muted-foreground">Clique para escolher arquivo</span>
+                            </>
+                          )}
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) uploadImage(field, file);
+                              e.target.value = "";
+                            }}
+                          />
+                        </label>
+                        <div className="flex items-center justify-between">
+                          <p className="text-[11px] text-muted-foreground">{hint}</p>
+                          {themeForm[field] && (
+                            <button
+                              type="button"
+                              onClick={() => setThemeForm((f) => ({ ...f, [field]: "" }))}
+                              className="flex items-center gap-1 text-[11px] text-destructive hover:underline"
+                            >
+                              <X className="h-3 w-3" /> Remover
+                            </button>
+                          )}
                         </div>
-                      )}
-                    </div>
-                    <div className="space-y-2">
-                      <Label>URL do Favicon</Label>
-                      <Input
-                        value={themeForm.favicon}
-                        onChange={(e) => setThemeForm((f) => ({ ...f, favicon: e.target.value }))}
-                        placeholder="https://sua-empresa.com/favicon.ico"
-                      />
-                      {themeForm.favicon && (
-                        <div className="rounded-lg border border-border bg-muted/30 p-3 flex items-center justify-center h-20">
-                          <img src={themeForm.favicon} alt="Favicon" className="h-8 w-8 object-contain" onError={(e) => (e.currentTarget.style.display = "none")} />
-                        </div>
-                      )}
-                    </div>
+                      </div>
+                    ))}
                   </div>
                 </CardContent>
               </Card>
