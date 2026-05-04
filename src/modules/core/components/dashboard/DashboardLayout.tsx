@@ -20,7 +20,6 @@ import {
   CalendarCheck,
   ListOrdered,
   Plug,
-  FileSearch,
   ChevronDown,
   ShoppingCart,
   Megaphone,
@@ -42,6 +41,7 @@ import { NavLink } from "@/components/NavLink";
 import { cn } from "@/lib/utils";
 import { companyConfig } from "@/modules/core/data/company-config";
 import { useTenant } from "@/contexts/ClientContext";
+import { useCurrentUser, getInitials } from "@/hooks/use-current-user";
 import averaLogo from "@/assets/logo.svg";
 
 interface NavItem {
@@ -165,12 +165,13 @@ const bothNavGroups: NavGroup[] = [
   },
 ];
 
-const navGroups: NavGroup[] =
-  companyConfig.companyType === "clinic"
-    ? clinicNavGroups
-    : companyConfig.companyType === "fit"
-      ? fitNavGroups
-      : bothNavGroups;
+function resolveNavGroups(): NavGroup[] {
+  if (companyConfig.companyType === "clinic") return clinicNavGroups;
+  if (companyConfig.companyType === "fit") return fitNavGroups;
+  return bothNavGroups;
+}
+
+const navGroups: NavGroup[] = resolveNavGroups();
 
 const SidebarGroup = ({ group }: { group: NavGroup }) => {
   const [open, setOpen] = useState(group.defaultOpen ?? true);
@@ -214,6 +215,7 @@ interface DashboardLayoutProps {
 
 const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const tenant = useTenant();
+  const currentUser = useCurrentUser();
   const logoSrc = tenant?.logo ?? averaLogo;
   const companyName = tenant?.name ?? companyConfig.companyName;
 
@@ -237,11 +239,13 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
           <div className="p-4 m-3 mb-4 rounded-xl bg-muted/40 border border-border">
             <div className="flex items-center gap-3">
               <Avatar className="h-9 w-9 ring-2 ring-primary/20">
-                <AvatarFallback className="text-xs bg-primary/10 text-primary font-bold">AS</AvatarFallback>
+                <AvatarFallback className="text-xs bg-primary/10 text-primary font-bold">
+                  {currentUser ? getInitials(currentUser.name) : "?"}
+                </AvatarFallback>
               </Avatar>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-foreground truncate">Ana Silva</p>
-                <p className="text-[11px] text-muted-foreground truncate">Administradora</p>
+                <p className="text-sm font-semibold text-foreground truncate">{currentUser?.name ?? "—"}</p>
+                <p className="text-[11px] text-muted-foreground truncate">{currentUser?.role ?? currentUser?.email ?? "—"}</p>
               </div>
               <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
                 <LogOut className="h-4 w-4" />

@@ -36,6 +36,7 @@ const Login = () => {
         if (data.success && data.token) {
           localStorage.setItem("token", data.token);
           localStorage.setItem("clientId", clientId);
+          localStorage.setItem("user", JSON.stringify({ name: "Avera", email: "master@avera.tech", role: "Master" }));
           navigate(`/${clientId}/dashboard`, { replace: true });
         } else {
           toast({ title: "Acesso master inválido", description: data.error, variant: "destructive" });
@@ -77,6 +78,7 @@ const Login = () => {
 
       localStorage.setItem("token", data.token);
       if (clientId) localStorage.setItem("clientId", clientId);
+      if (data.staff) localStorage.setItem("user", JSON.stringify(data.staff));
       navigate(clientId ? `/${clientId}/dashboard` : "/dashboard");
     } catch {
       toast({
