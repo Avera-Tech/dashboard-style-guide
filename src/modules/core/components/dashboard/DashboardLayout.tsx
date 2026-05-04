@@ -190,37 +190,27 @@ const SidebarGroup = ({ group, clientId }: { group: NavGroup; clientId: string }
       </button>
       {open && (
         <div className="space-y-0.5">
-          {group.items.map((item) =>
-            item.status === "dev" ? (
-              <div
-                key={item.href}
-                className={cn(
-                  "w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium opacity-40 cursor-not-allowed select-none text-muted-foreground",
-                  item.indent && "pl-9 text-xs"
-                )}
-              >
-                <item.icon className="h-4 w-4 shrink-0" />
-                <span className="flex-1">{item.label}</span>
+          {group.items.map((item) => (
+            <NavLink
+              key={item.href}
+              to={`/${clientId}${item.href}`}
+              end={item.href === "/financeiro" || item.href === "/clinica" || item.href === "/dashboard"}
+              className={cn(
+                "w-full flex items-center gap-3 text-left px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 text-muted-foreground hover:text-foreground hover:bg-muted/60",
+                item.indent && "pl-9 text-xs",
+                item.status === "dev" && "opacity-40"
+              )}
+              activeClassName="bg-primary text-primary-foreground shadow-md shadow-primary/25 hover:bg-primary hover:text-primary-foreground"
+            >
+              <item.icon className="h-4 w-4 shrink-0" />
+              <span className="flex-1">{item.label}</span>
+              {item.status === "dev" && (
                 <span className="text-[9px] font-bold uppercase tracking-wider bg-orange-500/20 text-orange-400 px-1.5 py-0.5 rounded">
                   dev
                 </span>
-              </div>
-            ) : (
-              <NavLink
-                key={item.href}
-                to={`/${clientId}${item.href}`}
-                end={item.href === "/financeiro" || item.href === "/clinica" || item.href === "/dashboard"}
-                className={cn(
-                  "w-full flex items-center gap-3 text-left px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 text-muted-foreground hover:text-foreground hover:bg-muted/60",
-                  item.indent && "pl-9 text-xs"
-                )}
-                activeClassName="bg-primary text-primary-foreground shadow-md shadow-primary/25 hover:bg-primary hover:text-primary-foreground"
-              >
-                <item.icon className="h-4 w-4 shrink-0" />
-                {item.label}
-              </NavLink>
-            )
-          )}
+              )}
+            </NavLink>
+          ))}
         </div>
       )}
     </div>
