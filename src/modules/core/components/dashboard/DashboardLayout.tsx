@@ -42,7 +42,7 @@ import { cn } from "@/lib/utils";
 import { companyConfig } from "@/modules/core/data/company-config";
 import { useTenant } from "@/contexts/ClientContext";
 import { useCurrentUser, getInitials } from "@/hooks/use-current-user";
-import averaLogo from "@/assets/logo.svg";
+import averaLogo from "@/assets/avera-logo.png";
 
 interface NavItem {
   label: string;
