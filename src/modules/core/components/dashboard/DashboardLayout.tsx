@@ -40,7 +40,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { NavLink } from "@/components/NavLink";
 import { cn } from "@/lib/utils";
 import { companyConfig } from "@/modules/core/data/company-config";
-import { useTenant } from "@/contexts/ClientContext";
+import { useTenant, useClientId } from "@/contexts/ClientContext";
 import { useCurrentUser, getInitials } from "@/hooks/use-current-user";
 import ThemeSetupModal from "@/modules/core/components/dashboard/ThemeSetupModal";
 import averaLogo from "@/assets/avera-logo.png";
@@ -174,7 +174,7 @@ function resolveNavGroups(): NavGroup[] {
 
 const navGroups: NavGroup[] = resolveNavGroups();
 
-const SidebarGroup = ({ group }: { group: NavGroup }) => {
+const SidebarGroup = ({ group, clientId }: { group: NavGroup; clientId: string }) => {
   const [open, setOpen] = useState(group.defaultOpen ?? true);
 
   return (
@@ -192,7 +192,7 @@ const SidebarGroup = ({ group }: { group: NavGroup }) => {
           {group.items.map((item) => (
             <NavLink
               key={item.href}
-              to={item.href}
+              to={`/${clientId}${item.href}`}
               end={item.href === "/financeiro" || item.href === "/clinica" || item.href === "/dashboard"}
               className={cn(
                 "w-full flex items-center gap-3 text-left px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 text-muted-foreground hover:text-foreground hover:bg-muted/60",
@@ -216,6 +216,7 @@ interface DashboardLayoutProps {
 
 const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const tenant = useTenant();
+  const clientId = useClientId();
   const currentUser = useCurrentUser();
   const [themeModalDismissed, setThemeModalDismissed] = useState(false);
   const logoSrc = tenant?.logo ?? averaLogo;
@@ -236,7 +237,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
 
           <nav className="flex-1 p-3 space-y-3 overflow-y-auto">
             {navGroups.map((group) => (
-              <SidebarGroup key={group.label} group={group} />
+              <SidebarGroup key={group.label} group={group} clientId={clientId} />
             ))}
           </nav>
 
