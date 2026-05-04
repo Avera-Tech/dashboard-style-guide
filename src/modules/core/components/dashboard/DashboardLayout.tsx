@@ -50,6 +50,7 @@ interface NavItem {
   icon: typeof LayoutDashboard;
   href: string;
   indent?: boolean;
+  status?: "dev"; // remove this field to mark the item as ready/released
 }
 
 interface NavGroup {
@@ -66,17 +67,17 @@ const fitNavGroups: NavGroup[] = [
     icon: LayoutDashboard,
     defaultOpen: true,
     items: [
-      { label: "Visão Geral", icon: LayoutDashboard, href: "/dashboard" },
-      { label: "Produtos", icon: Package, href: "/produtos" },
-      { label: "CRM", icon: MessageSquare, href: "/crm" },
-      { label: "Vendas", icon: ShoppingCart, href: "/vendas" },
-      { label: "Anúncios", icon: Megaphone, href: "/anuncios" },
-      { label: "Financeiro", icon: DollarSign, href: "/financeiro" },
-      { label: "Contas a Receber", icon: ArrowDownCircle, href: "/financeiro/receber", indent: true },
-      { label: "Contas a Pagar", icon: ArrowUpCircle, href: "/financeiro/pagar", indent: true },
-      { label: "Relatórios", icon: BarChart3, href: "/relatorios" },
-      { label: "Cadastros", icon: ClipboardList, href: "/cadastros" },
-      { label: "Configurações", icon: Settings, href: "/configuracoes" },
+      { label: "Visão Geral",      icon: LayoutDashboard, href: "/dashboard" },
+      { label: "Produtos",         icon: Package,         href: "/produtos" },
+      { label: "CRM",              icon: MessageSquare,   href: "/crm",               status: "dev" },
+      { label: "Vendas",           icon: ShoppingCart,    href: "/vendas",             status: "dev" },
+      { label: "Anúncios",         icon: Megaphone,       href: "/anuncios",           status: "dev" },
+      { label: "Financeiro",       icon: DollarSign,      href: "/financeiro",         status: "dev" },
+      { label: "Contas a Receber", icon: ArrowDownCircle, href: "/financeiro/receber", status: "dev", indent: true },
+      { label: "Contas a Pagar",   icon: ArrowUpCircle,   href: "/financeiro/pagar",   status: "dev", indent: true },
+      { label: "Relatórios",       icon: BarChart3,       href: "/relatorios",         status: "dev" },
+      { label: "Cadastros",        icon: ClipboardList,   href: "/cadastros",          status: "dev" },
+      { label: "Configurações",    icon: Settings,        href: "/configuracoes",      status: "dev" },
     ],
   },
   {
@@ -84,13 +85,13 @@ const fitNavGroups: NavGroup[] = [
     icon: Dumbbell,
     defaultOpen: true,
     items: [
-      { label: "Alunos", icon: GraduationCap, href: "/users" },
-      { label: "Funcionários", icon: Briefcase, href: "/staff" },
-      { label: "Turmas", icon: Calendar, href: "/turmas" },
-      { label: "Aulas", icon: ClipboardList, href: "/aulas" },
-      { label: "Agendamento", icon: CalendarCheck, href: "/agendamento" },
-      { label: "Lista de Espera", icon: ListOrdered, href: "/lista-espera" },
-      { label: "Integrações", icon: Plug, href: "/integracoes" },
+      { label: "Alunos",        icon: GraduationCap, href: "/users" },
+      { label: "Funcionários",  icon: Briefcase,     href: "/staff",         status: "dev" },
+      { label: "Turmas",        icon: Calendar,      href: "/turmas",        status: "dev" },
+      { label: "Aulas",         icon: ClipboardList, href: "/aulas",         status: "dev" },
+      { label: "Agendamento",   icon: CalendarCheck, href: "/agendamento",   status: "dev" },
+      { label: "Lista de Espera", icon: ListOrdered, href: "/lista-espera",  status: "dev" },
+      { label: "Integrações",   icon: Plug,          href: "/integracoes",   status: "dev" },
     ],
   },
 ];
@@ -102,9 +103,9 @@ const clinicNavGroups: NavGroup[] = [
     defaultOpen: true,
     items: [
       { label: "Dashboard", icon: LayoutDashboard, href: "/clinica" },
-      { label: "Agenda", icon: CalendarCheck, href: "/clinica/agenda" },
-      { label: "Pacientes", icon: UsersIcon, href: "/clinica/pacientes" },
-      { label: "Médicos", icon: Stethoscope, href: "/clinica/medicos" },
+      { label: "Agenda",    icon: CalendarCheck,   href: "/clinica/agenda",    status: "dev" },
+      { label: "Pacientes", icon: UsersIcon,       href: "/clinica/pacientes", status: "dev" },
+      { label: "Médicos",   icon: Stethoscope,     href: "/clinica/medicos",   status: "dev" },
     ],
   },
   {
@@ -112,10 +113,10 @@ const clinicNavGroups: NavGroup[] = [
     icon: Building2,
     defaultOpen: true,
     items: [
-      { label: "Salas e recursos", icon: Building2, href: "/clinica/salas" },
-      { label: "Estoque", icon: BoxesIcon, href: "/clinica/estoque" },
-      { label: "Escala médica", icon: Clock, href: "/clinica/escala" },
-      { label: "Multi-unidades", icon: Building2, href: "/clinica/unidades" },
+      { label: "Salas e recursos", icon: Building2,  href: "/clinica/salas",     status: "dev" },
+      { label: "Estoque",          icon: BoxesIcon,   href: "/clinica/estoque",   status: "dev" },
+      { label: "Escala médica",    icon: Clock,       href: "/clinica/escala",    status: "dev" },
+      { label: "Multi-unidades",   icon: Building2,   href: "/clinica/unidades",  status: "dev" },
     ],
   },
   {
@@ -123,9 +124,9 @@ const clinicNavGroups: NavGroup[] = [
     icon: UserCheck,
     defaultOpen: true,
     items: [
-      { label: "Confirmações WA", icon: PhoneCall, href: "/clinica/confirmacoes" },
-      { label: "Painel de chamada", icon: MessageSquare, href: "/clinica/painel-chamada" },
-      { label: "Satisfação / NPS", icon: Star, href: "/clinica/nps" },
+      { label: "Confirmações WA",   icon: PhoneCall,    href: "/clinica/confirmacoes",   status: "dev" },
+      { label: "Painel de chamada", icon: MessageSquare,href: "/clinica/painel-chamada", status: "dev" },
+      { label: "Satisfação / NPS",  icon: Star,         href: "/clinica/nps",            status: "dev" },
     ],
   },
   {
@@ -133,11 +134,11 @@ const clinicNavGroups: NavGroup[] = [
     icon: DollarSign,
     defaultOpen: false,
     items: [
-      { label: "Convênios", icon: CreditCard, href: "/clinica/convenios" },
-      { label: "DRE / Fluxo de caixa", icon: TrendingDown, href: "/clinica/dre" },
-      { label: "Repasse médicos", icon: DollarSign, href: "/clinica/repasse" },
-      { label: "Inadimplência", icon: ArrowDownCircle, href: "/clinica/inadimplencia" },
-      { label: "Relatórios", icon: BarChart3, href: "/clinica/relatorios" },
+      { label: "Convênios",          icon: CreditCard,     href: "/clinica/convenios",     status: "dev" },
+      { label: "DRE / Fluxo de caixa", icon: TrendingDown, href: "/clinica/dre",           status: "dev" },
+      { label: "Repasse médicos",    icon: DollarSign,     href: "/clinica/repasse",       status: "dev" },
+      { label: "Inadimplência",      icon: ArrowDownCircle,href: "/clinica/inadimplencia", status: "dev" },
+      { label: "Relatórios",         icon: BarChart3,      href: "/clinica/relatorios",    status: "dev" },
     ],
   },
   {
@@ -145,9 +146,9 @@ const clinicNavGroups: NavGroup[] = [
     icon: Shield,
     defaultOpen: false,
     items: [
-      { label: "Log de auditoria", icon: ScrollText, href: "/clinica/auditoria" },
-      { label: "Permissões", icon: Lock, href: "/clinica/permissoes" },
-      { label: "Backup", icon: HardDrive, href: "/clinica/backup" },
+      { label: "Log de auditoria", icon: ScrollText, href: "/clinica/auditoria",  status: "dev" },
+      { label: "Permissões",       icon: Lock,       href: "/clinica/permissoes", status: "dev" },
+      { label: "Backup",           icon: HardDrive,  href: "/clinica/backup",     status: "dev" },
     ],
   },
 ];
@@ -160,8 +161,8 @@ const bothNavGroups: NavGroup[] = [
     defaultOpen: false,
     items: [
       { label: "Dashboard", icon: LayoutDashboard, href: "/clinica" },
-      { label: "Pacientes", icon: UsersIcon, href: "/clinica/pacientes" },
-      { label: "Agenda", icon: CalendarCheck, href: "/clinica/agenda" },
+      { label: "Pacientes", icon: UsersIcon,       href: "/clinica/pacientes", status: "dev" },
+      { label: "Agenda",    icon: CalendarCheck,   href: "/clinica/agenda",    status: "dev" },
     ],
   },
 ];
@@ -189,21 +190,37 @@ const SidebarGroup = ({ group, clientId }: { group: NavGroup; clientId: string }
       </button>
       {open && (
         <div className="space-y-0.5">
-          {group.items.map((item) => (
-            <NavLink
-              key={item.href}
-              to={`/${clientId}${item.href}`}
-              end={item.href === "/financeiro" || item.href === "/clinica" || item.href === "/dashboard"}
-              className={cn(
-                "w-full flex items-center gap-3 text-left px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 text-muted-foreground hover:text-foreground hover:bg-muted/60",
-                item.indent && "pl-9 text-xs"
-              )}
-              activeClassName="bg-primary text-primary-foreground shadow-md shadow-primary/25 hover:bg-primary hover:text-primary-foreground"
-            >
-              <item.icon className="h-4 w-4 shrink-0" />
-              {item.label}
-            </NavLink>
-          ))}
+          {group.items.map((item) =>
+            item.status === "dev" ? (
+              <div
+                key={item.href}
+                className={cn(
+                  "w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium opacity-40 cursor-not-allowed select-none text-muted-foreground",
+                  item.indent && "pl-9 text-xs"
+                )}
+              >
+                <item.icon className="h-4 w-4 shrink-0" />
+                <span className="flex-1">{item.label}</span>
+                <span className="text-[9px] font-bold uppercase tracking-wider bg-orange-500/20 text-orange-400 px-1.5 py-0.5 rounded">
+                  dev
+                </span>
+              </div>
+            ) : (
+              <NavLink
+                key={item.href}
+                to={`/${clientId}${item.href}`}
+                end={item.href === "/financeiro" || item.href === "/clinica" || item.href === "/dashboard"}
+                className={cn(
+                  "w-full flex items-center gap-3 text-left px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 text-muted-foreground hover:text-foreground hover:bg-muted/60",
+                  item.indent && "pl-9 text-xs"
+                )}
+                activeClassName="bg-primary text-primary-foreground shadow-md shadow-primary/25 hover:bg-primary hover:text-primary-foreground"
+              >
+                <item.icon className="h-4 w-4 shrink-0" />
+                {item.label}
+              </NavLink>
+            )
+          )}
         </div>
       )}
     </div>
