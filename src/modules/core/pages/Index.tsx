@@ -44,6 +44,7 @@ import {
   Megaphone,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useCurrentUser } from "@/hooks/use-current-user";
 
 // --- Mock data ---
 const revenueData = [
@@ -127,8 +128,21 @@ const newStudentsChartConfig = {
 
 const formatCurrency = (v: number) => `R$ ${(v / 1000).toFixed(1)}k`;
 
+function getGreeting(): string {
+  const h = new Date().getHours();
+  if (h < 12) return "Bom dia";
+  if (h < 18) return "Boa tarde";
+  return "Boa noite";
+}
+
+function formatToday(): string {
+  return new Date().toLocaleDateString("pt-BR", { day: "numeric", month: "long" });
+}
+
 const Index = () => {
   const navigate = useNavigate();
+  const currentUser = useCurrentUser();
+  const firstName = currentUser?.name?.split(" ")[0] ?? "";
 
   return (
     <DashboardLayout>
@@ -136,10 +150,10 @@ const Index = () => {
         {/* Header */}
         <div>
           <h1 className="text-2xl font-extrabold text-foreground tracking-tight">
-            Bom dia, Ana! 👋
+            {getGreeting()}{firstName ? `, ${firstName}` : ""}! 👋
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Aqui está o resumo da sua operação hoje, <span className="font-medium text-foreground">20 de fevereiro</span>.
+            Aqui está o resumo da sua operação hoje, <span className="font-medium text-foreground">{formatToday()}</span>.
           </p>
         </div>
 

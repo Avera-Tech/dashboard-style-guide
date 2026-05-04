@@ -96,6 +96,21 @@ async function fetchTenant(clientId: string): Promise<TenantTheme | null> {
   };
 }
 
+const EMPTY_THEME: TenantTheme = {
+  name: "",
+  primaryColor: "",
+  secondaryColor: "",
+  accentColor: "",
+  backgroundColor: "",
+  textColor: "",
+  logo: null,
+  favicon: null,
+};
+
+function saveThemeToStorage(theme: TenantTheme | null) {
+  localStorage.setItem("theme", JSON.stringify(theme ?? EMPTY_THEME));
+}
+
 export function ClientProvider() {
   const { clientId = "" } = useParams<{ clientId: string }>();
   const isReserved = !clientId || RESERVED.has(clientId);
@@ -108,12 +123,20 @@ export function ClientProvider() {
   const [loading,  setLoading]  = useState(!isReserved && !cached);
 
   useEffect(() => {
-    if (isReserved) return;
+    if (isReserved) {
+      saveThemeToStorage(null);
+      return;
+    }
 
     localStorage.setItem("clientId", clientId);
 
     // Aplica cache imediatamente enquanto o fetch acontece em background
-    if (cached) applyTheme(cached);
+    if (cached) {
+      applyTheme(cached);
+      saveThemeToStorage(cached);
+    } else {
+      saveThemeToStorage(null);
+    }
 
     fetchTenant(clientId)
       .then((fresh) => {
@@ -122,6 +145,7 @@ export function ClientProvider() {
           return;
         }
         localStorage.setItem(cacheKey(clientId), JSON.stringify(fresh));
+        saveThemeToStorage(fresh);
         setTenant(fresh);
         applyTheme(fresh);
       })
@@ -133,14 +157,14 @@ export function ClientProvider() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [clientId]);
 
+  const contextValue = useMemo(() => ({ clientId, tenant }), [clientId, tenant]);
+
   if (isReserved || notFound) return <NotFound />;
   if (loading) return (
     <div className="flex h-screen items-center justify-center">
       <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
     </div>
   );
-
-  const contextValue = useMemo(() => ({ clientId, tenant }), [clientId, tenant]);
 
   return (
     <ClientContext.Provider value={contextValue}>
