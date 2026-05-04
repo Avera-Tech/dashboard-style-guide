@@ -16,6 +16,7 @@ export interface TenantTheme {
   textColor: string;
   logo: string | null;
   favicon: string | null;
+  configured: boolean;
 }
 
 interface ClientContextType {
@@ -93,6 +94,7 @@ async function fetchTenant(clientId: string): Promise<TenantTheme | null> {
     textColor:       data.textColor       ?? "#0f172a",
     logo:            data.logo            ?? null,
     favicon:         data.favicon         ?? null,
+    configured:      data.themeConfigured ?? false,
   };
 }
 
@@ -105,6 +107,7 @@ const EMPTY_THEME: TenantTheme = {
   textColor: "",
   logo: null,
   favicon: null,
+  configured: false,
 };
 
 function saveThemeToStorage(theme: TenantTheme | null) {

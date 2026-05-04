@@ -42,6 +42,7 @@ import { cn } from "@/lib/utils";
 import { companyConfig } from "@/modules/core/data/company-config";
 import { useTenant } from "@/contexts/ClientContext";
 import { useCurrentUser, getInitials } from "@/hooks/use-current-user";
+import ThemeSetupModal from "@/modules/core/components/dashboard/ThemeSetupModal";
 import averaLogo from "@/assets/avera-logo.png";
 
 interface NavItem {
@@ -216,11 +217,14 @@ interface DashboardLayoutProps {
 const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const tenant = useTenant();
   const currentUser = useCurrentUser();
+  const [themeModalDismissed, setThemeModalDismissed] = useState(false);
   const logoSrc = tenant?.logo ?? averaLogo;
   const companyName = tenant?.name ?? companyConfig.companyName;
+  const showThemeSetup = tenant !== null && !tenant.configured && !themeModalDismissed;
 
   return (
     <div className="min-h-screen bg-background">
+      {showThemeSetup && <ThemeSetupModal onDismiss={() => setThemeModalDismissed(true)} />}
       <div className="flex">
         {/* Sidebar */}
         <aside className="hidden lg:flex w-64 border-r border-border bg-card/50 backdrop-blur-sm flex-col min-h-screen sticky top-0">
