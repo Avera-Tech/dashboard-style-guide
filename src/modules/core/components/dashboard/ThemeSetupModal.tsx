@@ -13,7 +13,7 @@ const ThemeSetupModal = ({ onDismiss }: ThemeSetupModalProps) => {
 
   const handleGoToSettings = () => {
     onDismiss();
-    navigate(clientId ? `/${clientId}/configuracoes` : "/configuracoes");
+    navigate(clientId ? `/${clientId}/configuracoes?tab=aparencia` : "/configuracoes?tab=aparencia");
   };
 
   return (

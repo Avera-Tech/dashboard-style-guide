@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Building2,
   MapPin,
@@ -9,7 +9,10 @@ import {
   Mail,
   Globe,
   Save,
+  Palette,
+  Image,
 } from "lucide-react";
+import { useSearchParams } from "react-router-dom";
 import DashboardLayout from "@/modules/core/components/dashboard/DashboardLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -29,6 +32,41 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { toast } from "@/hooks/use-toast";
+
+// ── Theme helpers ──────────────────────────────────────
+const BASE = import.meta.env.VITE_API_URL ?? "http://localhost:3000";
+
+function authHeaders(extra?: Record<string, string>) {
+  const token    = localStorage.getItem("token") ?? "";
+  const clientId = localStorage.getItem("clientId") ?? "";
+  return {
+    Authorization:  `Bearer ${token}`,
+    "X-Client-Id":  clientId,
+    ...extra,
+  };
+}
+
+interface ThemeForm {
+  name:            string;
+  primaryColor:    string;
+  secondaryColor:  string;
+  accentColor:     string;
+  backgroundColor: string;
+  textColor:       string;
+  logo:            string;
+  favicon:         string;
+}
+
+const DEFAULT_THEME: ThemeForm = {
+  name:            "",
+  primaryColor:    "#3B82F6",
+  secondaryColor:  "#6c757d",
+  accentColor:     "#F59E0B",
+  backgroundColor: "#ffffff",
+  textColor:       "#212529",
+  logo:            "",
+  favicon:         "",
+};
 
 // ── Types ──────────────────────────────────────────────
 interface Endereco {
@@ -73,6 +111,68 @@ const MOCK_ENDERECOS: Endereco[] = [
 ];
 
 const Configuracoes = () => {
+  const [searchParams] = useSearchParams();
+  const defaultTab = searchParams.get("tab") ?? "empresa";
+
+  // ── Theme state ────────────────────────────────────
+  const [themeForm,    setThemeForm]    = useState<ThemeForm>(DEFAULT_THEME);
+  const [themeLoading, setThemeLoading] = useState(false);
+  const [themeSaving,  setThemeSaving]  = useState(false);
+
+  useEffect(() => {
+    setThemeLoading(true);
+    fetch(`${BASE}/api/theme`, { headers: authHeaders() })
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.success && data.theme) {
+          setThemeForm({
+            name:            data.theme.name            ?? "",
+            primaryColor:    data.theme.primaryColor    ?? DEFAULT_THEME.primaryColor,
+            secondaryColor:  data.theme.secondaryColor  ?? DEFAULT_THEME.secondaryColor,
+            accentColor:     data.theme.accentColor     ?? DEFAULT_THEME.accentColor,
+            backgroundColor: data.theme.backgroundColor ?? DEFAULT_THEME.backgroundColor,
+            textColor:       data.theme.textColor       ?? DEFAULT_THEME.textColor,
+            logo:            data.theme.logo            ?? "",
+            favicon:         data.theme.favicon         ?? "",
+          });
+        }
+      })
+      .catch(() => {/* mantém defaults */})
+      .finally(() => setThemeLoading(false));
+  }, []);
+
+  const saveTheme = async () => {
+    setThemeSaving(true);
+    try {
+      const res  = await fetch(`${BASE}/api/theme`, {
+        method:  "PUT",
+        headers: authHeaders({ "Content-Type": "application/json" }),
+        body:    JSON.stringify({
+          ...themeForm,
+          logo:    themeForm.logo    || null,
+          favicon: themeForm.favicon || null,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        // Atualiza o localStorage para que o sidebar reflita imediatamente
+        const stored = localStorage.getItem("theme");
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          localStorage.setItem("theme", JSON.stringify({ ...parsed, ...themeForm, configured: true }));
+        }
+        toast({ title: "Tema salvo com sucesso!" });
+      } else {
+        toast({ title: "Erro ao salvar tema", description: data.error, variant: "destructive" });
+      }
+    } catch {
+      toast({ title: "Erro de conexão", variant: "destructive" });
+    } finally {
+      setThemeSaving(false);
+    }
+  };
+
+  // ── Endereços state ────────────────────────────────
   const [enderecos, setEnderecos] = useState<Endereco[]>(MOCK_ENDERECOS);
   const [enderecoDialogOpen, setEnderecoDialogOpen] = useState(false);
   const [editingEndereco, setEditingEndereco] = useState<Endereco | null>(null);
@@ -131,8 +231,8 @@ const Configuracoes = () => {
       </header>
 
       <div className="px-6 lg:px-8 py-6">
-        <Tabs defaultValue="empresa" className="space-y-6">
-          <TabsList className="grid w-full max-w-md grid-cols-2">
+        <Tabs defaultValue={defaultTab} className="space-y-6">
+          <TabsList className="grid w-full max-w-lg grid-cols-3">
             <TabsTrigger value="empresa" className="gap-2">
               <Building2 className="h-4 w-4" />
               Empresa
@@ -140,6 +240,10 @@ const Configuracoes = () => {
             <TabsTrigger value="enderecos" className="gap-2">
               <MapPin className="h-4 w-4" />
               Endereços
+            </TabsTrigger>
+            <TabsTrigger value="aparencia" className="gap-2">
+              <Palette className="h-4 w-4" />
+              Aparência
             </TabsTrigger>
           </TabsList>
 
@@ -223,6 +327,146 @@ const Configuracoes = () => {
                 </div>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          {/* ── TAB: Aparência ──────────────────────────── */}
+          <TabsContent value="aparencia">
+            <div className="space-y-6">
+              {/* Cores */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Palette className="h-5 w-5 text-primary" />
+                    Cores do Sistema
+                  </CardTitle>
+                  <CardDescription>Defina a paleta de cores da identidade visual</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  {themeLoading ? (
+                    <div className="flex justify-center py-8">
+                      <div className="h-6 w-6 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+                    </div>
+                  ) : (
+                    <>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                        {(
+                          [
+                            { key: "primaryColor",    label: "Cor Principal" },
+                            { key: "secondaryColor",  label: "Cor Secundária" },
+                            { key: "accentColor",     label: "Cor de Destaque" },
+                            { key: "backgroundColor", label: "Cor de Fundo" },
+                            { key: "textColor",       label: "Cor do Texto" },
+                          ] as { key: keyof ThemeForm; label: string }[]
+                        ).map(({ key, label }) => (
+                          <div key={key} className="space-y-2">
+                            <Label>{label}</Label>
+                            <div className="flex items-center gap-2">
+                              <div
+                                className="relative h-10 w-10 shrink-0 rounded-lg border-2 border-border overflow-hidden cursor-pointer"
+                                style={{ backgroundColor: themeForm[key] || "#000" }}
+                              >
+                                <input
+                                  type="color"
+                                  value={themeForm[key] || "#000000"}
+                                  onChange={(e) => setThemeForm((f) => ({ ...f, [key]: e.target.value }))}
+                                  className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
+                                />
+                              </div>
+                              <Input
+                                value={themeForm[key]}
+                                onChange={(e) => setThemeForm((f) => ({ ...f, [key]: e.target.value }))}
+                                placeholder="#000000"
+                                className="font-mono text-sm"
+                                maxLength={7}
+                              />
+                            </div>
+                          </div>
+                        ))}
+
+                        <div className="space-y-2">
+                          <Label>Nome do Tema</Label>
+                          <Input
+                            value={themeForm.name}
+                            onChange={(e) => setThemeForm((f) => ({ ...f, name: e.target.value }))}
+                            placeholder="Ex: Tema Principal"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Preview */}
+                      <div className="rounded-xl border border-border p-4 space-y-2">
+                        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Prévia</p>
+                        <div className="flex gap-2 flex-wrap">
+                          {[
+                            { label: "Principal",   color: themeForm.primaryColor },
+                            { label: "Secundária",  color: themeForm.secondaryColor },
+                            { label: "Destaque",    color: themeForm.accentColor },
+                          ].map(({ label, color }) => (
+                            <div key={label} className="flex items-center gap-2 rounded-lg px-3 py-1.5 text-white text-xs font-medium" style={{ backgroundColor: color }}>
+                              {label}
+                            </div>
+                          ))}
+                          <div
+                            className="flex items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-medium border"
+                            style={{ backgroundColor: themeForm.backgroundColor, color: themeForm.textColor, borderColor: themeForm.secondaryColor }}
+                          >
+                            Texto sobre fundo
+                          </div>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Imagens */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Image className="h-5 w-5 text-primary" />
+                    Logotipo e Favicon
+                  </CardTitle>
+                  <CardDescription>URLs públicas das imagens do seu sistema</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label>URL do Logo</Label>
+                      <Input
+                        value={themeForm.logo}
+                        onChange={(e) => setThemeForm((f) => ({ ...f, logo: e.target.value }))}
+                        placeholder="https://sua-empresa.com/logo.png"
+                      />
+                      {themeForm.logo && (
+                        <div className="rounded-lg border border-border bg-muted/30 p-3 flex items-center justify-center h-20">
+                          <img src={themeForm.logo} alt="Logo" className="h-full w-auto object-contain" onError={(e) => (e.currentTarget.style.display = "none")} />
+                        </div>
+                      )}
+                    </div>
+                    <div className="space-y-2">
+                      <Label>URL do Favicon</Label>
+                      <Input
+                        value={themeForm.favicon}
+                        onChange={(e) => setThemeForm((f) => ({ ...f, favicon: e.target.value }))}
+                        placeholder="https://sua-empresa.com/favicon.ico"
+                      />
+                      {themeForm.favicon && (
+                        <div className="rounded-lg border border-border bg-muted/30 p-3 flex items-center justify-center h-20">
+                          <img src={themeForm.favicon} alt="Favicon" className="h-8 w-8 object-contain" onError={(e) => (e.currentTarget.style.display = "none")} />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <div className="flex justify-end">
+                <Button onClick={saveTheme} disabled={themeSaving} className="shadow-md shadow-primary/20">
+                  <Save className="h-4 w-4 mr-2" />
+                  {themeSaving ? "Salvando..." : "Salvar Tema"}
+                </Button>
+              </div>
+            </div>
           </TabsContent>
 
           {/* ── TAB: Endereços ──────────────────────────── */}
