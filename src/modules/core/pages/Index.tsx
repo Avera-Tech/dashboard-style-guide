@@ -43,7 +43,8 @@ import {
   CalendarCheck,
   Megaphone,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { useEffect } from "react";
 import { useCurrentUser } from "@/hooks/use-current-user";
 
 // --- Mock data ---
@@ -140,9 +141,17 @@ function formatToday(): string {
 }
 
 const Index = () => {
-  const navigate = useNavigate();
-  const currentUser = useCurrentUser();
-  const firstName = currentUser?.name?.split(" ")[0] ?? "";
+  const navigate     = useNavigate();
+  const { clientId } = useParams<{ clientId: string }>();
+  const [searchParams] = useSearchParams();
+  const currentUser  = useCurrentUser();
+  const firstName    = currentUser?.name?.split(" ")[0] ?? "";
+
+  useEffect(() => {
+    if (searchParams.get("step") === "true") {
+      navigate(`/${clientId}/onboarding`, { replace: true });
+    }
+  }, []);
 
   return (
     <DashboardLayout>

@@ -202,9 +202,12 @@ const Onboarding = () => {
   const isFirst   = step === 1;
   const isLast    = step === STEPS.length;
 
-  const advance = () => {
+  const advance = async () => {
     if (isLast) {
-      localStorage.setItem("onboardingCompleted", "true");
+      // Garantir que o registro de tema exista — é o que marca onboarding como concluído
+      await fetch(`${BASE}/api/theme`, {
+        method: "PUT", headers: jsonHdr(), body: JSON.stringify({}),
+      }).catch(() => {});
       navigate(`/${clientId}/dashboard`, { replace: true });
     } else {
       setStep((s) => s + 1);
@@ -332,11 +335,11 @@ const Onboarding = () => {
     } finally {
       setSaving(false);
     }
-    advance();
+    await advance();
   };
 
   const goBack  = () => setStep((s) => s - 1);
-  const skipStep = () => advance();
+  const skipStep = () => { setStep((s) => s + 1); };
 
   return (
     <div className="min-h-screen bg-background flex flex-col">

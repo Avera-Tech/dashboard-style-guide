@@ -81,9 +81,8 @@ const Login = () => {
       if (clientId) localStorage.setItem("clientId", clientId);
       if (data.staff) localStorage.setItem("user", JSON.stringify(data.staff));
 
-      const onboardingDone = localStorage.getItem("onboardingCompleted");
       const destination = clientId
-        ? `/${clientId}/${onboardingDone ? "dashboard" : "onboarding"}`
+        ? `/${clientId}/${data.onboardingCompleted ? "dashboard" : "onboarding"}`
         : "/dashboard";
       navigate(destination);
     } catch {
