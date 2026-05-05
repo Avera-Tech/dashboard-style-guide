@@ -360,14 +360,14 @@ const Onboarding = () => {
       <div className="flex-1 flex items-start justify-center px-4 py-6">
         <div className="w-full max-w-2xl">
           {/* Step header */}
-          <div className="mb-8 space-y-1">
+          <div className="mb-8 space-y-2">
             <p className="text-xs font-bold uppercase tracking-widest text-primary">
               Passo {step} de {STEPS.length}
             </p>
-            <h1 className="text-2xl font-extrabold text-foreground tracking-tight">
+            <h1 className="text-4xl font-extrabold text-foreground tracking-tight leading-tight">
               {meta.title}
             </h1>
-            <p className="text-sm text-muted-foreground">{meta.description}</p>
+            <p className="text-base text-muted-foreground">{meta.description}</p>
           </div>
 
           {/* Step body */}
