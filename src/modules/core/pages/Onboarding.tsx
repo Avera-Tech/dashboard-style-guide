@@ -138,16 +138,12 @@ const ProgressBar = ({ current, total }: { current: number; total: number }) => 
             {done ? <Check className="h-4 w-4" /> : s.id}
           </div>
 
-          {/* Label — hidden on small screens except active */}
-          <span
-            className={cn(
-              "text-xs font-medium truncate hidden sm:block",
-              active && "text-foreground",
-              !active && "text-muted-foreground"
-            )}
-          >
-            {s.label}
-          </span>
+          {/* Label — only visible on the active step */}
+          {active && (
+            <span className="text-xs font-semibold text-foreground whitespace-nowrap">
+              {s.label}
+            </span>
+          )}
 
           {/* Connector line */}
           {!isLast && (
