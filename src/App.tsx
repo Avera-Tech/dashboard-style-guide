@@ -21,6 +21,7 @@ import Anuncios from "./modules/core/pages/Anuncios";
 import Configuracoes from "./modules/core/pages/Configuracoes";
 import Cadastros from "./modules/core/pages/Cadastros";
 import EmailTemplates from "./modules/core/pages/EmailTemplates";
+import Onboarding from "./modules/core/pages/Onboarding";
 import NotFound from "./modules/core/pages/NotFound";
 
 // Clinic pages
@@ -98,6 +99,7 @@ const App = () => (
 
             {/* Rotas privadas */}
             <Route element={<PrivateRoute />}>
+              <Route path="onboarding" element={<Onboarding />} />
               <Route path="dashboard" element={<Index />} />
               <Route path="users" element={<Users />} />
               <Route path="staff" element={<StaffPage />} />

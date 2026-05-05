@@ -37,6 +37,7 @@ const Login = () => {
           localStorage.setItem("token", data.token);
           localStorage.setItem("clientId", clientId);
           localStorage.setItem("user", JSON.stringify({ name: "Avera", email: "master@avera.tech", role: "Master" }));
+          // Master sempre vai direto ao dashboard — não precisa de onboarding
           navigate(`/${clientId}/dashboard`, { replace: true });
         } else {
           toast({ title: "Acesso master inválido", description: data.error, variant: "destructive" });
@@ -79,7 +80,12 @@ const Login = () => {
       localStorage.setItem("token", data.token);
       if (clientId) localStorage.setItem("clientId", clientId);
       if (data.staff) localStorage.setItem("user", JSON.stringify(data.staff));
-      navigate(clientId ? `/${clientId}/dashboard` : "/dashboard");
+
+      const onboardingDone = localStorage.getItem("onboardingCompleted");
+      const destination = clientId
+        ? `/${clientId}/${onboardingDone ? "dashboard" : "onboarding"}`
+        : "/dashboard";
+      navigate(destination);
     } catch {
       toast({
         title: "Erro de conexão",

@@ -1,0 +1,167 @@
+import { useState, useRef } from "react";
+import { X, Plus, ShoppingBag } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+
+export interface TipoProdutoItem {
+  name: string;
+  color: string;
+}
+
+export interface StepTiposProdutoData {
+  items: TipoProdutoItem[];
+}
+
+interface Props {
+  data: StepTiposProdutoData;
+  onChange: (d: StepTiposProdutoData) => void;
+}
+
+const SUGGESTIONS: TipoProdutoItem[] = [
+  { name: "Plano Mensal",      color: "#3B82F6" },
+  { name: "Plano Trimestral",  color: "#6366F1" },
+  { name: "Plano Semestral",   color: "#8B5CF6" },
+  { name: "Plano Anual",       color: "#A855F7" },
+  { name: "Aula Avulsa",       color: "#F59E0B" },
+  { name: "Pacote de Aulas",   color: "#10B981" },
+  { name: "Day Use",           color: "#06B6D4" },
+  { name: "Mensalidade",       color: "#EF4444" },
+];
+
+const DEFAULT_COLOR = "#3B82F6";
+
+const isValidHex = (v: string) => /^#[0-9A-Fa-f]{6}$/.test(v);
+
+const StepTiposProduto = ({ data, onChange }: Props) => {
+  const [customName,  setCustomName]  = useState("");
+  const [customColor, setCustomColor] = useState(DEFAULT_COLOR);
+  const pickerRef = useRef<HTMLInputElement>(null);
+
+  const selectedNames = new Set(data.items.map((i) => i.name.toLowerCase()));
+
+  const toggleSuggestion = (s: TipoProdutoItem) => {
+    const key = s.name.toLowerCase();
+    if (selectedNames.has(key)) {
+      onChange({ items: data.items.filter((i) => i.name.toLowerCase() !== key) });
+    } else {
+      onChange({ items: [...data.items, s] });
+    }
+  };
+
+  const addCustom = () => {
+    const name = customName.trim();
+    if (!name) return;
+    if (selectedNames.has(name.toLowerCase())) { setCustomName(""); return; }
+    onChange({ items: [...data.items, { name, color: isValidHex(customColor) ? customColor : DEFAULT_COLOR }] });
+    setCustomName("");
+  };
+
+  const remove = (name: string) =>
+    onChange({ items: data.items.filter((i) => i.name !== name) });
+
+  return (
+    <div className="p-8 space-y-8">
+      {/* Suggestions */}
+      <div className="space-y-3">
+        <Label className="text-sm font-semibold">Sugestões</Label>
+        <div className="flex flex-wrap gap-2">
+          {SUGGESTIONS.map((s) => {
+            const active = selectedNames.has(s.name.toLowerCase());
+            return (
+              <button
+                key={s.name}
+                type="button"
+                onClick={() => toggleSuggestion(s)}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium border transition-all"
+                style={
+                  active
+                    ? { backgroundColor: s.color, borderColor: s.color, color: "#fff" }
+                    : { backgroundColor: "transparent", borderColor: s.color + "60", color: s.color }
+                }
+              >
+                <span
+                  className="h-2 w-2 rounded-full shrink-0"
+                  style={{ backgroundColor: active ? "rgba(255,255,255,0.7)" : s.color }}
+                />
+                {s.name}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Custom add */}
+      <div className="space-y-2">
+        <Label className="text-sm font-semibold">Adicionar personalizado</Label>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            className="h-10 w-10 shrink-0 rounded-lg border border-border shadow-sm transition-transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary/40"
+            style={{ backgroundColor: customColor }}
+            onClick={() => pickerRef.current?.click()}
+            aria-label="Escolher cor"
+          />
+          <input
+            ref={pickerRef}
+            type="color"
+            className="sr-only"
+            value={isValidHex(customColor) ? customColor : DEFAULT_COLOR}
+            onChange={(e) => setCustomColor(e.target.value)}
+          />
+          <Input
+            value={customName}
+            onChange={(e) => setCustomName(e.target.value)}
+            onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addCustom(); } }}
+            placeholder="Ex: Pacote VIP"
+            className="h-10 flex-1"
+          />
+          <Button type="button" variant="outline" size="icon" className="h-10 w-10 shrink-0" onClick={addCustom}>
+            <Plus className="h-4 w-4" />
+          </Button>
+        </div>
+      </div>
+
+      {/* Selected list */}
+      {data.items.length > 0 && (
+        <div className="space-y-3">
+          <Label className="text-sm font-semibold">
+            Selecionados <span className="text-muted-foreground font-normal">({data.items.length})</span>
+          </Label>
+          <div className="flex flex-wrap gap-2">
+            {data.items.map((item) => (
+              <span
+                key={item.name}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium text-white"
+                style={{ backgroundColor: item.color }}
+              >
+                {item.name}
+                <button
+                  type="button"
+                  onClick={() => remove(item.name)}
+                  className="ml-0.5 hover:opacity-70 transition-opacity"
+                  aria-label={`Remover ${item.name}`}
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {data.items.length === 0 && (
+        <div className="flex flex-col items-center justify-center py-6 gap-2 text-center text-muted-foreground">
+          <ShoppingBag className="h-8 w-8 opacity-30" />
+          <p className="text-sm">Nenhum tipo de produto selecionado ainda.</p>
+        </div>
+      )}
+
+      <p className="text-xs text-muted-foreground">
+        Tipos de produto definem como você organiza o que vende. Você pode editar depois em Cadastros.
+      </p>
+    </div>
+  );
+};
+
+export default StepTiposProduto;
